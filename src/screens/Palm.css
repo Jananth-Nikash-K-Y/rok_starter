@@ -1,0 +1,73 @@
+/* Palm — hero entry screen.
+   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
+
+.palm {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 48px 16px;
+}
+
+.palm__content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  text-align: center;
+}
+
+.palm__icon {
+  color: var(--rok-red);
+  animation: palm-pulse 2s ease-in-out infinite;
+}
+
+.palm__button {
+  background: var(--rok-red);
+  border: 0;
+  border-radius: var(--rok-radius-lg);
+  color: var(--rok-white);
+  cursor: pointer;
+  font-family: var(--rok-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  padding: 24px 48px;
+  transition: background 150ms ease-out, transform 150ms ease-out, box-shadow 150ms ease-out;
+  min-width: 240px;
+}
+
+.palm__button:hover {
+  background: #a12121;
+  box-shadow: 0 4px 24px rgba(198, 40, 40, 0.3);
+  transform: translateY(-2px);
+}
+
+.palm__button:active {
+  transform: translateY(0);
+}
+
+@keyframes palm-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.85; }
+}
+
+@media (max-width: 360px) {
+  .palm__button {
+    font-size: 1.25rem;
+    min-width: 0;
+    padding: 20px 32px;
+    width: 100%;
+  }
+
+  .palm__icon {
+    height: 64px;
+    width: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palm__icon { animation: none; }
+  .palm__button { transition: none; }
+}

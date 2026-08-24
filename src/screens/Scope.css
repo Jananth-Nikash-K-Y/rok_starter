@@ -1,0 +1,77 @@
+/* Scope — "Only this one, or were there more?"
+   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
+
+.scope {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 48px 16px;
+}
+
+.scope__content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 28rem;
+  text-align: center;
+  width: 100%;
+}
+
+.scope h1 {
+  font-family: var(--rok-font-display);
+  font-size: 1.5rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.scope__choices {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+}
+
+.scope__choice {
+  align-items: center;
+  background: var(--rok-white);
+  border: 2px solid var(--rok-indigo);
+  border-radius: var(--rok-radius);
+  color: var(--rok-indigo);
+  cursor: pointer;
+  display: flex;
+  font-size: 1.125rem;
+  font-weight: 700;
+  gap: 12px;
+  justify-content: center;
+  padding: 24px;
+  transition: background 150ms ease-out, color 150ms ease-out, transform 150ms ease-out, box-shadow 150ms ease-out;
+  width: 100%;
+}
+
+.scope__choice:hover {
+  background: var(--rok-indigo);
+  box-shadow: 0 4px 16px rgba(59, 63, 166, 0.2);
+  color: var(--rok-white);
+  transform: translateY(-2px);
+}
+
+.scope__choice--secondary {
+  background: var(--rok-indigo-light);
+  border-style: dashed;
+}
+
+@media (max-width: 360px) {
+  .scope h1 {
+    font-size: 1.25rem;
+  }
+
+  .scope__choice {
+    font-size: 1rem;
+    padding: 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scope__choice { transition: none; }
+}

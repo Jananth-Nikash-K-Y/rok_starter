@@ -1,0 +1,174 @@
+/* CaseComplete — green success screen with 3 exit cards.
+   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
+
+.case-complete {
+  padding: 48px 16px;
+}
+
+.case-complete__content {
+  display: grid;
+  gap: 32px;
+  margin: 0 auto;
+  max-width: 44rem;
+}
+
+/* ── Success hero ─────────────────────────────────────── */
+
+.case-complete__hero {
+  align-items: center;
+  animation: case-hero-enter 300ms ease-out both;
+  background: var(--rok-green-light);
+  border: 1.5px solid var(--rok-green);
+  border-radius: var(--rok-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.case-complete__hero .rok-icon--lg {
+  color: var(--rok-green);
+}
+
+.case-complete__hero h1 {
+  color: var(--rok-green);
+  font-family: var(--rok-font-display);
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.case-complete__case-id {
+  color: var(--rok-grey);
+  font-family: monospace;
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+/* ── Three exit cards ─────────────────────────────────── */
+
+.case-complete__cards {
+  display: grid;
+  gap: 16px;
+}
+
+.case-complete__card {
+  border: 1.5px solid;
+  border-radius: var(--rok-radius);
+  display: grid;
+  gap: 8px;
+  padding: 24px;
+}
+
+.case-complete__card-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.case-complete__card-header h2 {
+  font-family: var(--rok-font-display);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.case-complete__card p {
+  color: var(--rok-grey);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.case-complete__card--money {
+  background: var(--rok-indigo-light);
+  border-color: var(--rok-indigo);
+}
+
+.case-complete__card--money .rok-icon {
+  color: var(--rok-indigo);
+}
+
+.case-complete__card--helpline {
+  background: var(--rok-amber-light);
+  border-color: var(--rok-amber);
+}
+
+.case-complete__card--helpline .rok-icon {
+  color: var(--rok-amber);
+}
+
+.case-complete__card--tomorrow {
+  background: var(--rok-grey-light);
+  border-color: var(--rok-grey);
+}
+
+.case-complete__card--tomorrow .rok-icon {
+  color: var(--rok-grey);
+}
+
+.case-complete__tel {
+  background: var(--rok-amber);
+  border-radius: 8px;
+  color: var(--rok-white);
+  display: inline-block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 12px 24px;
+  text-decoration: none;
+  transition: background 150ms ease-out;
+  width: fit-content;
+}
+
+.case-complete__tel:hover {
+  background: #965a00;
+}
+
+/* ── Calm mode button ─────────────────────────────────── */
+
+.case-complete__calm-btn {
+  background: var(--rok-white);
+  border: 1.5px dashed var(--rok-indigo);
+  border-radius: var(--rok-radius);
+  color: var(--rok-indigo);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 16px;
+  transition: background 150ms ease-out, color 150ms ease-out;
+  width: 100%;
+}
+
+.case-complete__calm-btn:hover {
+  background: var(--rok-indigo);
+  color: var(--rok-white);
+}
+
+/* ── Animation ────────────────────────────────────────── */
+
+@keyframes case-hero-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+
+@media (max-width: 360px) {
+  .case-complete {
+    padding: 32px 12px;
+  }
+
+  .case-complete__hero {
+    padding: 24px 16px;
+  }
+
+  .case-complete__card {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-complete__hero { animation: none; }
+  .case-complete__calm-btn { transition: none; }
+  .case-complete__tel { transition: none; }
+}

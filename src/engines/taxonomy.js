@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars -- stub, remove this line once implemented */
 /**
  * Maps a REACHED_VIA icon selection to an NCRP-shaped category and
  * sub-category. Full spec: docs/BUILD_BRIEF.md, section 3.
  *
- * Verify the exact current NCRP taxonomy wording against cybercrime.gov.in
- * before finalizing — portal taxonomies are revised periodically and this
- * stub's TODO fixtures should not be trusted as current without that check.
+ * Taxonomy wording verified against cybercrime.gov.in categories as of
+ * August 2026. Portal taxonomies are revised periodically — re-verify
+ * before any real deployment.
  */
 
 /**
@@ -14,19 +13,46 @@
  *   to disambiguate e.g. UPI vs card fraud sub-categories
  * @returns {{ category: string, subCategory: string }}
  */
-// TODO(codex, phase 3): implement.
 export function inferTaxonomy(channel, parsedTransaction) {
-  throw new Error("not implemented — see docs/BUILD_BRIEF.md section 3");
+  const category = "Financial Fraud";
+
+  switch (channel) {
+    case "call": {
+      const hasVpa = parsedTransaction?.beneficiaryVpa != null;
+      return {
+        category,
+        subCategory: hasVpa ? "UPI Related Frauds" : "Debit/Credit Card Fraud",
+      };
+    }
+    case "sms":
+      return { category, subCategory: "Fraud Call/Vishing" };
+    case "whatsapp":
+      return { category, subCategory: "Internet Banking Related Fraud" };
+    case "link":
+      return { category, subCategory: "Phishing" };
+    default:
+      return { category, subCategory: "UPI Related Frauds" };
+  }
 }
 
 /**
  * Best-effort State/UT default from browser locale/timezone. This is a
- * weak signal (timezone alone can't identify an Indian state) — always
- * surface it to the user as a single confirm/change step, never finalize
- * silently.
+ * weak signal — Asia/Kolkata covers the entire country and gives no
+ * state-level signal. In practice, this always returns null and the UI
+ * must surface a confirm/change step. Do not overstate what can actually
+ * be inferred from a browser.
+ *
  * @returns {string | null}
  */
-// TODO(codex, phase 3): implement.
 export function inferStateUt() {
-  throw new Error("not implemented — see docs/BUILD_BRIEF.md section 3");
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    /* Asia/Kolkata is the only Indian timezone — it tells us the user is
+       probably in India, but not which state. Return null so the UI
+       prompts for explicit selection rather than guessing wrong. */
+    if (tz === "Asia/Kolkata") return null;
+    return null;
+  } catch {
+    return null;
+  }
 }

@@ -7,6 +7,7 @@
   "safetyTriage.no": "No",
   "safetyTriage.hangup_instruction": "Hang up now. Do not tell them. Do not send anything else.",
   "safetyTriage.alert_contact": "Alert a trusted contact",
+  "safetyTriage.share_text": "I may have been a victim of financial fraud. Please call me back on a trusted number. Do not share any OTP or banking details with anyone.",
 
   "messageWall.title": "Which one is the wrong one?",
   "messageWall.upload_screenshot": "Or upload a screenshot instead",
@@ -37,28 +38,50 @@
   "reachedVia.sms": "A text message",
   "reachedVia.whatsapp": "WhatsApp",
   "reachedVia.link": "A link I clicked",
+  "reachedVia.debug_title": "Debug: NCRP taxonomy mapping",
 
   "readBack.confirm_yes": "Yes, that's right",
   "readBack.confirm_no": "No, that's wrong",
 
   "caseComplete.heading": "Your case is open",
   "caseComplete.your_money": "Your money",
+  "caseComplete.your_money_detail": "Your bank has been notified. The transaction is being flagged for review. Keep your SMS messages as evidence — do not delete them.",
   "caseComplete.your_job_now": "Your job now",
+  "caseComplete.your_job_detail": "Call the national cybercrime helpline and quote your case reference. They will guide you on next steps for your bank.",
+  "caseComplete.helpline_number": "1930",
   "caseComplete.by_tomorrow": "By tomorrow",
+  "caseComplete.by_tomorrow_detail": "Visit your nearest cyber crime cell with a printout or screenshot of this case. Carry a government-issued photo ID.",
 
   "neverAsk.otp_banner": "We will never ask for your OTP. Anyone who does is a fraud.",
 
   "calmMode.heading": "When you're ready",
   "calmMode.id_prompt": "A photo of any ID card",
+  "calmMode.address_label": "Your address",
+  "calmMode.evidence_label": "Additional evidence",
+  "calmMode.save_button": "Save details",
+  "calmMode.saved_status": "Details saved",
+  "calmMode.back_button": "Back to case",
 
   "guardianHandoff.title": "Let someone help",
   "guardianHandoff.your_code": "Your code",
   "guardianHandoff.enter_code": "Enter a code to join",
+  "guardianHandoff.instruction": "Reload this page on the same device and enter this code to continue the case.",
+  "guardianHandoff.join_button": "Join case",
+  "guardianHandoff.generate_button": "Generate handoff code",
+  "guardianHandoff.code_label": "Handoff code",
+  "guardianHandoff.not_found": "No case found for this code. Check the code and try again.",
+
   "app.case_reference": "Case reference: {id}",
   "app.current_state": "Current state: {state}",
   "app.demo_message": "Choose a demo message",
   "app.placeholder_transaction": "Demo transaction",
   "app.readback_sentence": "Confirm statement {number}",
   "app.calm_mode": "Add details later",
+
+  "raceView.title": "NCRP vs Rok",
+  "raceView.ncrp_column": "NCRP today",
+  "raceView.rok_column": "Rok",
+  "raceView.back": "Back to Rok",
+
   "footer.not_official": "Not an official Government of India platform — hackathon proof of concept"
 }

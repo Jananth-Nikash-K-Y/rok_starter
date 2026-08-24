@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
+import { announce } from "../engines/a11yBus.js";
 import { parseTransactionImage, parseTransactionSms } from "../engines/smsParser.js";
 import { speak } from "../engines/speech.js";
 import { SAMPLE_INBOX } from "../fixtures/sampleSms.js";
@@ -109,6 +110,10 @@ export default function MessageWall({ send }) {
   const inputRef = useRef(null);
   const t = useT();
   const messages = SAMPLE_INBOX.map((message) => ({ ...message, parsed: parseTransactionSms(message.text) }));
+
+  useEffect(() => {
+    announce(t("messageWall.title"));
+  }, [t]);
 
   useEffect(() => {
     if (!selected) return undefined;
