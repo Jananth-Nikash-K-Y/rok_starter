@@ -5,77 +5,118 @@
 A browser-based reimagining of India's National Cyber Crime Reporting Portal
 (cybercrime.gov.in), built for the **Build What Moves India** hackathon.
 
-See [`AGENTS.md`](./AGENTS.md) for the persistent project rules that apply
-to every change, and [`docs/BUILD_BRIEF.md`](./docs/BUILD_BRIEF.md) for the
-master specification used to bootstrap the build.
+## The problem
 
-## What this is
+India's fraud-freeze machinery already works. The Citizen Financial Cyber
+Fraud Reporting and Management System connects police, banks and telecom
+operators so a single complaint can hold a mule account while the money is
+still traceable — more than ₹7,000 crore saved across 23 lakh complaints.
 
-NCRP demands roughly 21 steps, a 12-digit UTR typed from memory, a
-200-character hand-written incident description, and a government ID scan —
-all in the first minutes after a fraud, from a victim who is often elderly,
-panicking, low-literacy, or reading no English. Rok inverts the form: it
-opens a case on the first tap, reads the victim's own bank SMS aloud and
-asks "which one is the wrong one?", infers the government taxonomy from
-four icon taps, and defers every non-urgent field to a calm mode *after*
-the freeze-relevant complaint already exists.
+The bottleneck is not the police or the banks. It is citizen intake.
 
-Full design rationale, evidence register, and diagrams:
+To open a financial-fraud complaint today, a victim must register with an
+OTP, classify their own crime into a government taxonomy, choose the state
+that will investigate, find a twelve-digit transaction ID, upload a scanned
+government photo ID, and write two hundred characters about their own
+humiliation without using an apostrophe — across roughly 21 steps, in Hindi
+or English only. An incomplete form is not a partial complaint. It is no
+complaint at all.
+
+**The Golden Hour is spent filling the form.**
+
+## The inversion
+
+NCRP is a *prove-it* document, structured for the investigator who reads it
+later. Rok is a *stop-it* signal, structured for the money that is moving
+right now.
+
+The case opens on the first tap, before anything is known. Rok never asks
+for a transaction ID — it shows the victim their own bank messages, reads
+them aloud in their language, and asks one question: **which one is the
+wrong one?** It infers the government taxonomy from four icon taps, writes
+the mandatory description itself, and reads it back for a yes or no. A
+visible Golden Hour clock decides what the interface is allowed to ask;
+everything that is paperwork waits until after the case exists.
+
+The result is a complete, submittable complaint in under a minute, with
+zero words typed and no English required — and the accessible path and the
+fast path are the same path.
+
+Full design rationale, evidence register and diagrams:
 [`docs/Rok_NCRP_Concept.pdf`](./docs/Rok_NCRP_Concept.pdf)
+
+## What a victim actually does
+
+| | |
+| --- | --- |
+| **Tap** | The case opens and is timestamped. Nothing has been asked yet. |
+| **Are they still on the phone?** | If yes: hang up now, tell nobody, alert someone you trust. |
+| **Which one is the wrong one?** | Their own bank messages, read aloud. One tap extracts amount, time, bank, reference and beneficiary. |
+| **Only this one, or more?** | Each payment may need its own hold. |
+| **How did they reach you?** | Four icons. The victim never sees the taxonomy. |
+| **Is this true?** | Three plain sentences in their language, yes or no on each. |
+| **Green screen** | A case reference to read aloud to 1930, and what happens next. |
+
+Everything else — ID, address, evidence — is deferred to a calm mode that
+opens only once the freeze-relevant complaint already exists.
 
 ## Status
 
-**Built and running.** All ten screens are implemented, styled and verified
-end to end. Run `npm run dev` and the full flow works from the Palm screen
-to a downloadable complaint packet.
+Built and running. The full flow works end to end, from the first tap to a
+downloadable complaint packet, in English and Tamil, with a live Golden Hour
+clock and a working screenshot-to-OCR path.
 
-| Area | State |
-| --- | --- |
-| Evidence Recognition Engine | 24 bank/wallet patterns, plus a bank-agnostic fallback so an unlisted bank still yields its amount and reference. In-browser OCR for the screenshot path. |
-| P0 spine | Palm, Safety Triage, Message Wall, Scope, Reached Via, Read-Back, Case Complete |
-| P1 | Guardian Handoff, Calm Mode |
-| P2 | Race View |
-| Golden Hour clock | Live, and it gates what each screen may ask |
-| Languages | English and Tamil, 149 keys, parity enforced in CI |
-| Accessibility | 360px and 200% zoom clean, no unnamed controls, palette verified against WCAG 2.1 AA |
-
-Verification — all five must pass before a commit:
+Every change must pass all five checks before it lands:
 
 ```bash
 npm run lint && npm run test && npm run build && npm run check:i18n && npm audit
 ```
 
-Currently: lint clean, 56 tests passing, build clean, i18n in sync, 0 vulnerabilities.
+**Known gaps, stated plainly:** the Tamil copy has not been reviewed by a
+native speaker and should not be demoed as final until it has. A manual
+screen-reader pass and a Lighthouse run on the deployed build are still
+owed — the automated checks above do not replace either.
 
-**Still outstanding:** the Tamil copy in `src/i18n/ta.json` has not been
-reviewed by a native speaker — do not demo it as final until it has been.
-A manual NVDA/VoiceOver pass and a Lighthouse run on the deployed build
-are also still owed; the automated checks above do not replace either.
+## What this deliberately is not
+
+- **Not a chatbot.** Four fixed questions, recognition-only inputs, no free
+  text anywhere in the flow.
+- **Not a translation layer.** A translated hostile form is still hostile.
+  Rok removes the questions rather than translating them.
+- **Not "add voice".** Voice was already added to this exact form because
+  the form is too slow, and it did not make the form shorter.
+- **Not a fake integration.** NCRP has no public API. Rok produces a
+  validated packet and a 1930 read-aloud card, and says so on screen.
 
 ## Stack
 
-- React 18 + Vite
-- Plain CSS (design tokens in `src/theme.css`) — no component library
-- Inter and Noto Sans Tamil, self-hosted via `@fontsource` so nothing loads
-  from a third-party origin at runtime
-- Web Speech API (TTS + STT), Tesseract.js (OCR), client-side PDF generation
-- No backend. Everything runs in the browser. Nothing is transmitted
-  anywhere until the user explicitly exports/shares a file.
+- React 18 + Vite, plain CSS with design tokens — no component library
+- One explicit finite state machine; the flow is auditable, not emergent
+- Deterministic regex parsing, no model in the critical path, works offline
+- Tesseract.js for OCR, Web Speech API for audio, client-side PDF
+- Fonts self-hosted, so nothing loads from a third-party origin at runtime
+- **No backend.** A server that never receives fraud evidence cannot leak
+  it. Nothing is transmitted anywhere until the user exports a file.
+
+See [`AGENTS.md`](./AGENTS.md) for the rules every change follows, and
+[`docs/BUILD_BRIEF.md`](./docs/BUILD_BRIEF.md) for the master specification.
 
 ## Local development
 
 ```bash
 npm install
-npm run dev       # http://localhost:5173
+npm run dev        # http://localhost:5173
 npm run build      # production build -> dist/
 npm run preview    # serve the production build locally
 ```
 
+Append `?debug=1` to surface the state machine and the inferred NCRP
+taxonomy mapping.
+
 ## Deployment
 
 Static build, deployable anywhere that serves static files. See
-[`docs/DEPLOY.md`](./docs/DEPLOY.md) for the Codex-driven Vercel deploy flow
-used for this submission.
+[`docs/DEPLOY.md`](./docs/DEPLOY.md).
 
 ## License / disclaimer
 
