@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { announce } from "../engines/a11yBus.js";
+import { buildCasePdf, buildHelplineCard, buildNcrpPacket } from "../engines/outputs.js";
 import { useT } from "../i18n/useT.js";
 import "./CaseComplete.css";
 
@@ -45,12 +46,46 @@ function LocationIcon() {
   );
 }
 
+/** Inline SVG: download icon. */
+function DownloadIcon() {
+  return (
+    <svg aria-hidden="true" className="rok-icon" fill="none" height="16" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="16">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" x2="12" y1="15" y2="3" />
+    </svg>
+  );
+}
+
 export default function CaseComplete({ caseData, send }) {
   const t = useT();
+  const [helplineLines, setHelplineLines] = useState([]);
 
   useEffect(() => {
     announce(t("caseComplete.heading"));
-  }, [t]);
+    setHelplineLines(buildHelplineCard(caseData));
+  }, [t, caseData]);
+
+  const handleDownloadPacket = useCallback(() => {
+    const packet = buildNcrpPacket(caseData);
+    const blob = new Blob([JSON.stringify(packet, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rok-case-${caseData.id.slice(0, 8)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [caseData]);
+
+  const handleDownloadPdf = useCallback(() => {
+    const blob = buildCasePdf(caseData);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `rok-case-${caseData.id.slice(0, 8)}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [caseData]);
 
   return (
     <section className="case-complete">
@@ -70,6 +105,14 @@ export default function CaseComplete({ caseData, send }) {
               <h2>{t("caseComplete.your_money")}</h2>
             </div>
             <p>{t("caseComplete.your_money_detail")}</p>
+            <div className="case-complete__card-actions">
+              <button className="case-complete__download" onClick={handleDownloadPacket} type="button">
+                <DownloadIcon /> <span>NCRP Packet</span>
+              </button>
+              <button className="case-complete__download" onClick={handleDownloadPdf} type="button">
+                <DownloadIcon /> <span>PDF Report</span>
+              </button>
+            </div>
           </article>
 
           <article className="case-complete__card case-complete__card--helpline">
@@ -78,6 +121,13 @@ export default function CaseComplete({ caseData, send }) {
               <h2>{t("caseComplete.your_job_now")}</h2>
             </div>
             <p>{t("caseComplete.your_job_detail")}</p>
+            {helplineLines.length > 0 && (
+              <div className="case-complete__helpline-card">
+                {helplineLines.map((line, i) => (
+                  <p key={i}>{line}</p>
+                ))}
+              </div>
+            )}
             <a className="case-complete__tel" href="tel:1930">{t("caseComplete.helpline_number")}</a>
           </article>
 
