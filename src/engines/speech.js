@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars -- stub, remove this line once implemented */
 /**
  * Web Speech API wrapper — TTS (speechSynthesis) and optional STT
  * (SpeechRecognition) for the spoken trigger on the Palm screen.
@@ -14,10 +13,16 @@
  * @param {string} text
  * @param {string} locale - BCP-47, e.g. 'ta-IN', 'en-IN'
  */
-// TODO(codex, phase 3): implement, with fallback to a pre-recorded clip
-// if speechSynthesis has no voice for `locale`.
 export function speak(text, locale) {
-  throw new Error("not implemented — see src/engines/speech.js header comment");
+  if (typeof window === "undefined" || !("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+    return false;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = locale;
+  window.speechSynthesis.speak(utterance);
+  return true;
 }
 
 /**
