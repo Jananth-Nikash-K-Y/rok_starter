@@ -1,0 +1,43 @@
+{
+  "_review_note": "Seed translation, not yet reviewed by a native Tamil speaker. Required before demo/submission — see docs/BUILD_BRIEF.md Phase 6.",
+
+  "palm.caption": "என் பணம் போச்சு",
+  "palm.sr_label": "மோசடியை இப்போதே புகாரளிக்க தட்டவும்",
+
+  "safetyTriage.question": "அவர்கள் இன்னும் உங்களுடன் பேசிக் கொண்டிருக்கிறார்களா?",
+  "safetyTriage.yes": "ஆம்",
+  "safetyTriage.no": "இல்லை",
+  "safetyTriage.hangup_instruction": "இப்போதே அழைப்பைத் துண்டியுங்கள். அவர்களிடம் சொல்ல வேண்டாம். வேறு எதுவும் அனுப்ப வேண்டாம்.",
+  "safetyTriage.alert_contact": "நம்பகமான ஒருவருக்கு தெரிவிக்கவும்",
+
+  "messageWall.title": "எது தவறானது?",
+  "messageWall.upload_screenshot": "அல்லது ஸ்கிரீன்ஷாட்டை பதிவேற்றவும்",
+  "messageWall.read_aloud": "இந்த செய்தியை படித்துக் காட்டு",
+
+  "scope.question": "இது மட்டும்தானா, அல்லது இன்னும் இருந்ததா?",
+  "scope.only_this_one": "இது மட்டும்",
+  "scope.there_were_more": "இன்னும் இருந்தது",
+
+  "reachedVia.question": "அவர்கள் உங்களை எப்படி தொடர்பு கொண்டார்கள்?",
+  "reachedVia.call": "தொலைபேசி அழைப்பு",
+  "reachedVia.sms": "எஸ்எம்எஸ் செய்தி",
+  "reachedVia.whatsapp": "வாட்ஸ்அப்",
+  "reachedVia.link": "நான் கிளிக் செய்த லிங்க்",
+
+  "readBack.confirm_yes": "ஆம், சரி",
+  "readBack.confirm_no": "இல்லை, தவறு",
+
+  "caseComplete.heading": "உங்கள் புகார் திறக்கப்பட்டது",
+  "caseComplete.your_money": "உங்கள் பணம்",
+  "caseComplete.your_job_now": "இப்போது நீங்கள் செய்ய வேண்டியது",
+  "caseComplete.by_tomorrow": "நாளைக்குள்",
+
+  "neverAsk.otp_banner": "நாங்கள் ஒருபோதும் உங்கள் OTP-ஐ கேட்க மாட்டோம். அதைக் கேட்பவர் மோசடிக்காரர்.",
+
+  "calmMode.heading": "நீங்கள் தயாராக இருக்கும்போது",
+  "calmMode.id_prompt": "ஏதேனும் அடையாள அட்டையின் புகைப்படம்",
+
+  "guardianHandoff.title": "ஒருவர் உதவட்டும்",
+  "guardianHandoff.your_code": "உங்கள் குறியீடு",
+  "guardianHandoff.enter_code": "சேர குறியீட்டை உள்ளிடவும்"
+}

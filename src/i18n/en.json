@@ -1,0 +1,41 @@
+{
+  "palm.caption": "My money is gone",
+  "palm.sr_label": "Tap to report a fraud right now",
+
+  "safetyTriage.question": "Are they still on the phone with you?",
+  "safetyTriage.yes": "Yes",
+  "safetyTriage.no": "No",
+  "safetyTriage.hangup_instruction": "Hang up now. Do not tell them. Do not send anything else.",
+  "safetyTriage.alert_contact": "Alert a trusted contact",
+
+  "messageWall.title": "Which one is the wrong one?",
+  "messageWall.upload_screenshot": "Or upload a screenshot instead",
+  "messageWall.read_aloud": "Read this message aloud",
+
+  "scope.question": "Only this one, or were there more?",
+  "scope.only_this_one": "Only this one",
+  "scope.there_were_more": "There were more",
+
+  "reachedVia.question": "How did they reach you?",
+  "reachedVia.call": "A phone call",
+  "reachedVia.sms": "A text message",
+  "reachedVia.whatsapp": "WhatsApp",
+  "reachedVia.link": "A link I clicked",
+
+  "readBack.confirm_yes": "Yes, that's right",
+  "readBack.confirm_no": "No, that's wrong",
+
+  "caseComplete.heading": "Your case is open",
+  "caseComplete.your_money": "Your money",
+  "caseComplete.your_job_now": "Your job now",
+  "caseComplete.by_tomorrow": "By tomorrow",
+
+  "neverAsk.otp_banner": "We will never ask for your OTP. Anyone who does is a fraud.",
+
+  "calmMode.heading": "When you're ready",
+  "calmMode.id_prompt": "A photo of any ID card",
+
+  "guardianHandoff.title": "Let someone help",
+  "guardianHandoff.your_code": "Your code",
+  "guardianHandoff.enter_code": "Enter a code to join"
+}

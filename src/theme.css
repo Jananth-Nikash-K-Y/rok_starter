@@ -1,0 +1,67 @@
+/*
+  Rok design tokens.
+  Colors match the palette used in docs/Rok_NCRP_Concept.pdf so the app
+  and the pitch deck read as one product. Do not hardcode hex values in
+  components — reference these variables instead.
+*/
+:root {
+  --rok-ink: #12162b;
+  --rok-indigo: #3b3fa6;
+  --rok-indigo-light: #e7e8f7;
+  --rok-red: #c62828;
+  --rok-red-light: #fdecec;
+  --rok-green: #1b7a4b;
+  --rok-green-light: #e6f4ec;
+  --rok-amber: #b26a00;
+  --rok-amber-light: #fdf3e3;
+  --rok-grey: #6b7280;
+  --rok-grey-light: #f2f3f5;
+  --rok-white: #ffffff;
+
+  --rok-radius: 16px;
+  --rok-radius-lg: 28px;
+
+  --rok-font-body: "Inter", "Noto Sans Tamil", system-ui, sans-serif;
+  --rok-font-display: "Cambria", "Noto Serif Tamil", Georgia, serif;
+
+  /* Minimum tap target per WCAG 2.5.5 / mobile accessibility guidance */
+  --rok-tap-target-min: 48px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--rok-font-body);
+  color: var(--rok-ink);
+  background: var(--rok-white);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  min-height: var(--rok-tap-target-min);
+  min-width: var(--rok-tap-target-min);
+}
+
+:focus-visible {
+  outline: 3px solid var(--rok-indigo);
+  outline-offset: 2px;
+}
+
+/* Visually-hidden but screen-reader-available utility, for redundant
+   text labels behind icon-only buttons. */
+.rok-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
