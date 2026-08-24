@@ -1,0 +1,421 @@
+/*
+  Shared component classes. Screens compose these; they should rarely need
+  to invent a new button or card of their own.
+*/
+
+/* ── Buttons ───────────────────────────────────────────── */
+
+.rok-btn {
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: var(--rok-radius);
+  display: inline-flex;
+  font-size: var(--rok-text-md);
+  font-weight: 600;
+  gap: var(--rok-s3);
+  justify-content: center;
+  letter-spacing: -0.01em;
+  min-height: var(--rok-tap-target-min);
+  padding: var(--rok-s3) var(--rok-s5);
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--rok-fast) var(--rok-ease),
+    border-color var(--rok-fast) var(--rok-ease),
+    color var(--rok-fast) var(--rok-ease),
+    transform var(--rok-fast) var(--rok-ease),
+    box-shadow var(--rok-fast) var(--rok-ease);
+}
+
+.rok-btn:active {
+  transform: scale(0.985);
+}
+
+.rok-btn--primary {
+  background: var(--rok-indigo);
+  box-shadow: var(--rok-shadow-sm);
+  color: var(--rok-ink-invert);
+}
+
+.rok-btn--primary:hover {
+  background: var(--rok-indigo-deep);
+}
+
+.rok-btn--danger {
+  background: var(--rok-red);
+  box-shadow: var(--rok-shadow);
+  color: var(--rok-ink-invert);
+}
+
+.rok-btn--danger:hover {
+  background: var(--rok-red-deep);
+}
+
+.rok-btn--quiet {
+  background: var(--rok-surface);
+  border-color: var(--rok-line-strong);
+  color: var(--rok-ink);
+}
+
+.rok-btn--quiet:hover {
+  background: var(--rok-surface-quiet);
+  border-color: var(--rok-ink-soft);
+}
+
+.rok-btn--ghost {
+  background: transparent;
+  color: var(--rok-indigo);
+  padding-inline: var(--rok-s3);
+}
+
+.rok-btn--ghost:hover {
+  background: var(--rok-indigo-tint);
+}
+
+.rok-btn--block {
+  width: 100%;
+}
+
+.rok-btn--lg {
+  border-radius: var(--rok-radius-lg);
+  font-size: var(--rok-text-lg);
+  min-height: 72px;
+  padding: var(--rok-s4) var(--rok-s5);
+}
+
+/* ── Choice buttons: the two- and four-up icon grids ───── */
+
+.rok-choice-grid {
+  display: grid;
+  gap: var(--rok-s3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+
+.rok-choice {
+  align-items: center;
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  box-shadow: var(--rok-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s3);
+  justify-content: center;
+  min-height: 148px;
+  padding: var(--rok-s5) var(--rok-s4);
+  text-align: center;
+  transition: border-color var(--rok-fast) var(--rok-ease),
+    box-shadow var(--rok-fast) var(--rok-ease),
+    transform var(--rok-fast) var(--rok-ease);
+}
+
+.rok-choice:hover {
+  border-color: var(--rok-indigo);
+  box-shadow: var(--rok-shadow);
+  transform: translateY(-2px);
+}
+
+.rok-choice:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.rok-choice__icon {
+  align-items: center;
+  background: var(--rok-indigo-tint);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-indigo);
+  display: flex;
+  height: 56px;
+  justify-content: center;
+  width: 56px;
+}
+
+.rok-choice__label {
+  font-size: var(--rok-text-lg);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.rok-choice--danger .rok-choice__icon {
+  background: var(--rok-red-tint);
+  color: var(--rok-red);
+}
+
+.rok-choice--danger:hover {
+  border-color: var(--rok-red);
+}
+
+.rok-choice--affirm .rok-choice__icon {
+  background: var(--rok-green-tint);
+  color: var(--rok-green);
+}
+
+.rok-choice--affirm:hover {
+  border-color: var(--rok-green);
+}
+
+/* ── Cards ─────────────────────────────────────────────── */
+
+.rok-card {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  box-shadow: var(--rok-shadow-sm);
+  padding: var(--rok-s5);
+}
+
+.rok-card__title {
+  align-items: center;
+  display: flex;
+  font-size: var(--rok-text-lg);
+  gap: var(--rok-s3);
+  margin-bottom: var(--rok-s2);
+}
+
+/* ── Badges and chips ──────────────────────────────────── */
+
+.rok-badge {
+  align-items: center;
+  align-self: flex-start;
+  border: 1px solid transparent;
+  border-radius: var(--rok-radius-pill);
+  display: inline-flex;
+  font-size: var(--rok-text-xs);
+  font-weight: 650;
+  gap: var(--rok-s1);
+  letter-spacing: 0.01em;
+  padding: var(--rok-s1) var(--rok-s3);
+  white-space: nowrap;
+}
+
+.rok-badge--high {
+  background: var(--rok-green-tint);
+  border-color: var(--rok-green-line);
+  color: var(--rok-green-deep);
+}
+
+.rok-badge--medium,
+.rok-badge--low {
+  background: var(--rok-amber-tint);
+  border-color: var(--rok-amber-line);
+  color: var(--rok-amber);
+}
+
+.rok-badge--info {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo-line);
+  color: var(--rok-indigo-deep);
+}
+
+.rok-badge--demo {
+  background: var(--rok-surface-sunken);
+  border-color: var(--rok-line-strong);
+  color: var(--rok-ink-soft);
+}
+
+/* ── App bar, clock and progress ───────────────────────── */
+
+.rok-appbar {
+  align-items: center;
+  background: var(--rok-surface);
+  border-bottom: 1px solid var(--rok-line);
+  display: flex;
+  gap: var(--rok-s3);
+  justify-content: space-between;
+  padding: var(--rok-s3) var(--rok-s4);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.rok-appbar__brand {
+  align-items: baseline;
+  display: flex;
+  gap: var(--rok-s2);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.rok-appbar__brand span:last-child {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.rok-appbar__tools {
+  align-items: center;
+  display: flex;
+  gap: var(--rok-s1);
+}
+
+.rok-icon-btn {
+  align-items: center;
+  flex: none;
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-sm);
+  color: var(--rok-ink-soft);
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  min-height: 44px;
+  transition: background var(--rok-fast) var(--rok-ease),
+    color var(--rok-fast) var(--rok-ease);
+  width: 44px;
+}
+
+.rok-icon-btn:hover {
+  background: var(--rok-surface-sunken);
+  color: var(--rok-ink);
+}
+
+.rok-icon-btn[aria-pressed="true"] {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo-line);
+  color: var(--rok-indigo-deep);
+}
+
+.rok-lang {
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-sm);
+  flex: none;
+  font-size: var(--rok-text-sm);
+  font-weight: 600;
+  height: 44px;
+  min-height: 44px;
+  padding-inline: var(--rok-s3);
+}
+
+/* At 360px the bar carries a clock, a language picker and two controls.
+   The transliterated wordmark is the only element that can go without
+   losing a function, so it goes first — the tap targets never shrink. */
+@media (max-width: 420px) {
+  .rok-appbar {
+    gap: var(--rok-s2);
+    padding-inline: var(--rok-s3);
+  }
+
+  .rok-appbar__brand span:last-child {
+    display: none;
+  }
+
+  .rok-lang {
+    font-size: var(--rok-text-xs);
+    padding-inline: var(--rok-s2);
+  }
+}
+
+/* The Golden Hour clock. It is not decoration: it states what is still
+   worth asking. See src/engines/goldenHour.js. */
+.rok-clock {
+  align-items: center;
+  border-radius: var(--rok-radius-pill);
+  display: inline-flex;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  gap: var(--rok-s2);
+  padding: var(--rok-s1) var(--rok-s3);
+  transition: background var(--rok-base) var(--rok-ease),
+    color var(--rok-base) var(--rok-ease);
+}
+
+.rok-clock--calm {
+  background: var(--rok-indigo-tint);
+  color: var(--rok-indigo-deep);
+}
+
+.rok-clock--urgent {
+  background: var(--rok-amber-tint);
+  color: var(--rok-amber);
+}
+
+.rok-clock--critical,
+.rok-clock--elapsed {
+  background: var(--rok-red-tint);
+  color: var(--rok-red-deep);
+}
+
+.rok-clock__value {
+  font-size: var(--rok-text-md);
+}
+
+.rok-progress {
+  background: var(--rok-line);
+  display: flex;
+  gap: 2px;
+  height: 4px;
+}
+
+.rok-progress__step {
+  background: var(--rok-line);
+  flex: 1;
+  transition: background var(--rok-base) var(--rok-ease);
+}
+
+.rok-progress__step--done {
+  background: var(--rok-indigo);
+}
+
+.rok-progress__step--current {
+  background: var(--rok-red);
+}
+
+/* ── Screen scaffolding ────────────────────────────────── */
+
+.rok-screen {
+  animation: rok-screen-in var(--rok-base) var(--rok-ease) both;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s5);
+  padding-block: var(--rok-s5) var(--rok-s7);
+}
+
+@keyframes rok-screen-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.rok-eyebrow {
+  align-items: center;
+  color: var(--rok-ink-mute);
+  display: flex;
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  gap: var(--rok-s2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rok-question {
+  font-size: var(--rok-text-2xl);
+  margin-block: var(--rok-s2) 0;
+}
+
+.rok-support {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-md);
+  max-width: var(--rok-measure);
+}
+
+/* Says what a question buys, per mechanic M3. */
+.rok-why {
+  align-items: flex-start;
+  background: var(--rok-indigo-tint);
+  border-left: 3px solid var(--rok-indigo);
+  border-radius: var(--rok-radius-sm);
+  color: var(--rok-indigo-deep);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+  padding: var(--rok-s3) var(--rok-s4);
+}
+
+.rok-why svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+@media (min-width: 700px) {
+  .rok-question {
+    font-size: var(--rok-text-3xl);
+  }
+}

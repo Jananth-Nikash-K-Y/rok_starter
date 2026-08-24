@@ -1,82 +1,93 @@
-/* eslint-disable react/prop-types */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Button from "../components/Button.jsx";
+import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
-import { composeReadBackSentences } from "../engines/narrative.js";
-import { useT } from "../i18n/useT.js";
+import { composeNarrative, composeReadBackSentences } from "../engines/narrative.js";
 import "./ReadBack.css";
 
-/** Inline SVG: thumbs up. */
-function ThumbsUpIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-    </svg>
-  );
-}
-
-/** Inline SVG: thumbs down. */
-function ThumbsDownIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
-    </svg>
-  );
-}
-
-export default function ReadBack({ caseData, send }) {
-  const t = useT();
+/**
+ * Screen 6 — Read-Back (mechanic M4).
+ *
+ * The mandatory 200-character description is composed from confirmed facts
+ * rather than written by the victim. What they get back is three short
+ * sentences in their own language, one at a time, each needing only a yes
+ * or a no. The same step is the audio path for a blind user, the text path
+ * for a deaf user, and the confirmation path for everyone else.
+ */
+export default function ReadBack({ send, t, locale, caseData }) {
+  const sentences = useMemo(() => composeReadBackSentences(caseData, t), [caseData, t]);
+  const narrative = useMemo(() => composeNarrative(caseData), [caseData]);
   const index = caseData.sentenceConfirmations.findIndex((confirmed) => !confirmed);
-  const sentences = useMemo(() => composeReadBackSentences(caseData, "en"), [caseData]);
+  const current = index === -1 ? sentences.length - 1 : index;
+  const [showNarrative, setShowNarrative] = useState(false);
 
   useEffect(() => {
-    if (index >= 0 && index < sentences.length) {
-      announce(sentences[index]);
-    }
-  }, [index, sentences]);
-
-  if (index < 0 || index >= sentences.length) return null;
+    announce(sentences[current], { locale });
+  }, [sentences, current, locale]);
 
   return (
-    <section className="read-back">
-      <div className="read-back__content">
-        <p className="read-back__progress">
-          {t("app.readback_sentence", { number: index + 1 })}
-        </p>
+    <section className="rok-container rok-screen readback">
+      <p className="rok-eyebrow">
+        <Icon name="speaker" size={14} />
+        {t("readBack.eyebrow", { number: String(current + 1), total: String(sentences.length) })}
+      </p>
 
-        <div className="read-back__sentence-container">
-          <blockquote className="read-back__sentence" key={index}>
-            {sentences[index]}
-          </blockquote>
-        </div>
-
-        <div className="read-back__dots">
-          {sentences.map((_, i) => (
-            <span
-              className={`read-back__dot ${i < index ? "read-back__dot--done" : ""} ${i === index ? "read-back__dot--active" : ""}`}
-              key={i}
-            />
-          ))}
-        </div>
-
-        <div className="read-back__actions">
-          <button
-            className="read-back__btn read-back__btn--yes"
-            onClick={() => send({ type: "CONFIRM_SENTENCE", index, confirmed: true })}
-            type="button"
-          >
-            <ThumbsUpIcon />
-            <span>{t("readBack.confirm_yes")}</span>
-          </button>
-          <button
-            className="read-back__btn read-back__btn--no"
-            onClick={() => send({ type: "CONFIRM_SENTENCE", index, confirmed: false })}
-            type="button"
-          >
-            <ThumbsDownIcon />
-            <span>{t("readBack.confirm_no")}</span>
-          </button>
-        </div>
+      <div className="readback__dots" aria-hidden="true">
+        {sentences.map((_, position) => (
+          <span
+            key={position}
+            className={`readback__dot ${position < current ? "readback__dot--done" : ""} ${position === current ? "readback__dot--current" : ""}`}
+          />
+        ))}
       </div>
+
+      <blockquote className="readback__sentence" lang={locale} key={current}>
+        {sentences[current]}
+      </blockquote>
+
+      <div className="readback__actions">
+        <Button
+          variant="quiet"
+          icon="cross"
+          block
+          onClick={() => send({ type: "REJECT_READBACK" })}
+        >
+          {t("readBack.confirm_no")}
+        </Button>
+        <Button
+          variant="primary"
+          icon="check"
+          block
+          onClick={() => send({
+            type: "CONFIRM_SENTENCE",
+            index: current,
+            confirmed: true,
+            narrative,
+          })}
+        >
+          {t("readBack.confirm_yes")}
+        </Button>
+      </div>
+
+      <div className="rok-why">
+        <Icon name="document" size={18} />
+        <span lang={locale}>{t("readBack.why")}</span>
+      </div>
+
+      {/* Available, but deliberately not in the way: the point of this
+          screen is that nobody has to read 200 characters of police
+          English to file a complaint. */}
+      <details
+        className="readback__narrative"
+        open={showNarrative}
+        onToggle={(event) => setShowNarrative(event.currentTarget.open)}
+      >
+        <summary>{t("readBack.show_narrative")}</summary>
+        <p className="readback__narrative-body" lang="en">{narrative}</p>
+        <p className="readback__narrative-meta">
+          {t("readBack.narrative_meta", { count: String(narrative.length) })}
+        </p>
+      </details>
     </section>
   );
 }

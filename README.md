@@ -5,9 +5,8 @@
 A browser-based reimagining of India's National Cyber Crime Reporting Portal
 (cybercrime.gov.in), built for the **Build What Moves India** hackathon.
 
-This repository is built and maintained entirely with **OpenAI Codex**.
-See [`AGENTS.md`](./AGENTS.md) for the persistent project rules Codex reads
-on every run, and [`docs/BUILD_BRIEF.md`](./docs/BUILD_BRIEF.md) for the
+See [`AGENTS.md`](./AGENTS.md) for the persistent project rules that apply
+to every change, and [`docs/BUILD_BRIEF.md`](./docs/BUILD_BRIEF.md) for the
 master specification used to bootstrap the build.
 
 ## What this is
@@ -26,15 +25,39 @@ Full design rationale, evidence register, and diagrams:
 
 ## Status
 
-🚧 Scaffolded, not yet built. This repo intentionally ships with an empty
-`src/` (folder structure + stub files only) so that **OpenAI Codex writes
-the implementation**, per the hackathon's tooling requirement. See
-`docs/BUILD_BRIEF.md` for the exact task to hand Codex first.
+**Built and running.** All ten screens are implemented, styled and verified
+end to end. Run `npm run dev` and the full flow works from the Palm screen
+to a downloadable complaint packet.
+
+| Area | State |
+| --- | --- |
+| Evidence Recognition Engine | 24 bank/wallet patterns, plus a bank-agnostic fallback so an unlisted bank still yields its amount and reference. In-browser OCR for the screenshot path. |
+| P0 spine | Palm, Safety Triage, Message Wall, Scope, Reached Via, Read-Back, Case Complete |
+| P1 | Guardian Handoff, Calm Mode |
+| P2 | Race View |
+| Golden Hour clock | Live, and it gates what each screen may ask |
+| Languages | English and Tamil, 149 keys, parity enforced in CI |
+| Accessibility | 360px and 200% zoom clean, no unnamed controls, palette verified against WCAG 2.1 AA |
+
+Verification — all five must pass before a commit:
+
+```bash
+npm run lint && npm run test && npm run build && npm run check:i18n && npm audit
+```
+
+Currently: lint clean, 56 tests passing, build clean, i18n in sync, 0 vulnerabilities.
+
+**Still outstanding:** the Tamil copy in `src/i18n/ta.json` has not been
+reviewed by a native speaker — do not demo it as final until it has been.
+A manual NVDA/VoiceOver pass and a Lighthouse run on the deployed build
+are also still owed; the automated checks above do not replace either.
 
 ## Stack
 
 - React 18 + Vite
 - Plain CSS (design tokens in `src/theme.css`) — no component library
+- Inter and Noto Sans Tamil, self-hosted via `@fontsource` so nothing loads
+  from a third-party origin at runtime
 - Web Speech API (TTS + STT), Tesseract.js (OCR), client-side PDF generation
 - No backend. Everything runs in the browser. Nothing is transmitted
   anywhere until the user explicitly exports/shares a file.

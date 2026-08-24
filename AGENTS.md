@@ -53,6 +53,15 @@ red tests.
 - Never persist or transmit an OTP, PIN, password, or full account number,
   in any form, anywhere in the codebase — including logs, fixtures, and
   comments. If a task seems to require this, stop and flag it.
+- Mask the account number, never the transaction amount. The Message Wall
+  works by recognition: the victim finds the fraudulent payment by its
+  amount, so it is always rendered in full via `formatIndianCurrency`.
+  `formatMaskedAccount` exists for the account tail, and that is the only
+  thing on that screen that gets masked.
+- Never state a fact the evidence does not carry. A bank alert with a date
+  but no clock time sets `timeKnown: false`, and neither the interface nor
+  the composed narrative may fill in a time. The same rule governs a
+  missing amount: report it as unconfirmed, never as zero.
 - Money, dates, and phone numbers are formatted for India (₹, DD/MM/YYYY,
   +91) via `src/i18n/format.js` — do not use `Intl` defaults inline.
 

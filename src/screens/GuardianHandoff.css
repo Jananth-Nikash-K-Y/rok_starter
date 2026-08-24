@@ -1,0 +1,49 @@
+.guardian__panel {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s3);
+  padding: var(--rok-s5);
+}
+
+.guardian__code {
+  background: var(--rok-indigo-tint);
+  border: 2px dashed var(--rok-indigo-line);
+  border-radius: var(--rok-radius);
+  color: var(--rok-indigo-deep);
+  font-family: var(--rok-font-mono);
+  font-size: var(--rok-text-3xl);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: var(--rok-s5) var(--rok-s3);
+  text-align: center;
+}
+
+.guardian__instruction {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-sm);
+}
+
+.guardian__field input {
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  font-family: var(--rok-font-mono);
+  font-size: var(--rok-text-xl);
+  letter-spacing: 0.12em;
+  min-height: 56px;
+  padding: var(--rok-s3);
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.guardian__error {
+  align-items: center;
+  color: var(--rok-red-deep);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+}

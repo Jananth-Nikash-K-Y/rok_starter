@@ -1,0 +1,73 @@
+.rok-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.rok-main {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+/* Keyboard users land here first. */
+.rok-skip {
+  background: var(--rok-indigo);
+  border-radius: 0 0 var(--rok-radius-sm) 0;
+  color: var(--rok-ink-invert);
+  left: 0;
+  padding: var(--rok-s3) var(--rok-s4);
+  position: absolute;
+  top: 0;
+  transform: translateY(-120%);
+  transition: transform var(--rok-fast) var(--rok-ease);
+  z-index: 50;
+}
+
+.rok-skip:focus {
+  transform: none;
+}
+
+.rok-otp-banner {
+  align-items: center;
+  background: var(--rok-ink);
+  color: var(--rok-ink-invert);
+  display: flex;
+  font-size: var(--rok-text-xs);
+  font-weight: 600;
+  gap: var(--rok-s2);
+  justify-content: center;
+  letter-spacing: 0.01em;
+  padding: var(--rok-s2) var(--rok-s4);
+  text-align: center;
+}
+
+.rok-otp-banner svg {
+  flex: none;
+}
+
+.rok-debug-state {
+  background: var(--rok-amber-tint);
+  border-bottom: 1px solid var(--rok-amber-line);
+  color: var(--rok-amber);
+  font-family: var(--rok-font-mono);
+  font-size: var(--rok-text-xs);
+  padding: var(--rok-s1) var(--rok-s4);
+  text-align: center;
+}
+
+.rok-footer {
+  align-items: center;
+  border-top: 1px solid var(--rok-line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+  margin-top: auto;
+  padding: var(--rok-s5) var(--rok-s4);
+  text-align: center;
+}
+
+.rok-footer p {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  max-width: var(--rok-measure);
+}

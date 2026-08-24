@@ -1,228 +1,273 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from "react";
+import Button from "../components/Button.jsx";
+import ConfidenceBadge from "../components/ConfidenceBadge.jsx";
+import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
 import { parseTransactionImage, parseTransactionSms } from "../engines/smsParser.js";
-import { speak } from "../engines/speech.js";
 import { SAMPLE_INBOX } from "../fixtures/sampleSms.js";
-import { formatIndianDateTime, formatMaskedIndianCurrency } from "../i18n/format.js";
-import { useT } from "../i18n/useT.js";
+import {
+  formatIndianCurrency,
+  formatIndianDateTime,
+  formatMaskedAccount,
+} from "../i18n/format.js";
 import "./MessageWall.css";
 
-const RECEIPT_DELAY_MS = 650;
-
-/** Inline SVG: speaker icon — consistent with project's icon approach. */
-function SpeakerIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20">
-      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-    </svg>
-  );
-}
-
-/** Inline SVG: upload/camera icon. */
-function UploadIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="17 8 12 3 7 8" />
-      <line x1="12" x2="12" y1="3" y2="15" />
-    </svg>
-  );
-}
-
-/** Inline SVG: checkmark circle for receipt. */
-function CheckIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon rok-icon--success" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
-  );
-}
-
-/** Inline SVG: shield icon for confidence. */
-function ShieldIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="16" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="16">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-
-/** Inline SVG: alert-triangle for low confidence. */
-function AlertIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="16" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="16">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" x2="12" y1="9" y2="13" />
-      <line x1="12" x2="12.01" y1="17" y2="17" />
-    </svg>
-  );
-}
-
-/** Inline SVG: loading spinner for OCR. */
-function SpinnerIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon rok-icon--spin" fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeWidth="2.5" viewBox="0 0 24 24" width="20">
-      <path d="M12 2a10 10 0 0 1 10 10" />
-    </svg>
-  );
-}
-
-function confidenceTag(confidence, t) {
-  if (confidence === "high") {
-    return (
-      <span className="message-receipt__confidence message-receipt__confidence--high">
-        <ShieldIcon /> {t("messageWall.confidence_high")}
-      </span>
-    );
-  }
-  if (confidence === "medium") {
-    return (
-      <span className="message-receipt__confidence message-receipt__confidence--medium">
-        <ShieldIcon /> {t("messageWall.confidence_medium")}
-      </span>
-    );
-  }
-  return (
-    <span className="message-receipt__confidence message-receipt__confidence--low">
-      <AlertIcon /> {t("messageWall.confidence_low")}
-    </span>
-  );
-}
-
-function receiptFields(parsed, t) {
-  return [
-    [t("messageWall.bank"), parsed.bank],
-    [t("messageWall.amount"), formatMaskedIndianCurrency(parsed.amount)],
-    [t("messageWall.timestamp"), formatIndianDateTime(parsed.timestamp)],
-    [t("messageWall.account_tail"), parsed.accountTail ?? t("messageWall.not_available")],
-    [t("messageWall.reference"), parsed.utr ?? t("messageWall.not_available")],
-    [t("messageWall.beneficiary"), parsed.beneficiaryVpa ?? t("messageWall.not_available")],
-  ];
-}
-
-export default function MessageWall({ send }) {
+/**
+ * Screen 3 — the Message Wall (mechanic M2).
+ *
+ * The one question that replaces the UTR field: "which one is the wrong
+ * one?" Recognition is the only cognitive function that survives panic,
+ * age, low literacy, blindness and an unfamiliar script, so everything the
+ * user needs to recognise a transaction is on the card — above all the
+ * amount, in full. Masking those digits would remove the only cue they
+ * have and break the mechanic this screen exists for.
+ */
+export default function MessageWall({ send, t, locale }) {
+  const [parsedInbox, setParsedInbox] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [ocrStatus, setOcrStatus] = useState(null);
-  const inputRef = useRef(null);
-  const t = useT();
-  const messages = SAMPLE_INBOX.map((message) => ({ ...message, parsed: parseTransactionSms(message.text) }));
+  const [ocrState, setOcrState] = useState("idle");
+  const [corrections, setCorrections] = useState({});
+  const fileInput = useRef(null);
 
   useEffect(() => {
-    announce(t("messageWall.title"));
-  }, [t]);
+    announce(t("messageWall.title"), { locale });
+  }, [t, locale]);
 
   useEffect(() => {
-    if (!selected) return undefined;
-    const timer = window.setTimeout(() => send({ type: "SELECT_MESSAGE", message: selected }), RECEIPT_DELAY_MS);
-    return () => window.clearTimeout(timer);
-  }, [selected, send]);
+    setParsedInbox(
+      SAMPLE_INBOX.map((message) => ({
+        id: message.id,
+        raw: message.text,
+        parsed: parseTransactionSms(message.text),
+      })).filter((entry) => entry.parsed !== null),
+    );
+  }, []);
 
-  const selectMessage = (message, parsed) => {
-    if (!parsed || selected) return;
-    setSelected({ raw: message.text, ...parsed });
+  const readAloud = (entry) => {
+    const amount = formatIndianCurrency(entry.parsed.amount);
+    announce(
+      t("messageWall.spoken_card", {
+        bank: entry.parsed.bank ?? t("messageWall.unknown_bank"),
+        amount: amount ?? t("messageWall.not_available"),
+        when: formatIndianDateTime(entry.parsed.timestamp, entry.parsed.timeKnown) ?? "",
+      }),
+      { locale, speak: true },
+    );
   };
 
   const handleUpload = async (event) => {
-    const [file] = event.target.files ?? [];
+    const file = event.target.files?.[0];
     if (!file) return;
 
-    setOcrStatus("reading");
+    setOcrState("reading");
+    announce(t("messageWall.ocr_reading"), { locale });
     const parsed = await parseTransactionImage(file);
+
     if (!parsed) {
-      setOcrStatus("unrecognized");
-      event.target.value = "";
+      setOcrState("failed");
+      announce(t("messageWall.ocr_unrecognized"), { locale });
       return;
     }
 
-    setOcrStatus("recognized");
-    selectMessage({ text: "" }, parsed);
-    event.target.value = "";
+    setOcrState("idle");
+    setSelected({ id: "ocr", raw: parsed.raw, parsed });
   };
 
-  return (
-    <section className="message-wall" aria-busy={ocrStatus === "reading"}>
-      <header className="message-wall__header">
-        <p className="message-wall__eyebrow">{t("messageWall.demo_label")}</p>
-        <h1>{t("messageWall.title")}</h1>
-      </header>
+  const confirmSelection = () => {
+    send({ type: "SELECT_MESSAGE", message: { ...selected.parsed, ...corrections, raw: selected.raw } });
+  };
 
-      <div className="message-wall__cards" role="list">
-        {messages.map((message) => {
-          const { parsed } = message;
-          if (!parsed) return null;
-          return (
-            <article className="message-card" key={message.id} role="listitem">
+  if (selected) {
+    return (
+      <Receipt
+        entry={selected}
+        corrections={corrections}
+        onCorrect={(field, value) => setCorrections((current) => ({ ...current, [field]: value }))}
+        onConfirm={confirmSelection}
+        onBack={() => { setSelected(null); setCorrections({}); }}
+        t={t}
+        locale={locale}
+      />
+    );
+  }
+
+  return (
+    <section className="rok-container rok-screen wall">
+      <p className="rok-eyebrow">
+        <span className="rok-badge rok-badge--demo">{t("messageWall.demo_label")}</span>
+      </p>
+
+      <h1 className="rok-question" lang={locale}>{t("messageWall.title")}</h1>
+      <p className="rok-support" lang={locale}>{t("messageWall.support")}</p>
+
+      <ul className="wall__list">
+        {parsedInbox.map((entry) => (
+          <li key={entry.id}>
+            <div className="wall__card">
               <button
-                aria-label={t("messageWall.select_message", { bank: parsed.bank })}
-                className="message-card__select"
-                disabled={Boolean(selected)}
-                onClick={() => selectMessage(message, parsed)}
+                className="wall__select"
                 type="button"
+                onClick={() => setSelected(entry)}
+                aria-label={t("messageWall.select_message", {
+                  bank: entry.parsed.bank ?? t("messageWall.unknown_bank"),
+                  amount: formatIndianCurrency(entry.parsed.amount) ?? "",
+                })}
               >
-                <span className="message-card__bank">{parsed.bank}</span>
-                <span className="message-card__amount">{formatMaskedIndianCurrency(parsed.amount)}</span>
-                <span className="message-card__timestamp">{formatIndianDateTime(parsed.timestamp)}</span>
+                <span className="wall__bank">
+                  {entry.parsed.bank ?? t("messageWall.unknown_bank")}
+                </span>
+                {/* The recognition cue. Never masked. */}
+                <span className="wall__amount">
+                  {formatIndianCurrency(entry.parsed.amount) ?? t("messageWall.not_available")}
+                </span>
+                <span className="wall__when">
+                  {formatIndianDateTime(entry.parsed.timestamp, entry.parsed.timeKnown)}
+                  {!entry.parsed.timeKnown && entry.parsed.timestamp && (
+                    <span className="wall__no-time"> · {t("messageWall.no_time")}</span>
+                  )}
+                </span>
+                <span className="wall__snippet">{entry.raw}</span>
               </button>
+
               <button
-                aria-label={t("messageWall.read_message", { bank: parsed.bank })}
-                className="message-card__read"
-                disabled={Boolean(selected)}
-                onClick={() => speak(message.text, "en-IN")}
+                className="wall__speak"
                 type="button"
+                onClick={() => readAloud(entry)}
+                aria-label={t("messageWall.read_message", {
+                  bank: entry.parsed.bank ?? t("messageWall.unknown_bank"),
+                })}
               >
-                <SpeakerIcon />
-                <span className="rok-sr-only">{t("messageWall.read_aloud")}</span>
+                <Icon name="speaker" size={22} />
               </button>
-            </article>
-          );
-        })}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div className="wall__upload">
+        <p className="wall__upload-title" lang={locale}>{t("messageWall.upload_screenshot")}</p>
+        <p className="wall__upload-note" lang={locale}>{t("messageWall.upload_note")}</p>
+
+        <input
+          ref={fileInput}
+          className="rok-sr-only"
+          type="file"
+          accept="image/*"
+          id="rok-screenshot"
+          onChange={handleUpload}
+        />
+        <Button
+          variant="quiet"
+          icon={ocrState === "reading" ? "clock" : "camera"}
+          block
+          disabled={ocrState === "reading"}
+          onClick={() => fileInput.current?.click()}
+        >
+          {ocrState === "reading" ? t("messageWall.ocr_reading") : t("messageWall.upload_button")}
+        </Button>
+
+        {ocrState === "reading" && (
+          <p className="wall__ocr-status" role="status" lang={locale}>
+            <span className="wall__spinner" aria-hidden="true" />
+            {t("messageWall.ocr_reading_detail")}
+          </p>
+        )}
+
+        {ocrState === "failed" && (
+          <p className="wall__ocr-error" role="alert" lang={locale}>
+            <Icon name="alert" size={18} />
+            {t("messageWall.ocr_unrecognized")}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/**
+ * What we read out of the message, shown back before it becomes evidence.
+ * Nothing is submitted without this step, and every field stays editable —
+ * a wrong identifier here could freeze an innocent person's account.
+ */
+function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }) {
+  const parsed = { ...entry.parsed, ...corrections };
+  const edited = Object.keys(corrections).length > 0;
+
+  useEffect(() => {
+    announce(t("messageWall.receipt_title"), { locale });
+  }, [t, locale]);
+
+  const rows = [
+    { key: "amount", label: t("messageWall.amount"), value: formatIndianCurrency(parsed.amount), editable: true, raw: parsed.amount },
+    { key: "bank", label: t("messageWall.bank"), value: parsed.bank, editable: true, raw: parsed.bank },
+    { key: "timestamp", label: t("messageWall.timestamp"), value: formatIndianDateTime(parsed.timestamp, parsed.timeKnown) },
+    { key: "accountTail", label: t("messageWall.account_tail"), value: formatMaskedAccount(parsed.accountTail) },
+    { key: "utr", label: t("messageWall.reference"), value: parsed.utr, editable: true, raw: parsed.utr },
+    { key: "beneficiaryVpa", label: t("messageWall.beneficiary"), value: parsed.beneficiaryVpa },
+  ];
+
+  return (
+    <section className="rok-container rok-screen receipt">
+      <p className="rok-eyebrow">
+        <Icon name="document" size={14} />
+        {t("messageWall.receipt_title")}
+      </p>
+
+      <div className="receipt__headline">
+        <span className="receipt__amount">
+          {formatIndianCurrency(parsed.amount) ?? t("messageWall.not_available")}
+        </span>
+        <span className="receipt__bank">{parsed.bank ?? t("messageWall.unknown_bank")}</span>
       </div>
 
-      <input
-        accept="image/png,image/jpeg,image/webp"
-        aria-label={t("messageWall.upload_screenshot")}
-        className="rok-sr-only"
-        onChange={handleUpload}
-        ref={inputRef}
-        type="file"
-      />
-      <button
-        className="message-wall__upload"
-        disabled={Boolean(selected) || ocrStatus === "reading"}
-        onClick={() => inputRef.current?.click()}
-        type="button"
-      >
-        {ocrStatus === "reading" ? <SpinnerIcon /> : <UploadIcon />}
-        <span>{t(ocrStatus === "reading" ? "messageWall.ocr_reading" : "messageWall.upload_screenshot")}</span>
-      </button>
+      <ConfidenceBadge level={edited ? "corrected" : parsed.confidence} t={t} />
 
-      {ocrStatus === "unrecognized" && (
-        <p className="message-wall__status" role="status">
-          <AlertIcon /> {t("messageWall.ocr_unrecognized")}
+      {!parsed.timeKnown && parsed.timestamp && (
+        <p className="receipt__caveat" lang={locale}>
+          <Icon name="alert" size={16} />
+          {t("messageWall.no_time_detail")}
         </p>
       )}
 
-      {selected && (
-        <section aria-live="polite" className="message-receipt" role="status">
-          <div className="message-receipt__header">
-            <CheckIcon />
-            <h2>{t("messageWall.receipt_title")}</h2>
+      <dl className="receipt__fields">
+        {rows.map((row) => (
+          <div className="receipt__row" key={row.key}>
+            <dt>{row.label}</dt>
+            <dd>{row.value ?? <span className="receipt__missing">{t("messageWall.not_available")}</span>}</dd>
           </div>
-          <dl>
-            {receiptFields(selected, t).map(([label, value]) => (
-              <div key={label}>
-                <dt>{label}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
-          {confidenceTag(selected.confidence, t)}
-        </section>
-      )}
+        ))}
+      </dl>
+
+      <details className="receipt__correct">
+        <summary lang={locale}>{t("messageWall.something_wrong")}</summary>
+        <div className="receipt__correct-body">
+          {rows.filter((row) => row.editable).map((row) => (
+            <label className="receipt__field" key={row.key}>
+              <span>{row.label}</span>
+              <input
+                type={row.key === "amount" ? "number" : "text"}
+                defaultValue={row.raw ?? ""}
+                onChange={(event) => onCorrect(
+                  row.key,
+                  row.key === "amount"
+                    ? (event.target.value === "" ? null : Number(event.target.value))
+                    : (event.target.value || null),
+                )}
+              />
+            </label>
+          ))}
+          <p className="receipt__correct-note" lang={locale}>{t("messageWall.correct_note")}</p>
+        </div>
+      </details>
+
+      <div className="receipt__actions">
+        <Button variant="ghost" icon="arrowLeft" onClick={onBack}>
+          {t("messageWall.choose_different")}
+        </Button>
+        <Button variant="danger" iconAfter="arrowRight" onClick={onConfirm}>
+          {t("messageWall.confirm_this")}
+        </Button>
+      </div>
     </section>
   );
 }

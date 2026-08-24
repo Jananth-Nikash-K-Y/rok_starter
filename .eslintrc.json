@@ -15,6 +15,7 @@
   "settings": { "react": { "version": "detect" } },
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "jsx-a11y/no-autofocus": "warn"
+    "jsx-a11y/no-autofocus": "warn",
+    "react/prop-types": "off"
   }
 }

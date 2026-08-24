@@ -1,153 +1,141 @@
-/* eslint-disable react/prop-types */
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Button from "../components/Button.jsx";
+import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
 import { buildCasePdf, buildHelplineCard, buildNcrpPacket } from "../engines/outputs.js";
-import { useT } from "../i18n/useT.js";
+import { caseReferenceFrom } from "../state/machine.js";
+import { formatIndianCurrency } from "../i18n/format.js";
 import "./CaseComplete.css";
 
-/** Inline SVG: check-circle for success. */
-function SuccessIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon rok-icon--lg" fill="none" height="48" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="48">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
-  );
-}
-
-/** Inline SVG: banknote / money icon. */
-function MoneyIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <rect height="14" rx="2" width="20" x="2" y="5" />
-      <circle cx="12" cy="12" r="3" />
-      <path d="M2 9h2M20 9h2M2 15h2M20 15h2" />
-    </svg>
-  );
-}
-
-/** Inline SVG: phone-call icon for helpline. */
-function HelplineIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94" />
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-/** Inline SVG: map-pin / location icon. */
-function LocationIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="24" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="24">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  );
-}
-
-/** Inline SVG: download icon. */
-function DownloadIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="16" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="16">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" x2="12" y1="15" y2="3" />
-    </svg>
-  );
-}
-
-export default function CaseComplete({ caseData, send }) {
-  const t = useT();
-  const [helplineLines, setHelplineLines] = useState([]);
+/**
+ * Screen 7 — the green screen.
+ *
+ * The case reference comes first and largest, because it is the one thing
+ * the victim has to be able to say out loud to a 1930 operator. Everything
+ * below it is ordered by what happens when: the money, then their next
+ * action, then tomorrow.
+ */
+export default function CaseComplete({ send, t, locale, caseData }) {
+  const reference = caseReferenceFrom(caseData.id);
+  const helplineLines = buildHelplineCard(caseData);
+  const transaction = caseData.transactions[0] ?? {};
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    announce(t("caseComplete.heading"));
-    setHelplineLines(buildHelplineCard(caseData));
-  }, [t, caseData]);
+    announce(t("caseComplete.spoken", { reference }), { locale });
+  }, [t, locale, reference]);
 
-  const handleDownloadPacket = useCallback(() => {
-    const packet = buildNcrpPacket(caseData);
-    const blob = new Blob([JSON.stringify(packet, null, 2)], { type: "application/json" });
+  const download = (blob, filename) => {
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rok-case-${caseData.id.slice(0, 8)}.json`;
-    a.click();
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
     URL.revokeObjectURL(url);
-  }, [caseData]);
+  };
 
-  const handleDownloadPdf = useCallback(() => {
-    const blob = buildCasePdf(caseData);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rok-case-${caseData.id.slice(0, 8)}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [caseData]);
+  const downloadPacket = () => {
+    const packet = JSON.stringify(buildNcrpPacket(caseData), null, 2);
+    download(new Blob([packet], { type: "application/json" }), `rok-${reference}.json`);
+  };
+
+  const downloadPdf = () => {
+    download(buildCasePdf(caseData), `rok-${reference}.pdf`);
+  };
+
+  const copyHelpline = async () => {
+    try {
+      await navigator.clipboard.writeText(helplineLines.join("\n"));
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
-    <section className="case-complete">
-      <div className="case-complete__content">
-        <div className="case-complete__hero">
-          <SuccessIcon />
-          <h1>{t("caseComplete.heading")}</h1>
-          <p className="case-complete__case-id">
-            {t("app.case_reference", { id: caseData.id.slice(0, 8) })}
+    <section className="rok-container rok-screen complete">
+      <div className="complete__hero">
+        <span className="complete__tick" aria-hidden="true">
+          <Icon name="check" size={32} />
+        </span>
+        <h1 className="complete__heading" lang={locale}>{t("caseComplete.heading")}</h1>
+        <p className="complete__reference-label" lang={locale}>{t("caseComplete.reference_label")}</p>
+        <p className="complete__reference">{reference}</p>
+        {transaction.amount !== undefined && transaction.amount !== null && (
+          <p className="complete__amount" lang={locale}>
+            {t("caseComplete.amount_line", { amount: formatIndianCurrency(transaction.amount) })}
           </p>
-        </div>
-
-        <div className="case-complete__cards">
-          <article className="case-complete__card case-complete__card--money">
-            <div className="case-complete__card-header">
-              <MoneyIcon />
-              <h2>{t("caseComplete.your_money")}</h2>
-            </div>
-            <p>{t("caseComplete.your_money_detail")}</p>
-            <div className="case-complete__card-actions">
-              <button className="case-complete__download" onClick={handleDownloadPacket} type="button">
-                <DownloadIcon /> <span>NCRP Packet</span>
-              </button>
-              <button className="case-complete__download" onClick={handleDownloadPdf} type="button">
-                <DownloadIcon /> <span>PDF Report</span>
-              </button>
-            </div>
-          </article>
-
-          <article className="case-complete__card case-complete__card--helpline">
-            <div className="case-complete__card-header">
-              <HelplineIcon />
-              <h2>{t("caseComplete.your_job_now")}</h2>
-            </div>
-            <p>{t("caseComplete.your_job_detail")}</p>
-            {helplineLines.length > 0 && (
-              <div className="case-complete__helpline-card">
-                {helplineLines.map((line, i) => (
-                  <p key={i}>{line}</p>
-                ))}
-              </div>
-            )}
-            <a className="case-complete__tel" href="tel:1930">{t("caseComplete.helpline_number")}</a>
-          </article>
-
-          <article className="case-complete__card case-complete__card--tomorrow">
-            <div className="case-complete__card-header">
-              <LocationIcon />
-              <h2>{t("caseComplete.by_tomorrow")}</h2>
-            </div>
-            <p>{t("caseComplete.by_tomorrow_detail")}</p>
-          </article>
-        </div>
-
-        <button
-          className="case-complete__calm-btn"
-          onClick={() => send({ type: "ENTER_CALM_MODE" })}
-          type="button"
-        >
-          {t("app.calm_mode")}
-        </button>
+        )}
       </div>
+
+      {/* The 1930 card: four lines, in the order an operator asks for them. */}
+      <article className="complete__card complete__card--helpline">
+        <h2 className="rok-card__title">
+          <Icon name="phone" size={20} />
+          {t("caseComplete.helpline_card")}
+        </h2>
+        <ol className="complete__lines">
+          {helplineLines.map((line) => <li key={line}>{line}</li>)}
+        </ol>
+        <div className="complete__helpline-actions">
+          <a className="rok-btn rok-btn--danger" href="tel:1930">
+            <Icon name="phone" />
+            <span>{t("caseComplete.call_1930")}</span>
+          </a>
+          <Button variant="quiet" icon="document" onClick={copyHelpline}>
+            {copied ? t("caseComplete.copied") : t("caseComplete.copy_lines")}
+          </Button>
+        </div>
+      </article>
+
+      <div className="complete__cards">
+        <article className="complete__card">
+          <h2 className="rok-card__title">
+            <Icon name="rupee" size={20} />
+            {t("caseComplete.your_money")}
+          </h2>
+          <p lang={locale}>{t("caseComplete.your_money_detail")}</p>
+        </article>
+
+        <article className="complete__card">
+          <h2 className="rok-card__title">
+            <Icon name="clock" size={20} />
+            {t("caseComplete.your_job_now")}
+          </h2>
+          <p lang={locale}>{t("caseComplete.your_job_detail")}</p>
+        </article>
+
+        <article className="complete__card">
+          <h2 className="rok-card__title">
+            <Icon name="location" size={20} />
+            {t("caseComplete.by_tomorrow")}
+          </h2>
+          <p lang={locale}>{t("caseComplete.by_tomorrow_detail")}</p>
+        </article>
+      </div>
+
+      {/* Stated plainly, because the alternative is letting a judge or a
+          victim believe a complaint was filed when it was not. */}
+      <div className="complete__honesty">
+        <Icon name="alert" size={20} />
+        <div>
+          <p className="complete__honesty-title" lang={locale}>{t("caseComplete.not_submitted_title")}</p>
+          <p lang={locale}>{t("caseComplete.not_submitted_detail")}</p>
+        </div>
+      </div>
+
+      <div className="complete__downloads">
+        <Button variant="quiet" icon="document" onClick={downloadPacket}>
+          {t("caseComplete.download_packet")}
+        </Button>
+        <Button variant="quiet" icon="document" onClick={downloadPdf}>
+          {t("caseComplete.download_pdf")}
+        </Button>
+      </div>
+
+      <Button variant="primary" block iconAfter="arrowRight" onClick={() => send({ type: "ENTER_CALM_MODE" })}>
+        {t("app.calm_mode")}
+      </Button>
     </section>
   );
 }

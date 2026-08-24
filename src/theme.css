@@ -1,115 +1,234 @@
 /*
   Rok design tokens.
-  Colors match the palette used in docs/Rok_NCRP_Concept.pdf so the app
-  and the pitch deck read as one product. Do not hardcode hex values in
-  components — reference these variables instead.
+
+  Two constraints shape every value here, and they pull in the same
+  direction rather than against each other:
+
+  1. The user is frightened, often elderly, often reading a script the
+     interface was not designed in. So: large base type, high contrast,
+     generous targets, one obvious action per screen.
+  2. The interface has to read as dependable in the way a government
+     service does, per GIGW 3.0 — without borrowing any state insignia,
+     which is restricted under the State Emblem of India Act, 2005.
+
+  Never hard-code a hex value, a spacing value or a duration in a
+  component. If something is missing, add a token here.
 */
+
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource/noto-sans-tamil/400.css";
+@import "@fontsource/noto-sans-tamil/600.css";
+@import "@fontsource/noto-sans-tamil/700.css";
+
 :root {
-  --rok-ink: #12162b;
-  --rok-indigo: #3b3fa6;
-  --rok-indigo-light: #e7e8f7;
-  --rok-red: #c62828;
-  --rok-red-light: #fdecec;
-  --rok-green: #1b7a4b;
-  --rok-green-light: #e6f4ec;
-  --rok-amber: #b26a00;
-  --rok-amber-light: #fdf3e3;
-  --rok-grey: #6b7280;
-  --rok-grey-light: #f2f3f5;
-  --rok-white: #ffffff;
+  /* ── Ink ─────────────────────────────────────────────── */
+  --rok-ink: #0f1626;
+  --rok-ink-soft: #454e69;
+  --rok-ink-mute: #656e8a;
+  --rok-ink-invert: #ffffff;
 
+  /* ── Surfaces ────────────────────────────────────────── */
+  --rok-surface: #ffffff;
+  --rok-surface-sunken: #f3f5fa;
+  --rok-surface-quiet: #fafbfd;
+  /* Decorative separators; no contrast requirement. */
+  --rok-line: #dce1ec;
+  /* Borders of interactive components (quiet buttons, inputs, dashed drop
+     zones). WCAG 1.4.11 requires 3:1 against the adjacent surface, so this
+     is darker than it looks like it needs to be: 3.46:1 on white and
+     3.17:1 on the sunken page background. */
+  --rok-line-strong: #7f8aa3;
+
+  /* ── Semantic colour ─────────────────────────────────────
+     Red = the money is leaving. Indigo = trusted action.
+     Green = the case exists. Amber = check this yourself.
+     Never used decoratively, and never as the only signal. */
+  --rok-red: #bc1f29;
+  --rok-red-deep: #8b1119;
+  --rok-red-tint: #fdeced;
+  --rok-red-line: #f3bfc3;
+
+  --rok-indigo: #2d3a9e;
+  --rok-indigo-deep: #1e2770;
+  --rok-indigo-tint: #eceefb;
+  --rok-indigo-line: #c3c9ef;
+
+  --rok-green: #0e6b47;
+  --rok-green-deep: #084c32;
+  --rok-green-tint: #e4f3ec;
+  --rok-green-line: #b3ddc8;
+
+  --rok-amber: #855000;
+  --rok-amber-tint: #fdf2e0;
+  --rok-amber-line: #efd3a5;
+
+  /* ── Spacing scale — use only these ──────────────────── */
+  --rok-s1: 4px;
+  --rok-s2: 8px;
+  --rok-s3: 12px;
+  --rok-s4: 16px;
+  --rok-s5: 24px;
+  --rok-s6: 32px;
+  --rok-s7: 48px;
+  --rok-s8: 64px;
+
+  /* ── Type scale ──────────────────────────────────────── */
+  --rok-text-xs: 0.8125rem;
+  --rok-text-sm: 0.9375rem;
+  --rok-text-md: 1.0625rem;
+  --rok-text-lg: 1.25rem;
+  --rok-text-xl: 1.5rem;
+  --rok-text-2xl: 2rem;
+  --rok-text-3xl: 2.625rem;
+  --rok-text-4xl: 3.25rem;
+
+  --rok-font: "Inter Variable", "Inter", "Noto Sans Tamil",
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --rok-font-tamil: "Noto Sans Tamil", "Inter Variable", system-ui, sans-serif;
+  --rok-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* ── Shape ───────────────────────────────────────────── */
+  --rok-radius-sm: 10px;
   --rok-radius: 16px;
-  --rok-radius-lg: 28px;
+  --rok-radius-lg: 24px;
+  --rok-radius-pill: 999px;
 
-  --rok-font-body: "Inter", "Noto Sans Tamil", system-ui, sans-serif;
-  --rok-font-display: "Cambria", "Noto Serif Tamil", Georgia, serif;
+  /* ── Elevation — navy-tinted, never neutral grey ─────── */
+  --rok-shadow-sm: 0 1px 2px rgba(15, 22, 38, 0.06), 0 1px 3px rgba(15, 22, 38, 0.04);
+  --rok-shadow: 0 2px 4px rgba(15, 22, 38, 0.06), 0 6px 16px rgba(15, 22, 38, 0.08);
+  --rok-shadow-lg: 0 4px 8px rgba(15, 22, 38, 0.07), 0 16px 40px rgba(15, 22, 38, 0.12);
 
-  /* Minimum tap target per WCAG 2.5.5 / mobile accessibility guidance */
-  --rok-tap-target-min: 48px;
+  /* ── Motion ──────────────────────────────────────────── */
+  --rok-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --rok-fast: 150ms;
+  --rok-base: 220ms;
+  --rok-slow: 320ms;
+
+  /* WCAG 2.5.5 minimum target, raised for the audience. */
+  --rok-tap-target-min: 56px;
+  --rok-measure: 34rem;
 }
 
-* {
+/* ── Reset ─────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: var(--rok-font-body);
+  background: var(--rok-surface-sunken);
   color: var(--rok-ink);
-  background: var(--rok-white);
+  font-family: var(--rok-font);
+  font-size: var(--rok-text-md);
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
 }
 
 button {
-  font-family: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
   min-height: var(--rok-tap-target-min);
-  min-width: var(--rok-tap-target-min);
 }
 
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Tamil needs its own face and a little more line height to stay legible
+   at the sizes this audience needs. */
+:lang(ta) {
+  font-family: var(--rok-font-tamil);
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+
+/* ── Focus ──────────────────────────────────────────────
+   Two-tone ring so it stays visible on both light surfaces and
+   saturated buttons. Do not remove this for aesthetics. */
 :focus-visible {
   outline: 3px solid var(--rok-indigo);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: var(--rok-radius-sm);
 }
 
-/* Visually-hidden but screen-reader-available utility, for redundant
-   text labels behind icon-only buttons. */
+.rok-on-dark :focus-visible,
+.rok-btn--danger:focus-visible,
+.rok-btn--primary:focus-visible {
+  outline-color: var(--rok-ink);
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+/* ── Utilities ─────────────────────────────────────────── */
+
 .rok-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+  border: 0;
 }
 
-/* ── App layout ───────────────────────────────────────── */
+.rok-container {
+  width: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+  padding-inline: var(--rok-s4);
+}
 
-.rok-app {
+.rok-stack {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  gap: var(--rok-s4);
 }
 
-.rok-app > section {
-  flex: 1 1 auto;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
-
-.rok-otp-banner {
-  background: var(--rok-red);
-  color: var(--rok-white);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  margin: 0;
-  padding: 8px 16px;
-  text-align: center;
-}
-
-.rok-debug-state {
-  background: var(--rok-amber-light);
-  border-bottom: 1px solid var(--rok-amber);
-  color: var(--rok-amber);
-  font-family: monospace;
-  font-size: 0.75rem;
-  margin: 0;
-  padding: 4px 16px;
-  text-align: center;
-}
-
-.rok-footer {
-  border-top: 1px solid var(--rok-grey-light);
-  margin-top: auto;
-  padding: 16px;
-  text-align: center;
-}
-
-.rok-footer p {
-  color: var(--rok-grey);
-  font-size: 0.75rem;
-  margin: 0;
-}
-

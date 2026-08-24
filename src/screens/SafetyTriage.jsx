@@ -1,134 +1,109 @@
-/* eslint-disable react/prop-types */
-import { useCallback, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Button from "../components/Button.jsx";
+import Choice from "../components/Choice.jsx";
+import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
-import { useT } from "../i18n/useT.js";
 import "./SafetyTriage.css";
 
-/** Inline SVG: phone icon for "still on call". */
-function PhoneIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="32" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="32">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
+/**
+ * Screen 2 — Safety Triage (mechanic M5).
+ *
+ * Asked before anything about money, because a victim still on the call is
+ * still being robbed. Digital-arrest fraud works by keeping the person on a
+ * continuous line under instructions to tell nobody; this screen is the one
+ * place a government front door can interrupt that, so it comes first.
+ */
+export default function SafetyTriage({ send, t, locale, isHangupScript = false }) {
+  const [shareFailed, setShareFailed] = useState(false);
 
-/** Inline SVG: check-circle for "no, they hung up". */
-function CheckCircleIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="32" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="32">
-      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-      <polyline points="22 4 12 14.01 9 11.01" />
-    </svg>
-  );
-}
-
-/** Inline SVG: alert-octagon for hangup urgency. */
-function AlertOctagonIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="48" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="48">
-      <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
-      <line x1="12" x2="12" y1="8" y2="12" />
-      <line x1="12" x2="12.01" y1="16" y2="16" />
-    </svg>
-  );
-}
-
-/** Inline SVG: share icon. */
-function ShareIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="20" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="20">
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
-      <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
-    </svg>
-  );
-}
-
-function HangupScript({ send, t }) {
   useEffect(() => {
-    announce(t("safetyTriage.hangup_instruction"));
-  }, [t]);
+    announce(t(isHangupScript ? "safetyTriage.hangup_instruction" : "safetyTriage.question"), { locale });
+  }, [t, locale, isHangupScript]);
 
-  const handleAlertContact = useCallback(async () => {
-    const shareData = {
-      title: "Rok",
-      text: t("safetyTriage.share_text"),
-    };
-
+  const alertContact = async () => {
+    const message = t("safetyTriage.share_text");
     try {
-      if (typeof navigator !== "undefined" && navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        /* Graceful fallback: copy text to clipboard. */
-        if (typeof navigator !== "undefined" && navigator.clipboard) {
-          await navigator.clipboard.writeText(shareData.text);
-        }
+      if (navigator.share) {
+        await navigator.share({ title: t("safetyTriage.alert_contact"), text: message });
+        return;
       }
+      await navigator.clipboard.writeText(message);
+      setShareFailed(true);
     } catch {
-      /* User cancelled share sheet — not an error. */
+      /* The user dismissed the share sheet, or neither API is available.
+         Either way the message stays on screen to read out or copy. */
+      setShareFailed(true);
     }
-
-    send({ type: "GENERATE_HANDOFF_CODE" });
-  }, [send, t]);
-
-  return (
-    <section className="safety-triage safety-triage--hangup">
-      <div className="safety-triage__content">
-        <AlertOctagonIcon />
-        <h1 className="safety-triage__hangup-text">
-          {t("safetyTriage.hangup_instruction")}
-        </h1>
-        <button
-          className="safety-triage__alert-btn"
-          onClick={handleAlertContact}
-          type="button"
-        >
-          <ShareIcon />
-          <span>{t("safetyTriage.alert_contact")}</span>
-        </button>
-      </div>
-    </section>
-  );
-}
-
-export default function SafetyTriage({ isHangupScript, send }) {
-  const t = useT();
-
-  useEffect(() => {
-    if (!isHangupScript) {
-      announce(t("safetyTriage.question"));
-    }
-  }, [isHangupScript, t]);
+  };
 
   if (isHangupScript) {
-    return <HangupScript send={send} t={t} />;
+    return (
+      <section className="rok-container rok-screen triage">
+        <div className="triage__alarm">
+          <Icon name="phoneOff" size={40} />
+        </div>
+
+        <h1 className="rok-question" lang={locale}>{t("safetyTriage.hangup_instruction")}</h1>
+
+        <ol className="triage__script">
+          <li lang={locale}>{t("safetyTriage.step_hangup")}</li>
+          <li lang={locale}>{t("safetyTriage.step_silence")}</li>
+          <li lang={locale}>{t("safetyTriage.step_nothing")}</li>
+        </ol>
+
+        <div className="rok-why">
+          <Icon name="shield" size={18} />
+          <span lang={locale}>{t("safetyTriage.why_hangup")}</span>
+        </div>
+
+        <div className="triage__actions">
+          <Button variant="quiet" icon="people" block onClick={alertContact}>
+            {t("safetyTriage.alert_contact")}
+          </Button>
+          <Button variant="primary" iconAfter="arrowRight" block onClick={() => send({ type: "HANGUP_DONE" })}>
+            {t("safetyTriage.continue_after_hangup")}
+          </Button>
+        </div>
+
+        {shareFailed && (
+          <p className="triage__share-fallback" lang={locale} role="status">
+            {t("safetyTriage.share_fallback")}
+          </p>
+        )}
+      </section>
+    );
   }
 
   return (
-    <section className="safety-triage">
-      <div className="safety-triage__content">
-        <h1>{t("safetyTriage.question")}</h1>
-        <div className="safety-triage__choices">
-          <button
-            className="safety-triage__choice safety-triage__choice--danger"
-            onClick={() => send({ type: "STILL_ON_CALL_YES" })}
-            type="button"
-          >
-            <PhoneIcon />
-            <span>{t("safetyTriage.yes")}</span>
-          </button>
-          <button
-            className="safety-triage__choice safety-triage__choice--safe"
-            onClick={() => send({ type: "STILL_ON_CALL_NO" })}
-            type="button"
-          >
-            <CheckCircleIcon />
-            <span>{t("safetyTriage.no")}</span>
-          </button>
-        </div>
+    <section className="rok-container rok-screen triage">
+      <p className="rok-eyebrow">
+        <Icon name="shield" size={14} />
+        {t("safetyTriage.eyebrow")}
+      </p>
+
+      <h1 className="rok-question" lang={locale}>{t("safetyTriage.question")}</h1>
+      <p className="rok-support" lang={locale}>{t("safetyTriage.support")}</p>
+
+      <div className="rok-choice-grid">
+        <Choice
+          icon="phone"
+          tone="danger"
+          lang={locale}
+          label={t("safetyTriage.yes")}
+          onClick={() => send({ type: "STILL_ON_CALL_YES" })}
+        />
+        <Choice
+          icon="phoneOff"
+          tone="affirm"
+          lang={locale}
+          label={t("safetyTriage.no")}
+          onClick={() => send({ type: "STILL_ON_CALL_NO" })}
+        />
+      </div>
+
+      <div className="rok-why">
+        <Icon name="clock" size={18} />
+        <span lang={locale}>{t("safetyTriage.why")}</span>
       </div>
     </section>
   );

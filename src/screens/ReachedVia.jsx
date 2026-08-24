@@ -1,100 +1,83 @@
-/* eslint-disable react/prop-types */
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
+import Choice from "../components/Choice.jsx";
+import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
 import { inferTaxonomy } from "../engines/taxonomy.js";
-import { useT } from "../i18n/useT.js";
 import "./ReachedVia.css";
 
-/** Inline SVG: phone call icon. */
-function CallIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="28">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-/** Inline SVG: message/sms icon. */
-function SmsIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="28">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-
-/** Inline SVG: whatsapp-style chat icon. */
-function WhatsAppIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="28">
-      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-    </svg>
-  );
-}
-
-/** Inline SVG: link/globe icon. */
-function LinkIcon() {
-  return (
-    <svg aria-hidden="true" className="rok-icon" fill="none" height="28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="28">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
-
-const CHANNEL_CONFIG = [
-  { channel: "call", Icon: CallIcon },
-  { channel: "sms", Icon: SmsIcon },
-  { channel: "whatsapp", Icon: WhatsAppIcon },
-  { channel: "link", Icon: LinkIcon },
+/**
+ * Screen 5 — How they reached you (part of mechanic M3).
+ *
+ * Four icons stand in for the entire NCRP category and sub-category
+ * taxonomy. The user never sees a dropdown, never classifies their own
+ * crime, and never learns the vocabulary — the mapping happens in
+ * src/engines/taxonomy.js and is shown only in the judges' debug ribbon.
+ */
+const CHANNELS = [
+  { channel: "call", icon: "phone", labelKey: "reachedVia.call" },
+  { channel: "sms", icon: "message", labelKey: "reachedVia.sms" },
+  { channel: "whatsapp", icon: "whatsapp", labelKey: "reachedVia.whatsapp" },
+  { channel: "link", icon: "link", labelKey: "reachedVia.link" },
 ];
 
-export default function ReachedVia({ send }) {
-  const t = useT();
-  const debugMode = useMemo(() => new URLSearchParams(window.location.search).has("debug"), []);
-
+export default function ReachedVia({ send, t, locale, caseData, debugMode }) {
   useEffect(() => {
-    announce(t("reachedVia.question"));
-  }, [t]);
+    announce(t("reachedVia.question"), { locale });
+  }, [t, locale]);
 
-  const handleSelect = (channel) => {
-    send({ type: "SELECT_CHANNEL", channel });
+  const transaction = caseData.transactions[0];
+
+  const choose = (channel) => {
+    const { category, subCategory } = inferTaxonomy(channel, transaction);
+    send({ type: "SELECT_CHANNEL", channel, category, subCategory });
   };
 
   return (
-    <section className="reached-via">
-      <div className="reached-via__content">
-        <h1>{t("reachedVia.question")}</h1>
-        <div className="reached-via__grid">
-          {CHANNEL_CONFIG.map(({ channel, Icon }) => (
-            <button
-              className="reached-via__choice"
-              key={channel}
-              onClick={() => handleSelect(channel)}
-              type="button"
-            >
-              <Icon />
-              <span>{t(`reachedVia.${channel}`)}</span>
-            </button>
-          ))}
-        </div>
+    <section className="rok-container rok-screen reached">
+      <p className="rok-eyebrow">
+        <Icon name="people" size={14} />
+        {t("reachedVia.eyebrow")}
+      </p>
 
-        {debugMode && (
-          <details className="reached-via__debug">
-            <summary>{t("reachedVia.debug_title")}</summary>
-            <ul>
-              {CHANNEL_CONFIG.map(({ channel }) => {
-                const { category, subCategory } = inferTaxonomy(channel);
+      <h1 className="rok-question" lang={locale}>{t("reachedVia.question")}</h1>
+      <p className="rok-support" lang={locale}>{t("reachedVia.support")}</p>
+
+      <div className="rok-choice-grid">
+        {CHANNELS.map(({ channel, icon, labelKey }) => (
+          <Choice
+            key={channel}
+            icon={icon}
+            lang={locale}
+            label={t(labelKey)}
+            onClick={() => choose(channel)}
+          />
+        ))}
+      </div>
+
+      <div className="rok-why">
+        <Icon name="document" size={18} />
+        <span lang={locale}>{t("reachedVia.why")}</span>
+      </div>
+
+      {debugMode && (
+        <div className="reached__debug">
+          <p className="reached__debug-title">{t("reachedVia.debug_title")}</p>
+          <table>
+            <tbody>
+              {CHANNELS.map(({ channel, labelKey }) => {
+                const mapped = inferTaxonomy(channel, transaction);
                 return (
-                  <li key={channel}>
-                    <strong>{channel}</strong>: {category} / {subCategory}
-                  </li>
+                  <tr key={channel}>
+                    <th scope="row">{t(labelKey)}</th>
+                    <td>{mapped.category}</td>
+                    <td>{mapped.subCategory}</td>
+                  </tr>
                 );
               })}
-            </ul>
-          </details>
-        )}
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }

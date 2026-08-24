@@ -1,0 +1,110 @@
+.race > .rok-btn { align-self: flex-start; }
+
+.race__header { display: flex; flex-direction: column; gap: var(--rok-s2); }
+
+.race__title {
+  font-size: var(--rok-text-2xl);
+}
+
+.race__contrast {
+  display: grid;
+  gap: var(--rok-s3);
+}
+
+.race__stat {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius);
+  padding: var(--rok-s4);
+}
+
+.race__stat-label {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--rok-s2);
+  text-transform: uppercase;
+}
+
+/* A long "before" value must not sit in a three-line strikethrough beside
+   its arrow — it stacks instead. */
+.race__stat-values {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rok-s2) var(--rok-s3);
+}
+
+.race__stat-values svg { transform: rotate(0deg); }
+
+@media (max-width: 460px) {
+  .race__stat-values { flex-direction: column; align-items: flex-start; }
+  .race__stat-values svg { transform: rotate(90deg); }
+}
+
+.race__stat-values svg { color: var(--rok-ink-mute); flex: none; }
+
+.race__stat-ncrp {
+  color: var(--rok-red-deep);
+  font-size: var(--rok-text-lg);
+  font-weight: 700;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+
+.race__stat-rok {
+  color: var(--rok-green-deep);
+  font-size: var(--rok-text-lg);
+  font-weight: 700;
+}
+
+/* Wide content scrolls inside its own container; the page never scrolls
+   sideways. */
+.race__table-wrap {
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius);
+  overflow-x: auto;
+}
+
+.race__table {
+  border-collapse: collapse;
+  font-size: var(--rok-text-sm);
+  min-width: 34rem;
+  width: 100%;
+}
+
+.race__table th,
+.race__table td {
+  border-bottom: 1px solid var(--rok-line);
+  padding: var(--rok-s3) var(--rok-s4);
+  text-align: left;
+  vertical-align: top;
+}
+
+.race__table thead th {
+  background: var(--rok-surface-quiet);
+  font-size: var(--rok-text-xs);
+  letter-spacing: 0.06em;
+  position: sticky;
+  text-transform: uppercase;
+  top: 0;
+}
+
+.race__table tbody th {
+  font-weight: 650;
+  width: 30%;
+}
+
+.race__cell-ncrp { color: var(--rok-red-deep); }
+.race__cell-rok { color: var(--rok-green-deep); font-weight: 600; }
+
+.race__source {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+}
+
+@media (min-width: 700px) {
+  .race__contrast { grid-template-columns: repeat(2, 1fr); }
+  .race__title { font-size: var(--rok-text-3xl); }
+}

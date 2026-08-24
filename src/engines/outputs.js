@@ -10,6 +10,8 @@
 import { jsPDF } from "jspdf";
 import { composeNarrative } from "./narrative.js";
 import { inferTaxonomy } from "./taxonomy.js";
+import { caseReferenceFrom } from "../state/machine.js";
+import { formatIndianDateTime } from "../i18n/format.js";
 
 /**
  * Builds a JSON object whose keys mirror the NCRP field list.
@@ -28,7 +30,10 @@ export function buildNcrpPacket(caseObj) {
     complaintSubCategory: taxonomy.subCategory,
     stateUt: caseObj.stateUt ?? "Not determined",
     incidentDate: tx.timestamp ?? null,
-    fraudAmount: tx.amount ?? 0,
+    /* False when the bank alert carried a date but no clock time, so a
+       reader never mistakes a defaulted midnight for a recorded time. */
+    incidentTimeRecorded: tx.timeKnown ?? false,
+    fraudAmount: tx.amount ?? null,
     currency: "INR",
     bankOrWallet: tx.bank ?? "Unknown",
     transactionReference: tx.utr ?? null,
@@ -36,6 +41,8 @@ export function buildNcrpPacket(caseObj) {
     accountTail: tx.accountTail ?? null,
     incidentDescription: composeNarrative(caseObj),
     caseReferenceId: caseObj.id,
+    spokenCaseReference: caseReferenceFrom(caseObj.id),
+    evidenceConfidence: tx.confidence ?? "low",
     createdAt: caseObj.openedAt,
     _disclaimer: "This is a pre-filled packet for self-submission. It has NOT been submitted to cybercrime.gov.in on your behalf.",
   };
@@ -48,16 +55,22 @@ export function buildNcrpPacket(caseObj) {
  */
 export function buildHelplineCard(caseObj) {
   const tx = caseObj.transactions[0] ?? {};
-  const amount = tx.amount ? `Rs.${tx.amount.toLocaleString("en-IN")}` : "Unknown amount";
-  const bank = tx.bank ?? "Unknown bank";
-  const utr = tx.utr ?? "No reference";
-  const caseId = caseObj.id.slice(0, 8);
+  const amount = tx.amount === null || tx.amount === undefined
+    ? "Amount not confirmed"
+    : `Rs.${Number(tx.amount).toLocaleString("en-IN")}`;
+  const bank = tx.bank ?? "bank not identified";
+  const utr = tx.utr ?? "no reference number found";
+  const when = tx.timestamp
+    ? formatIndianDateTime(tx.timestamp, tx.timeKnown ?? false)
+    : "time not recorded";
 
   return [
-    `Case ID: ${caseId}`,
-    `${amount} debited from ${bank} account`,
-    `UPI Reference: ${utr}`,
-    `Filed via Rok at ${caseObj.openedAt ? new Date(caseObj.openedAt).toLocaleString("en-IN") : "unknown time"}`,
+    `My case reference is ${caseReferenceFrom(caseObj.id)}.`,
+    `${amount} left my ${bank} account on ${when}.`,
+    `The transaction reference is ${utr}.`,
+    tx.beneficiaryVpa
+      ? `The money went to ${tx.beneficiaryVpa}.`
+      : "I do not have the beneficiary details.",
   ];
 }
 

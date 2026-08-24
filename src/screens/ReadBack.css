@@ -1,153 +1,72 @@
-/* ReadBack — sentence-by-sentence confirmation.
-   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
-
-.read-back {
-  align-items: center;
+.readback__dots {
   display: flex;
-  justify-content: center;
-  min-height: calc(100vh - 120px);
-  padding: 48px 16px;
+  gap: var(--rok-s2);
 }
 
-.read-back__content {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  max-width: 32rem;
-  text-align: center;
-  width: 100%;
-}
-
-.read-back__progress {
-  color: var(--rok-grey);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-/* ── Sentence ─────────────────────────────────────────── */
-
-.read-back__sentence-container {
-  min-height: 120px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.read-back__sentence {
-  animation: read-back-enter 200ms ease-out both;
-  background: var(--rok-indigo-light);
-  border: 0;
-  border-left: 4px solid var(--rok-indigo);
-  border-radius: 0 var(--rok-radius) var(--rok-radius) 0;
-  font-family: var(--rok-font-display);
-  font-size: 1.25rem;
-  line-height: 1.5;
-  margin: 0;
-  padding: 24px;
-  text-align: left;
-  width: 100%;
-}
-
-/* ── Progress dots ────────────────────────────────────── */
-
-.read-back__dots {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.read-back__dot {
-  background: var(--rok-grey-light);
-  border-radius: 50%;
-  display: block;
+.readback__dot {
+  background: var(--rok-line);
+  border-radius: var(--rok-radius-pill);
   height: 8px;
-  transition: background 200ms ease-out, transform 200ms ease-out;
+  transition: background var(--rok-base) var(--rok-ease),
+    width var(--rok-base) var(--rok-ease);
   width: 8px;
 }
 
-.read-back__dot--done {
-  background: var(--rok-green);
+.readback__dot--done { background: var(--rok-green); }
+.readback__dot--current { background: var(--rok-indigo); width: 28px; }
+
+/* Large, quiet, one thought at a time. */
+.readback__sentence {
+  animation: readback-in var(--rok-base) var(--rok-ease) both;
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-left: 4px solid var(--rok-indigo);
+  border-radius: var(--rok-radius-lg);
+  box-shadow: var(--rok-shadow-sm);
+  font-size: var(--rok-text-xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  margin: 0;
+  padding: var(--rok-s5);
 }
 
-.read-back__dot--active {
-  background: var(--rok-indigo);
-  transform: scale(1.5);
-}
-
-/* ── Action buttons ───────────────────────────────────── */
-
-.read-back__actions {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr 1fr;
-  width: 100%;
-}
-
-.read-back__btn {
-  align-items: center;
-  border: 2px solid;
-  border-radius: var(--rok-radius);
-  cursor: pointer;
-  display: flex;
-  font-size: 1rem;
-  font-weight: 700;
-  gap: 8px;
-  justify-content: center;
-  padding: 20px 16px;
-  transition: background 150ms ease-out, color 150ms ease-out, transform 150ms ease-out;
-}
-
-.read-back__btn--yes {
-  background: var(--rok-green-light);
-  border-color: var(--rok-green);
-  color: var(--rok-green);
-}
-
-.read-back__btn--yes:hover {
-  background: var(--rok-green);
-  color: var(--rok-white);
-  transform: translateY(-2px);
-}
-
-.read-back__btn--no {
-  background: var(--rok-white);
-  border-color: var(--rok-grey);
-  color: var(--rok-grey);
-}
-
-.read-back__btn--no:hover {
-  background: var(--rok-grey);
-  color: var(--rok-white);
-  transform: translateY(-2px);
-}
-
-/* ── Animation ────────────────────────────────────────── */
-
-@keyframes read-back-enter {
+@keyframes readback-in {
   from { opacity: 0; transform: translateX(12px); }
-  to   { opacity: 1; transform: translateX(0); }
+  to { opacity: 1; transform: none; }
 }
 
-/* ── Responsive ───────────────────────────────────────── */
-
-@media (max-width: 360px) {
-  .read-back__sentence {
-    font-size: 1.0625rem;
-    padding: 16px;
-  }
-
-  .read-back__btn {
-    font-size: 0.875rem;
-    padding: 16px 12px;
-  }
+.readback__actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--rok-s3);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .read-back__sentence { animation: none; }
-  .read-back__dot { transition: none; }
-  .read-back__btn { transition: none; }
+.readback__narrative summary {
+  color: var(--rok-ink-mute);
+  cursor: pointer;
+  font-size: var(--rok-text-sm);
+  padding: var(--rok-s2) 0;
+}
+
+.readback__narrative-body {
+  background: var(--rok-surface-quiet);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-sm);
+  color: var(--rok-ink-soft);
+  font-family: var(--rok-font-mono);
+  font-size: var(--rok-text-xs);
+  line-height: 1.6;
+  padding: var(--rok-s4);
+}
+
+.readback__narrative-meta {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  margin-top: var(--rok-s2);
+}
+
+@media (min-width: 560px) {
+  .readback__actions { flex-direction: row; }
+  .readback__sentence { font-size: var(--rok-text-2xl); }
 }

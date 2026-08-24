@@ -240,9 +240,16 @@ Build and manually verify each screen before moving to the next.
    build real SMS sending, browsers cannot do this).
 3. **MessageWall** (`MessageWall.jsx`) — **P0, build this one carefully.**
    Card list from `SAMPLE_INBOX` (demo) or an "Upload a screenshot"
-   button (real OCR path). Each card: bank, masked amount, timestamp,
-   read-aloud button, tap-to-select. Selecting animates the extracted
-   fields into a small receipt view before advancing.
+   button (real OCR path). Each card: bank, **the amount in full**,
+   timestamp, read-aloud button, tap-to-select. Selecting animates the
+   extracted fields into a small receipt view before advancing.
+
+   The amount is NEVER masked. This screen works by recognition — the
+   victim identifies the fraudulent transaction by its amount, so hiding
+   those digits removes the only cue they have and breaks the mechanic
+   the whole product rests on. What gets masked is the account number
+   (last four digits only, via `formatMaskedAccount`), which is a
+   security requirement; the amount is not.
 4. **Scope** (`Scope.jsx`) — P0. "Only this one" / "There were more" —
    loops back to MessageWall if more.
 5. **ReachedVia** (`ReachedVia.jsx`) — P0. Four icon buttons (call, sms,

@@ -1,174 +1,131 @@
-/* CaseComplete — green success screen with 3 exit cards.
-   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
-
-.case-complete {
-  padding: 48px 16px;
-}
-
-.case-complete__content {
-  display: grid;
-  gap: 32px;
-  margin: 0 auto;
-  max-width: 44rem;
-}
-
-/* ── Success hero ─────────────────────────────────────── */
-
-.case-complete__hero {
-  align-items: center;
-  animation: case-hero-enter 300ms ease-out both;
-  background: var(--rok-green-light);
-  border: 1.5px solid var(--rok-green);
-  border-radius: var(--rok-radius);
+.complete__hero {
+  background: var(--rok-green-tint);
+  border: 1px solid var(--rok-green-line);
+  border-radius: var(--rok-radius-lg);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 32px 24px;
+  align-items: center;
+  gap: var(--rok-s2);
+  padding: var(--rok-s6) var(--rok-s4);
   text-align: center;
 }
 
-.case-complete__hero .rok-icon--lg {
-  color: var(--rok-green);
-}
-
-.case-complete__hero h1 {
-  color: var(--rok-green);
-  font-family: var(--rok-font-display);
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.case-complete__case-id {
-  color: var(--rok-grey);
-  font-family: monospace;
-  font-size: 0.8125rem;
-  margin: 0;
-}
-
-/* ── Three exit cards ─────────────────────────────────── */
-
-.case-complete__cards {
-  display: grid;
-  gap: 16px;
-}
-
-.case-complete__card {
-  border: 1.5px solid;
-  border-radius: var(--rok-radius);
-  display: grid;
-  gap: 8px;
-  padding: 24px;
-}
-
-.case-complete__card-header {
+.complete__tick {
   align-items: center;
+  animation: complete-pop var(--rok-slow) var(--rok-ease) both;
+  background: var(--rok-green);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-ink-invert);
   display: flex;
-  gap: 8px;
+  height: 64px;
+  justify-content: center;
+  width: 64px;
 }
 
-.case-complete__card-header h2 {
-  font-family: var(--rok-font-display);
-  font-size: 1rem;
-  margin: 0;
+@keyframes complete-pop {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: none; }
 }
 
-.case-complete__card p {
-  color: var(--rok-grey);
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 0;
+.complete__heading {
+  color: var(--rok-green-deep);
+  font-size: var(--rok-text-xl);
 }
 
-.case-complete__card--money {
-  background: var(--rok-indigo-light);
-  border-color: var(--rok-indigo);
-}
-
-.case-complete__card--money .rok-icon {
-  color: var(--rok-indigo);
-}
-
-.case-complete__card--helpline {
-  background: var(--rok-amber-light);
-  border-color: var(--rok-amber);
-}
-
-.case-complete__card--helpline .rok-icon {
-  color: var(--rok-amber);
-}
-
-.case-complete__card--tomorrow {
-  background: var(--rok-grey-light);
-  border-color: var(--rok-grey);
-}
-
-.case-complete__card--tomorrow .rok-icon {
-  color: var(--rok-grey);
-}
-
-.case-complete__tel {
-  background: var(--rok-amber);
-  border-radius: 8px;
-  color: var(--rok-white);
-  display: inline-block;
-  font-size: 1.125rem;
+.complete__reference-label {
+  color: var(--rok-green);
+  font-size: var(--rok-text-xs);
   font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 12px 24px;
-  text-decoration: none;
-  transition: background 150ms ease-out;
-  width: fit-content;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.case-complete__tel:hover {
-  background: #965a00;
+/* Big enough to read across a room, and to read out loud. It must stay on
+   one line at every width — a reference broken across two lines gets read
+   out as two things. */
+.complete__reference {
+  color: var(--rok-ink);
+  font-size: clamp(1.75rem, 9vw, 3.25rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
-/* ── Calm mode button ─────────────────────────────────── */
-
-.case-complete__calm-btn {
-  background: var(--rok-white);
-  border: 1.5px dashed var(--rok-indigo);
-  border-radius: var(--rok-radius);
-  color: var(--rok-indigo);
-  cursor: pointer;
-  font-size: 0.875rem;
+.complete__amount {
+  color: var(--rok-green-deep);
+  font-size: var(--rok-text-md);
   font-weight: 600;
-  padding: 16px;
-  transition: background 150ms ease-out, color 150ms ease-out;
-  width: 100%;
 }
 
-.case-complete__calm-btn:hover {
-  background: var(--rok-indigo);
-  color: var(--rok-white);
+.complete__card {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  box-shadow: var(--rok-shadow-sm);
+  padding: var(--rok-s5);
 }
 
-/* ── Animation ────────────────────────────────────────── */
-
-@keyframes case-hero-enter {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
+.complete__card p {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-sm);
 }
 
-/* ── Responsive ───────────────────────────────────────── */
-
-@media (max-width: 360px) {
-  .case-complete {
-    padding: 32px 12px;
-  }
-
-  .case-complete__hero {
-    padding: 24px 16px;
-  }
-
-  .case-complete__card {
-    padding: 16px;
-  }
+.complete__card--helpline {
+  border-color: var(--rok-red-line);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .case-complete__hero { animation: none; }
-  .case-complete__calm-btn { transition: none; }
-  .case-complete__tel { transition: none; }
+.complete__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+  list-style: none;
+  margin: 0 0 var(--rok-s4);
+  padding: 0;
+}
+
+.complete__lines li {
+  background: var(--rok-surface-quiet);
+  border-left: 3px solid var(--rok-red);
+  border-radius: var(--rok-radius-sm);
+  font-size: var(--rok-text-md);
+  font-weight: 600;
+  padding: var(--rok-s3) var(--rok-s4);
+}
+
+.complete__helpline-actions,
+.complete__downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rok-s3);
+}
+
+.complete__helpline-actions > *,
+.complete__downloads > * {
+  flex: 1 1 12rem;
+}
+
+.complete__cards {
+  display: grid;
+  gap: var(--rok-s3);
+}
+
+.complete__honesty {
+  align-items: flex-start;
+  background: var(--rok-amber-tint);
+  border: 1px solid var(--rok-amber-line);
+  border-radius: var(--rok-radius);
+  color: var(--rok-amber);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s3);
+  padding: var(--rok-s4);
+}
+
+.complete__honesty svg { flex: none; margin-top: 2px; }
+.complete__honesty-title { font-weight: 700; }
+
+@media (min-width: 700px) {
+  .complete__cards { grid-template-columns: repeat(3, 1fr); }
 }

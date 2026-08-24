@@ -1,0 +1,97 @@
+/* No clock, no red, wider rhythm — the visual opposite of the first
+   sixty seconds, on purpose. */
+.calm {
+  gap: var(--rok-s6);
+}
+
+.calm__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+}
+
+.calm__heading {
+  font-size: var(--rok-text-2xl);
+}
+
+.calm__panel {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  padding: var(--rok-s5);
+}
+
+.calm__note {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+  margin-bottom: var(--rok-s4);
+}
+
+.calm__file input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.calm__file {
+  display: block;
+}
+
+.calm__file-label {
+  align-items: center;
+  border: 2px dashed var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  color: var(--rok-ink-soft);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  min-height: 88px;
+  padding: var(--rok-s4);
+  text-align: center;
+  transition: border-color var(--rok-fast) var(--rok-ease),
+    background var(--rok-fast) var(--rok-ease);
+}
+
+.calm__file:hover .calm__file-label,
+.calm__file input:focus-visible + .calm__file-label {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo);
+  color: var(--rok-indigo-deep);
+}
+
+.calm__field textarea {
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  font-size: var(--rok-text-md);
+  padding: var(--rok-s3);
+  resize: vertical;
+  width: 100%;
+}
+
+.calm__privacy {
+  align-items: flex-start;
+  background: var(--rok-green-tint);
+  border-radius: var(--rok-radius);
+  color: var(--rok-green-deep);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+  padding: var(--rok-s4);
+}
+
+.calm__privacy svg { flex: none; margin-top: 2px; }
+
+.calm__actions {
+  display: flex;
+  gap: var(--rok-s3);
+  justify-content: space-between;
+}
+
+.calm__saved {
+  align-items: center;
+  color: var(--rok-green-deep);
+  display: flex;
+  font-weight: 600;
+  gap: var(--rok-s2);
+}

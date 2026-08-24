@@ -87,7 +87,7 @@ as you build each screen, not after:
 - Message Wall screen, fully styled per the UI/UX bar above: card list
   from `SAMPLE_INBOX`, "upload a screenshot instead" button wired to
   `parseTransactionImage` (with a visible OCR-in-progress state), each
-  card showing bank/masked amount/timestamp, a read-aloud button, full
+  card showing bank / the full unmasked amount / timestamp, a read-aloud button, full
   keyboard operability, and a receipt-view transition on selection
   before firing `SELECT_MESSAGE`.
 - **Bug fix:** the `Current state: <STATE>` debug text currently renders

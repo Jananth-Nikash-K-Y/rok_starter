@@ -4,85 +4,183 @@
  * Full spec + example template: docs/BUILD_BRIEF.md, section 4.
  *
  * Deterministic template composition — no model call.
+ *
+ * The composer states only what the evidence actually contains. Where a
+ * field is missing it says so in words rather than inventing a value: a
+ * complaint that asserts a transaction time the bank SMS never carried is
+ * a factual error in a police document.
  */
 
 import { inferTaxonomy } from "./taxonomy.js";
+import { formatIndianDate, formatIndianTime } from "../i18n/format.js";
+
+const MINIMUM_LENGTH = 200;
 
 /**
- * Strips everything outside the safe NCRP character set.
- * @param {string} text
- * @returns {string}
+ * Strips everything outside NCRP's accepted character set, then restores
+ * sentence case.
  */
 function sanitize(text) {
-  return text.replace(/[^A-Za-z0-9 ,.-]/g, "");
+  const cleaned = text.replace(/[^A-Za-z0-9 ,.-]/g, "").replace(/\s+/g, " ").trim();
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
 /**
- * @param {import('../state/machine.js').Case} caseObj
- * @returns {string} >=200 characters, plain ASCII only (A-Z a-z 0-9 space comma period hyphen)
+ * A UPI handle spelled out for a field that forbids the @ sign.
+ *
+ * Sanitising "scammer123@okhdfcbank" to "scammer123okhdfcbank" would
+ * silently corrupt the single identifier the bank needs to trace the
+ * beneficiary, so the separator is written as a word instead.
+ */
+function spellVpa(vpa) {
+  return vpa.replace("@", " at ");
+}
+
+const CHANNEL_TEXT = {
+  call: "phone call",
+  sms: "text message",
+  whatsapp: "WhatsApp message",
+  link: "fraudulent link",
+};
+
+/**
+ * @param {object} caseObj
+ * @returns {string} >=200 characters, plain ASCII only
  */
 export function composeNarrative(caseObj) {
-  const tx = caseObj.transactions[0];
-  if (!tx) return sanitize("No transaction data available for this case. The complainant has initiated a report.").padEnd(200, " ");
+  const transaction = caseObj.transactions?.[0];
+
+  if (!transaction) {
+    return sanitize(
+      "The complainant has opened a financial fraud report using the Rok intake system. " +
+      "No transaction evidence has been attached to this case yet. The complainant intends " +
+      "to supply the debit details and supporting evidence as soon as they are available.",
+    );
+  }
 
   const { category, subCategory } = caseObj.channel
-    ? inferTaxonomy(caseObj.channel, tx)
+    ? inferTaxonomy(caseObj.channel, transaction)
     : { category: "Financial Fraud", subCategory: "UPI Related Frauds" };
 
-  const date = tx.timestamp ? new Date(tx.timestamp).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }) : "an unknown date";
-  const time = tx.timestamp ? new Date(tx.timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: false }) : "an unknown time";
+  /* NCRP accepts only [A-Za-z0-9 ,.-], so a slashed date and a colonned
+     time would be sanitised into an unreadable digit run ("24082026 at
+     2347"). Hyphens and periods survive, and read correctly in a
+     complaint. */
+  const date = transaction.timestamp
+    ? formatIndianDate(transaction.timestamp).replace(/\//g, "-")
+    : null;
+  const time = transaction.timestamp && transaction.timeKnown
+    ? formatIndianTime(transaction.timestamp).replace(":", ".")
+    : null;
 
-  const channelMap = { call: "phone call", sms: "text message", whatsapp: "WhatsApp message", link: "fraudulent link" };
-  const channelText = channelMap[caseObj.channel] || "unknown channel";
+  let when = "on a date the complainant is unable to confirm";
+  if (date && time) when = `on ${date} at approximately ${time} hours IST`;
+  else if (date) when = `on ${date}, at a time not recorded in the bank alert`;
 
-  const amountText = tx.amount ? `Rs.${tx.amount.toLocaleString("en-IN")}` : "an unknown amount";
-  const accountText = tx.accountTail ? `account ending ${tx.accountTail}` : "their account";
-  const utrText = tx.utr ? `UPI reference ${tx.utr}` : "an unidentified reference";
-  const vpaText = tx.beneficiaryVpa ? ` to ${tx.beneficiaryVpa}` : "";
+  const channelText = CHANNEL_TEXT[caseObj.channel] ?? "method the complainant could not identify";
+  const amountText = transaction.amount === null
+    ? "an amount the complainant is unable to confirm"
+    : `Rs.${Number(transaction.amount).toLocaleString("en-IN")}`;
+  const accountText = transaction.accountTail
+    ? `their account ending ${transaction.accountTail}`
+    : "their account";
+  const bankText = transaction.bank ? ` held with ${transaction.bank}` : "";
+  const referenceText = transaction.utr
+    ? `The transaction reference number is ${transaction.utr}.`
+    : "The complainant was unable to locate a transaction reference number.";
+  const beneficiaryText = transaction.beneficiaryVpa
+    ? ` The funds were credited to the payment address ${spellVpa(transaction.beneficiaryVpa)}.`
+    : "";
 
-  let narrative = `On ${date} at ${time}, the complainant received a ${channelText}-based fraudulent request and subsequently observed an unauthorized debit of ${amountText} from ${accountText} processed via ${utrText}${vpaText}. The complainant did not authorize this transaction and is reporting it as ${subCategory} under ${category}.`;
+  const sentences = [
+    `${when}, the complainant was contacted by an unknown person through a ${channelText} and subsequently observed an unauthorised debit of ${amountText} from ${accountText}${bankText}.`,
+    referenceText + beneficiaryText,
+    `The complainant states that they did not authorise this transaction and did not knowingly share any credentials.`,
+    `This complaint is being reported under the category ${category}, sub category ${subCategory}.`,
+  ];
 
-  /* Pad with safety-triage context if under 200 characters. */
   if (caseObj.stillOnCall === true) {
-    narrative += " The complainant was still on the phone with the suspected fraudster at the time of reporting and was instructed to hang up immediately.";
+    sentences.push(
+      "The complainant was still in contact with the suspected fraudster when this report was opened and was advised to disconnect the call immediately.",
+    );
   } else if (caseObj.stillOnCall === false) {
-    narrative += " The complainant confirmed they were no longer in contact with the suspected fraudster at the time of reporting.";
+    sentences.push(
+      "The complainant confirmed that contact with the suspected fraudster had already ended when this report was opened.",
+    );
   }
 
-  /* Final safety pad to guarantee >=200 chars. */
-  if (narrative.length < 200) {
-    narrative += " This report was generated using the Rok evidence-recognition system for rapid fraud reporting.";
+  if (transaction.confidence === "low" || transaction.confidence === "medium") {
+    sentences.push(
+      "Some details above were read automatically from the bank alert and have been confirmed by the complainant.",
+    );
   }
 
-  return sanitize(narrative);
+  let narrative = sanitize(sentences.join(" "));
+
+  /* Guarantee the portal's 200-character floor without padding with filler
+     that says nothing. */
+  if (narrative.length < MINIMUM_LENGTH) {
+    narrative = sanitize(
+      `${narrative} The complainant requests that the beneficiary account be placed on hold and that the transaction be traced on an urgent basis under the Citizen Financial Cyber Fraud Reporting and Management System.`,
+    );
+  }
+
+  return narrative;
 }
 
 /**
- * @param {import('../state/machine.js').Case} caseObj
+ * Three short plain-language sentences for the Read-Back screen. These are
+ * deliberately not the narrative: the narrative is written for the
+ * investigator, these are written to be understood by ear.
+ *
  * @returns {[string, string, string]}
  */
-export function composeReadBackSentences(caseObj) {
-  const tx = caseObj.transactions[0];
-  if (!tx) {
+export function composeReadBackSentences(caseObj, t) {
+  const translate = typeof t === "function" ? t : (key, vars = {}) => fallback(key, vars);
+  const transaction = caseObj.transactions?.[0];
+
+  if (!transaction) {
     return [
-      "You are reporting a financial fraud.",
-      "We have recorded your report.",
-      "Your case will be filed as a financial fraud complaint.",
+      translate("readBack.fallback_one"),
+      translate("readBack.fallback_two"),
+      translate("readBack.fallback_three"),
     ];
   }
 
-  const amountText = tx.amount ? `Rs.${tx.amount.toLocaleString("en-IN")}` : "an amount";
-  const bankText = tx.bank || "your bank";
-  const dateText = tx.timestamp
-    ? new Date(tx.timestamp).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })
-    : "a recent date";
-
-  const channelMap = { call: "a phone call", sms: "a text message", whatsapp: "a WhatsApp message", link: "a link you clicked" };
-  const channelText = channelMap[caseObj.channel] || "an unknown method";
+  const amount = transaction.amount === null
+    ? translate("readBack.some_money")
+    : `₹${Number(transaction.amount).toLocaleString("en-IN")}`;
 
   return [
-    `${amountText} was debited from your ${bankText} account on ${dateText}.`,
-    `You were contacted through ${channelText} and you did not authorize this transaction.`,
-    `We will file this as a financial fraud complaint on your behalf.`,
+    translate("readBack.sentence_money", {
+      amount,
+      bank: transaction.bank ?? translate("readBack.your_bank"),
+      date: formatIndianDate(transaction.timestamp) ?? translate("readBack.recently"),
+    }),
+    translate("readBack.sentence_contact", {
+      channel: translate(`readBack.channel_${caseObj.channel ?? "unknown"}`),
+    }),
+    translate("readBack.sentence_filing"),
   ];
+}
+
+/* Used only when no translator is supplied, e.g. in unit tests. */
+function fallback(key, variables) {
+  const strings = {
+    "readBack.sentence_money": "{amount} left your {bank} account on {date}.",
+    "readBack.sentence_contact": "They reached you through {channel}, and you did not agree to this payment.",
+    "readBack.sentence_filing": "We will report this as a financial fraud, right now.",
+    "readBack.fallback_one": "You are reporting a financial fraud.",
+    "readBack.fallback_two": "Your case is already open.",
+    "readBack.fallback_three": "We will report this as a financial fraud.",
+    "readBack.your_bank": "bank",
+    "readBack.recently": "recently",
+    "readBack.some_money": "Money",
+    "readBack.channel_call": "a phone call",
+    "readBack.channel_sms": "a text message",
+    "readBack.channel_whatsapp": "WhatsApp",
+    "readBack.channel_link": "a link",
+    "readBack.channel_unknown": "an unknown method",
+  };
+  return (strings[key] ?? key).replace(/\{(\w+)\}/g, (_, name) => String(variables[name] ?? ""));
 }
