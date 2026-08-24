@@ -43,5 +43,6 @@
   "app.demo_message": "Choose a demo message",
   "app.placeholder_transaction": "Demo transaction",
   "app.readback_sentence": "Confirm statement {number}",
-  "app.calm_mode": "Add details later"
+  "app.calm_mode": "Add details later",
+  "footer.not_official": "Not an official Government of India platform — hackathon proof of concept"
 }

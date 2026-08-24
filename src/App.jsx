@@ -38,5 +38,5 @@ export default function App() {
     if (machine.case.openedAt) localStorage.setItem(`rok:case:${machine.case.id}`, JSON.stringify(machine.case));
   }, [machine]);
 
-  return <main><p>{t("neverAsk.otp_banner")}</p><p>{t("app.current_state", { state: machine.value })}</p>{screenFor(machine, send)}</main>;
+  return <main><p>{t("neverAsk.otp_banner")}</p><p>{t("app.current_state", { state: machine.value })}</p>{screenFor(machine, send)}<footer><p>{t("footer.not_official")}</p></footer></main>;
 }
