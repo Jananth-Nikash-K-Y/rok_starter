@@ -1,31 +1,42 @@
-/**
- * Placeholder root component.
- *
- * Phase 0 (see docs/BUILD_BRIEF.md, section 9) replaces this with real
- * routing between screens, driven by src/state/machine.js. Leaving this
- * as an intentionally minimal placeholder rather than building it here,
- * so the first meaningful diff in this repo's history is Codex's.
- */
+import { useEffect, useState } from "react";
+import { useT } from "./i18n/useT.js";
+import { createInitialMachineState, rokReducer, ROK_STATES } from "./state/machine.js";
+import CaseComplete from "./screens/CaseComplete.jsx";
+import MessageWall from "./screens/MessageWall.jsx";
+import Palm from "./screens/Palm.jsx";
+import ReachedVia from "./screens/ReachedVia.jsx";
+import ReadBack from "./screens/ReadBack.jsx";
+import SafetyTriage from "./screens/SafetyTriage.jsx";
+import Scope from "./screens/Scope.jsx";
+
+function screenFor(machine, send) {
+  switch (machine.value) {
+    case ROK_STATES.IDLE: return <Palm send={send} />;
+    case ROK_STATES.SAFETY_TRIAGE: return <SafetyTriage send={send} />;
+    case ROK_STATES.SAFETY_HANGUP_SCRIPT: return <SafetyTriage isHangupScript send={send} />;
+    case ROK_STATES.MESSAGE_WALL: return <MessageWall send={send} />;
+    case ROK_STATES.SCOPE: return <Scope send={send} />;
+    case ROK_STATES.REACHED_VIA: return <ReachedVia send={send} />;
+    case ROK_STATES.READ_BACK: return <ReadBack caseData={machine.case} send={send} />;
+    case ROK_STATES.CASE_COMPLETE: return <CaseComplete caseData={machine.case} send={send} />;
+    default: return null;
+  }
+}
+
 export default function App() {
-  return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-        textAlign: "center",
-        padding: "2rem",
-        gap: "0.5rem",
-      }}
-    >
-      <h1 style={{ fontFamily: "var(--rok-font-display)", color: "var(--rok-ink)" }}>
-        Rok
-      </h1>
-      <p style={{ color: "var(--rok-grey)", maxWidth: "32ch" }}>
-        Scaffold ready. See <code>docs/BUILD_BRIEF.md</code> for Phase 0.
-      </p>
-    </main>
-  );
+  const [machine, setMachine] = useState(createInitialMachineState);
+  const t = useT();
+  const send = (event) => {
+    setMachine((current) => {
+      const next = rokReducer(current, event);
+      console.info("[Rok machine]", { event: event.type, from: current.value, to: next.value, caseId: next.case.id });
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    if (machine.case.openedAt) localStorage.setItem(`rok:case:${machine.case.id}`, JSON.stringify(machine.case));
+  }, [machine]);
+
+  return <main><p>{t("neverAsk.otp_banner")}</p><p>{t("app.current_state", { state: machine.value })}</p>{screenFor(machine, send)}</main>;
 }

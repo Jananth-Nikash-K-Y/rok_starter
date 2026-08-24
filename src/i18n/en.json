@@ -37,5 +37,11 @@
 
   "guardianHandoff.title": "Let someone help",
   "guardianHandoff.your_code": "Your code",
-  "guardianHandoff.enter_code": "Enter a code to join"
+  "guardianHandoff.enter_code": "Enter a code to join",
+  "app.case_reference": "Case reference: {id}",
+  "app.current_state": "Current state: {state}",
+  "app.demo_message": "Choose a demo message",
+  "app.placeholder_transaction": "Demo transaction",
+  "app.readback_sentence": "Confirm statement {number}",
+  "app.calm_mode": "Add details later"
 }

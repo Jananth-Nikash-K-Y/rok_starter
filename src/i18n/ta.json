@@ -39,5 +39,11 @@
 
   "guardianHandoff.title": "ஒருவர் உதவட்டும்",
   "guardianHandoff.your_code": "உங்கள் குறியீடு",
-  "guardianHandoff.enter_code": "சேர குறியீட்டை உள்ளிடவும்"
+  "guardianHandoff.enter_code": "சேர குறியீட்டை உள்ளிடவும்",
+  "app.case_reference": "வழக்கு குறிப்பு: {id}",
+  "app.current_state": "தற்போதைய நிலை: {state}",
+  "app.demo_message": "மாதிரி செய்தியைத் தேர்ந்தெடுக்கவும்",
+  "app.placeholder_transaction": "மாதிரி பரிவர்த்தனை",
+  "app.readback_sentence": "வாக்கியம் {number}-ஐ உறுதிப்படுத்தவும்",
+  "app.calm_mode": "விவரங்களை பின்னர் சேர்க்கவும்"
 }

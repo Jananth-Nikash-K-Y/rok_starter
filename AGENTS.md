@@ -69,3 +69,80 @@ red tests.
 - Small, single-purpose commits. Message format: `screen: what changed`
   or `engine: what changed` (e.g. `smsParser: add HDFC UPI debit format`).
 - Do not commit `dist/`, `node_modules/`, or anything under `.env*`.
+
+## Government UI standards (GIGW 3.0 / WCAG 2.1 AA)
+
+Rok is not an official Government of India platform, but its interface
+must read as trustworthy and dependable in the way a real GoI digital
+service does. Treat GIGW 3.0 (Guidelines for Indian Government Websites
+and Apps, MeitY) as the binding visual/interaction standard, on top of
+the accessibility rules already in this file:
+
+- Text contrast >= 4.5:1 (body), >= 3:1 (large text, icons, UI borders).
+  Verify every color pairing in theme.css against this, not just the
+  ones that look fine at a glance.
+- Never convey state by color alone — every colored state (red/green/amber
+  cards, confidence flags) must also carry an icon or text label.
+- Visible focus indicator on every interactive element (already in
+  theme.css via :focus-visible — do not remove it for aesthetics).
+- Layout must not break, clip, or require horizontal scroll at 360px
+  width OR at 200% browser zoom. Test both, not just one.
+- No autoplaying audio. Every spoken announcement must be user-initiated
+  or clearly previewable/mutable — add a persistent mute toggle once
+  speech.js is implemented.
+- Do NOT use the State Emblem of India, the Ashoka Chakra, the national
+  flag, or any official government insignia anywhere in the UI or
+  marketing assets. This is restricted under the State Emblem of India
+  (Prohibition of Improper Use) Act, 2005, and using it would misrepresent
+  the project's affiliation. Instead: restrained palette (already set in
+  theme.css), official-document typography, generous whitespace, and a
+  permanent footer line reading "Not an official Government of India
+  platform — hackathon proof of concept."
+
+## Security posture and the guardian-handoff backend
+
+The core flow is client-only by design, not by shortcut: for data this
+sensitive (fraud evidence, financial details), a server that never
+receives the data cannot be breached, subpoenaed, or misconfigured into
+leaking it. State this explicitly in any pitch material — do not let
+"no backend" read as unfinished.
+
+Harden the client itself:
+
+- Content-Security-Policy: disallow inline scripts/eval, restrict
+  connect-src to same-origin, block third-party trackers and analytics
+  entirely.
+- No external CDN <script> tags at runtime — vendor/bundle all
+  dependencies (Tesseract.js, jspdf) so nothing loads from a third-party
+  origin the app doesn't control.
+- Never render parsed SMS/OCR text via dangerouslySetInnerHTML — JSX's
+  default escaping is the only path for user-influenced text.
+- `npm audit` must be clean (or documented exceptions) before submission.
+- No analytics SDK, no error-tracking SDK — either could exfiltrate case
+  data as a side effect of its normal operation.
+
+DECISION FOR THIS SUBMISSION: no real backend is being built. Guardian
+handoff (src/engines/outputs.js -> buildGuardianHandoffCode) stays a
+localStorage-backed demo simplification, same-browser/same-device only.
+Do not build a serverless function, a KV store, or any network relay for
+this feature. Keep the existing code comment that flags this as a demo
+simplification, and make sure the UI itself never implies cross-device
+handoff works in the deployed build (no copy like "send this code to
+someone on another phone" — say "reload on this device" or similar).
+
+Document this as a deliberate scope decision in SECURITY.md, not an
+oversight: zero backend = zero server-side attack surface for financial
+fraud evidence, which is the stronger security posture for a POC anyway.
+List it under "Out of scope for this submission" alongside the other
+non-goals already in docs/BUILD_BRIEF.md section 10.
+
+## Competing at hackathon scale (10k+ submissions)
+
+- Target Lighthouse Accessibility >= 95 and Performance >= 90 on the
+  deployed build — run it and fix what it flags, don't just estimate.
+- Finish the Race View (P2 in BUILD_BRIEF screen list) — a side-by-side
+  timed comparison is the single highest-leverage thing for standing out
+  in a 90-second judge skim.
+- Ship a one-page README section with 3-4 real screenshots and a 60-90
+  second demo video script — judges reviewing thousands of entries decide
+  in seconds whether to look closer.
