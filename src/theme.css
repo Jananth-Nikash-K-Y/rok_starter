@@ -65,3 +65,51 @@ button {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* ── App layout ───────────────────────────────────────── */
+
+.rok-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.rok-app > section {
+  flex: 1 1 auto;
+}
+
+.rok-otp-banner {
+  background: var(--rok-red);
+  color: var(--rok-white);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.rok-debug-state {
+  background: var(--rok-amber-light);
+  border-bottom: 1px solid var(--rok-amber);
+  color: var(--rok-amber);
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin: 0;
+  padding: 4px 16px;
+  text-align: center;
+}
+
+.rok-footer {
+  border-top: 1px solid var(--rok-grey-light);
+  margin-top: auto;
+  padding: 16px;
+  text-align: center;
+}
+
+.rok-footer p {
+  color: var(--rok-grey);
+  font-size: 0.75rem;
+  margin: 0;
+}
+

@@ -1,133 +1,308 @@
+/* MessageWall — Evidence Recognition screen.
+   Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48 px. */
+
 .message-wall {
   display: grid;
-  gap: 1rem;
+  gap: 24px;
   margin: 0 auto;
   max-width: 44rem;
   min-width: 0;
-  padding: 1rem;
+  padding: 24px 16px;
 }
 
-.message-wall__header,
-.message-wall__cards,
-.message-receipt {
+/* ── Header ───────────────────────────────────────────── */
+
+.message-wall__header {
   display: grid;
-  gap: 0.75rem;
-}
-
-.message-wall__eyebrow,
-.message-card__timestamp,
-.message-wall__status {
-  color: var(--rok-grey);
+  gap: 4px;
 }
 
 .message-wall__eyebrow {
-  font-size: 0.875rem;
+  color: var(--rok-grey);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.message-wall h1 {
+  font-family: var(--rok-font-display);
+  font-size: 1.5rem;
+  line-height: 1.2;
   margin: 0;
 }
 
-.message-wall h1,
-.message-receipt h2 {
-  font-family: var(--rok-font-display);
-  margin: 0;
+/* ── Card list ────────────────────────────────────────── */
+
+.message-wall__cards {
+  display: grid;
+  gap: 12px;
 }
 
 .message-card {
   align-items: stretch;
-  border: 1px solid var(--rok-indigo);
+  background: var(--rok-white);
+  border: 1.5px solid var(--rok-indigo);
   border-radius: var(--rok-radius);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   overflow: hidden;
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out;
 }
 
-.message-card__select,
-.message-card__read,
-.message-wall__upload {
-  background: var(--rok-white);
+.message-card:hover {
+  box-shadow: 0 2px 12px rgba(59, 63, 166, 0.12);
+  transform: translateY(-1px);
+}
+
+/* ── Card: select region ──────────────────────────────── */
+
+.message-card__select {
+  background: transparent;
   border: 0;
   color: var(--rok-ink);
   cursor: pointer;
-}
-
-.message-card__select {
   display: grid;
-  gap: 0.25rem;
-  min-width: 0;
-  padding: 0.875rem;
+  gap: 4px;
+  padding: 16px;
   text-align: left;
+  min-width: 0;
 }
 
-.message-card__bank,
-.message-receipt dt {
+.message-card__bank {
+  font-size: 0.8125rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--rok-grey);
 }
 
 .message-card__amount {
   color: var(--rok-indigo);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
+  line-height: 1.2;
 }
+
+.message-card__timestamp {
+  color: var(--rok-grey);
+  font-size: 0.8125rem;
+}
+
+/* ── Card: read-aloud button ──────────────────────────── */
 
 .message-card__read {
-  border-left: 1px solid var(--rok-indigo);
-  padding: 0.75rem;
+  align-items: center;
+  background: var(--rok-indigo-light);
+  border: 0;
+  border-left: 1.5px solid var(--rok-indigo);
+  color: var(--rok-indigo);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  transition: background 150ms ease-out, color 150ms ease-out;
 }
 
+.message-card__read:hover {
+  background: var(--rok-indigo);
+  color: var(--rok-white);
+}
+
+/* ── Upload button ────────────────────────────────────── */
+
 .message-wall__upload {
-  border: 1px solid var(--rok-indigo);
+  align-items: center;
+  background: var(--rok-white);
+  border: 1.5px dashed var(--rok-grey);
   border-radius: var(--rok-radius);
-  padding: 0.75rem 1rem;
+  color: var(--rok-grey);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 600;
+  gap: 8px;
+  justify-content: center;
+  padding: 16px;
+  transition: border-color 150ms ease-out, color 150ms ease-out, background 150ms ease-out;
   width: 100%;
 }
 
-.message-card__select:hover,
-.message-card__read:hover,
 .message-wall__upload:hover {
   background: var(--rok-indigo-light);
+  border-color: var(--rok-indigo);
+  color: var(--rok-indigo);
 }
+
+/* ── Shared disabled state ────────────────────────────── */
 
 .message-card__select:disabled,
 .message-card__read:disabled,
 .message-wall__upload:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: 0.5;
 }
 
-.message-receipt {
-  animation: message-receipt-enter 300ms ease-out both;
-  background: var(--rok-green-light);
-  border: 1px solid var(--rok-green);
+.message-card__select:disabled:hover,
+.message-card__read:disabled:hover {
+  background: transparent;
+  color: inherit;
+}
+
+.message-wall__upload:disabled:hover {
+  background: var(--rok-white);
+  border-color: var(--rok-grey);
+  color: var(--rok-grey);
+}
+
+/* ── Status message (OCR error) ───────────────────────── */
+
+.message-wall__status {
+  align-items: center;
+  background: var(--rok-amber-light);
+  border: 1px solid var(--rok-amber);
   border-radius: var(--rok-radius);
-  padding: 1rem;
+  color: var(--rok-amber);
+  display: flex;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px;
+}
+
+/* ── Receipt ──────────────────────────────────────────── */
+
+.message-receipt {
+  animation: message-receipt-enter 250ms ease-out both;
+  background: var(--rok-green-light);
+  border: 1.5px solid var(--rok-green);
+  border-radius: var(--rok-radius);
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.message-receipt__header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.message-receipt__header h2 {
+  font-family: var(--rok-font-display);
+  font-size: 1.125rem;
+  margin: 0;
 }
 
 .message-receipt dl {
   display: grid;
-  gap: 0.5rem;
+  gap: 8px;
   margin: 0;
 }
 
 .message-receipt dl div {
   display: grid;
-  gap: 0.25rem;
+  gap: 4px;
   grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr);
 }
 
+.message-receipt dt {
+  color: var(--rok-grey);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .message-receipt dd {
+  font-weight: 500;
   margin: 0;
   overflow-wrap: anywhere;
 }
 
-@keyframes message-receipt-enter {
-  from { opacity: 0; transform: translateY(0.5rem); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── Confidence badge ─────────────────────────────────── */
+
+.message-receipt__confidence {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  gap: 6px;
+  padding: 8px 12px;
+  width: fit-content;
 }
 
-@media (max-width: 360px) {
-  .message-wall { padding: 0.75rem; }
-  .message-receipt dl div { grid-template-columns: minmax(0, 1fr); }
+.message-receipt__confidence--high {
+  background: var(--rok-green-light);
+  color: var(--rok-green);
 }
+
+.message-receipt__confidence--medium {
+  background: var(--rok-amber-light);
+  color: var(--rok-amber);
+}
+
+.message-receipt__confidence--low {
+  background: var(--rok-red-light);
+  color: var(--rok-red);
+}
+
+/* ── Inline SVG icons ─────────────────────────────────── */
+
+.rok-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.rok-icon--success {
+  color: var(--rok-green);
+}
+
+@keyframes rok-spin {
+  to { transform: rotate(360deg); }
+}
+
+.rok-icon--spin {
+  animation: rok-spin 0.8s linear infinite;
+}
+
+/* ── Keyframes ────────────────────────────────────────── */
+
+@keyframes message-receipt-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive: 360px mobile ─────────────────────────── */
+
+@media (max-width: 360px) {
+  .message-wall {
+    padding: 16px 12px;
+  }
+
+  .message-wall h1 {
+    font-size: 1.25rem;
+  }
+
+  .message-receipt {
+    padding: 16px;
+  }
+
+  .message-receipt dl div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .message-receipt { animation: none; }
+  .message-card { transition: none; }
+  .message-card__read { transition: none; }
+  .message-wall__upload { transition: none; }
+  .rok-icon--spin { animation: none; }
 }

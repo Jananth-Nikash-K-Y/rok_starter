@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useT } from "./i18n/useT.js";
 import { createInitialMachineState, rokReducer, ROK_STATES } from "./state/machine.js";
 import CaseComplete from "./screens/CaseComplete.jsx";
@@ -26,6 +26,7 @@ function screenFor(machine, send) {
 export default function App() {
   const [machine, setMachine] = useState(createInitialMachineState);
   const t = useT();
+  const debugMode = useMemo(() => new URLSearchParams(window.location.search).has("debug"), []);
   const send = (event) => {
     setMachine((current) => {
       const next = rokReducer(current, event);
@@ -38,5 +39,12 @@ export default function App() {
     if (machine.case.openedAt) localStorage.setItem(`rok:case:${machine.case.id}`, JSON.stringify(machine.case));
   }, [machine]);
 
-  return <main><p>{t("neverAsk.otp_banner")}</p><p>{t("app.current_state", { state: machine.value })}</p>{screenFor(machine, send)}<footer><p>{t("footer.not_official")}</p></footer></main>;
+  return (
+    <main className="rok-app">
+      <p className="rok-otp-banner">{t("neverAsk.otp_banner")}</p>
+      {debugMode && <p className="rok-debug-state">{t("app.current_state", { state: machine.value })}</p>}
+      {screenFor(machine, send)}
+      <footer className="rok-footer"><p>{t("footer.not_official")}</p></footer>
+    </main>
+  );
 }
