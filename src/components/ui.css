@@ -620,3 +620,78 @@
 
   .screen__question { font-size: var(--rok-text-4xl); }
 }
+
+
+/* ── Display controls ──────────────────────────────────── */
+
+.a11y { position: relative; }
+
+.a11y__panel {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  box-shadow: var(--rok-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s3);
+  padding: var(--rok-s4);
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--rok-s2));
+  width: max(240px, 100%);
+  z-index: 40;
+}
+
+.a11y__group { border: none; margin: 0; padding: 0; }
+
+.a11y__group legend {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0 0 var(--rok-s2);
+  text-transform: uppercase;
+}
+
+.a11y__sizes { display: flex; gap: var(--rok-s2); }
+
+.a11y__size {
+  align-items: center;
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius-sm);
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-height: 52px;
+}
+
+.a11y__size[aria-pressed="true"] {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo);
+  color: var(--rok-indigo-deep);
+}
+
+.a11y__toggle {
+  align-items: center;
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius-sm);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  font-weight: 600;
+  gap: var(--rok-s2);
+  min-height: 52px;
+  padding-inline: var(--rok-s3);
+  width: 100%;
+}
+
+.a11y__toggle[aria-pressed="true"] {
+  background: var(--rok-ink);
+  border-color: var(--rok-ink);
+  color: var(--rok-ink-invert);
+}
+
+/* The heading receives focus on every screen change so assistive tech
+   lands in the right place. It is a programmatic target, not a control, so
+   it gets no focus ring of its own. */
+.screen__question:focus { outline: none; }
+.screen__question:focus-visible { outline: none; }

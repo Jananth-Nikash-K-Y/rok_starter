@@ -13,11 +13,13 @@ describe("rokReducer", () => {
     state = send(state, { type: "SELECT_MESSAGE", message: { raw: "masked demo message", bank: "Demo Bank" } });
     state = send(state, { type: "SCOPE_ONLY_THIS" });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
+    state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Tamil Nadu" });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 0, confirmed: true });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 1, confirmed: true });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 2, confirmed: true });
 
     expect(state.value).toBe(ROK_STATES.CASE_COMPLETE);
+    expect(state.case.stateUt).toBe("Tamil Nadu");
     expect(state.case.openedAt).toBe("2026-08-24T00:00:00.000Z");
     expect(state.case.transactions).toHaveLength(1);
     expect(state.case.channel).toBe("call");
@@ -64,6 +66,7 @@ describe("calm mode", () => {
     state = send(state, { type: "SELECT_MESSAGE", message: { amount: 45000 } });
     state = send(state, { type: "SCOPE_ONLY_THIS" });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
+    state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Delhi" });
     [0, 1, 2].forEach((index) => {
       state = send(state, { type: "CONFIRM_SENTENCE", index, confirmed: true });
     });
@@ -148,9 +151,37 @@ describe("evidence integrity", () => {
     let state = atScope();
     state = send(state, { type: "SCOPE_ONLY_THIS" });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
+    state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Kerala" });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 0, confirmed: true });
     state = send(state, { type: "REJECT_READBACK" });
     expect(state.value).toBe(ROK_STATES.MESSAGE_WALL);
     expect(state.case.sentenceConfirmations).toEqual([false, false, false]);
+  });
+});
+
+describe("jurisdiction", () => {
+  function atJurisdiction() {
+    let state = createInitialMachineState();
+    state = send(state, { type: "OPEN_CASE" });
+    state = send(state, { type: "STILL_ON_CALL_NO" });
+    state = send(state, { type: "SELECT_MESSAGE", message: { amount: 45000 } });
+    state = send(state, { type: "SCOPE_ONLY_THIS" });
+    return send(state, { type: "SELECT_CHANNEL", channel: "call" });
+  }
+
+  /* NCRP routes on this field, so a packet without it is incomplete. */
+  it("is asked before the read-back, and records what was confirmed", () => {
+    const state = atJurisdiction();
+    expect(state.value).toBe(ROK_STATES.JURISDICTION);
+    const confirmed = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Karnataka" });
+    expect(confirmed.value).toBe(ROK_STATES.READ_BACK);
+    expect(confirmed.case.stateUt).toBe("Karnataka");
+  });
+
+  it("refuses to advance without a State/UT", () => {
+    const state = atJurisdiction();
+    expect(send(state, { type: "CONFIRM_JURISDICTION" }).value).toBe(ROK_STATES.JURISDICTION);
+    expect(send(state, { type: "CONFIRM_JURISDICTION", stateUt: "" }).value)
+      .toBe(ROK_STATES.JURISDICTION);
   });
 });

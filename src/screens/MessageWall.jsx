@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "../components/Button.jsx";
 import ConfidenceBadge from "../components/ConfidenceBadge.jsx";
 import Icon from "../components/Icon.jsx";
@@ -23,10 +23,14 @@ import "./MessageWall.css";
  * amount, in full. Masking those digits would remove the only cue they
  * have and break the mechanic this screen exists for.
  */
-export default function MessageWall({ send, t, locale }) {
+export default function MessageWall({ send, t, locale, caseData }) {
   const [parsedInbox, setParsedInbox] = useState([]);
   const [selected, setSelected] = useState(null);
   const [ocrState, setOcrState] = useState("idle");
+  const alreadyCaptured = useMemo(
+    () => new Set(caseData.transactions.map((transaction) => transaction.utr ?? transaction.raw)),
+    [caseData.transactions],
+  );
   const [corrections, setCorrections] = useState({});
   const fileInput = useRef(null);
 
@@ -40,9 +44,13 @@ export default function MessageWall({ send, t, locale }) {
         /* Money arriving is not a fraud to report, and offering it would
            only give a frightened user a wrong answer to tap. Credits are
            still parsed — they are simply never shown here. */
-        .filter((entry) => entry.parsed !== null && entry.parsed.direction !== "credit"),
+        .filter((entry) => entry.parsed !== null && entry.parsed.direction !== "credit")
+        /* After "there were more", a payment already in the case must not
+           be offered again: adding it twice would double the reported
+           amount and repeat the reference number in the complaint. */
+        .filter((entry) => !alreadyCaptured.has(entry.parsed.utr ?? entry.raw)),
     );
-  }, []);
+  }, [alreadyCaptured]);
 
   const readAloud = (entry) => {
     const amount = formatIndianCurrency(entry.parsed.amount);
@@ -98,6 +106,7 @@ export default function MessageWall({ send, t, locale }) {
       t={t}
       locale={locale}
       question={t("messageWall.title")}
+      spokenKey="messageWall.title"
       why={t("messageWall.why")}
     >
       <p className="wall__demo">

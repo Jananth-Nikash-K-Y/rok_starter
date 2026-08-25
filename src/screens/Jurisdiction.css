@@ -1,0 +1,52 @@
+.jurisdiction__locate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+}
+
+.jurisdiction__privacy {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+}
+
+.jurisdiction__toggle {
+  align-self: flex-start;
+  color: var(--rok-indigo);
+  font-size: var(--rok-text-md);
+  font-weight: 650;
+  min-height: 48px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.jurisdiction__list {
+  display: grid;
+  gap: var(--rok-s2);
+  list-style: none;
+  margin: 0;
+  max-height: 22rem;
+  overflow-y: auto;
+  padding: var(--rok-s1);
+}
+
+.jurisdiction__list button {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius);
+  font-size: var(--rok-text-md);
+  min-height: 56px;
+  padding: var(--rok-s2) var(--rok-s4);
+  text-align: left;
+  transition: border-color var(--rok-fast) var(--rok-ease),
+    background var(--rok-fast) var(--rok-ease);
+  width: 100%;
+}
+
+.jurisdiction__list button:hover {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo);
+}
+
+@media (min-width: 720px) {
+  .jurisdiction__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

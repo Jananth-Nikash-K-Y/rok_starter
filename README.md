@@ -55,10 +55,17 @@ Full design rationale, evidence register and diagrams:
 | **Only this one, or more?** | Each payment may need its own hold. |
 | **How did they reach you?** | Four icons. The victim never sees the taxonomy. |
 | **Is this true?** | Three plain sentences in their language, yes or no on each. |
-| **Green screen** | A case reference to read aloud to 1930, and what happens next. |
+| **Where are you?** | Location narrows 36 States and UTs to a shortlist. One tap confirms who investigates. |
+| **Green screen** | A case reference, and three equal ways to send it: speak it to 1930, send it in writing, or hand it to a helper. |
 
 Everything else — ID, address, evidence — is deferred to a calm mode that
 opens only once the freeze-relevant complaint already exists.
+
+## See it in 60 seconds
+
+Open **NCRP today vs Rok** from the footer and press **Start the race**. Both
+lanes run against one clock, in real time and unaccelerated: Rok files at
+0:50, while the portal is still waiting on an OTP at step 3 of 21.
 
 ## Status
 
@@ -96,6 +103,15 @@ either.
 - **Not a wall of text.** Every question is short enough to hear in one
   breath, every answer is an icon plus a few words, and every screen has a
   Listen button. Nothing autoplays.
+- **Not dependent on a phone call.** 1930 is a telephone line, which
+  excludes deaf and non-verbal users entirely. Speaking, sending in writing
+  and handing the case to a helper are offered as peers — whichever a
+  person can do is the right one.
+- **Not a contrast toggle instead of a design.** Rok ships text-size and
+  high-contrast controls *on top of* defaults that already clear WCAG 2.1
+  AA; in high-contrast mode every text pairing clears AAA. The critique of
+  NCRP is that a toggle was offered in place of considered design, not that
+  toggles are bad.
 
 ## Stack
 

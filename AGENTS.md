@@ -48,6 +48,17 @@ red tests.
   listed in `src/i18n/locales.js` (currently en, hi, ta, te);
   `npm run check:i18n` reads that registry and fails on any gap. Adding a
   language means adding its file, not editing the check script.
+- Never make a phone call the only way forward. The 1930 helpline is a
+  telephone line, and deaf and non-verbal users are excluded from it
+  entirely. Any screen that offers "call" must offer a written route and a
+  hand-to-a-helper route as visual peers, not as fallbacks below it.
+- Move focus to the new screen's heading on every transition. Without it,
+  focus falls to `<body>` and a keyboard or screen-reader user has to tab
+  through the header again on every step. `Screen.jsx` does this centrally;
+  any screen not using it must do it itself.
+- Prefer a recorded human voice over synthesis. `src/i18n/recordings.js`
+  maps i18n keys to audio files and TTS is the fallback, not the goal —
+  pass `key` to `announce()` so a recording can be used when one exists.
 - Write for someone who cannot read. Questions are short enough to be
   heard in one breath; choices are an icon plus one to three words; long
   explanatory paragraphs do not belong on a question screen. Every screen

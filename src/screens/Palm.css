@@ -120,3 +120,23 @@
   .palm__title { font-size: var(--rok-text-4xl); }
   .palm__button { max-width: 26rem; }
 }
+
+/* The spoken entry point. Secondary to the button, never a replacement —
+   browser support for Indian languages is uneven. */
+.palm__mic {
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--rok-ink-soft);
+  display: inline-flex;
+  font-size: var(--rok-text-sm);
+  font-weight: 600;
+  gap: var(--rok-s2);
+  min-height: 48px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.palm__mic:hover { color: var(--rok-indigo); }
+.palm__mic:disabled { color: var(--rok-indigo); text-decoration: none; }
+.palm__mic svg { flex: none; }

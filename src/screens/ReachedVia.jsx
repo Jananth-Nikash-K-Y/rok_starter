@@ -31,6 +31,7 @@ export default function ReachedVia({ send, t, locale, caseData, debugMode }) {
       t={t}
       locale={locale}
       question={t("reachedVia.question")}
+      spokenKey="reachedVia.question"
       why={t("reachedVia.why")}
       footer={debugMode && (
         <div className="reached__debug">

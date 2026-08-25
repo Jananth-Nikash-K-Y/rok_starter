@@ -9,6 +9,7 @@ import {
 import { announce, setSpeechEnabled } from "./engines/a11yBus.js";
 import { detectLocale, rememberLocale } from "./i18n/detect.js";
 import { localeMeta } from "./i18n/locales.js";
+import AccessibilityMenu from "./components/AccessibilityMenu.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import GoldenHourClock from "./components/GoldenHourClock.jsx";
 import Icon from "./components/Icon.jsx";
@@ -17,6 +18,7 @@ import ProgressRail from "./components/ProgressRail.jsx";
 import CalmMode from "./screens/CalmMode.jsx";
 import CaseComplete from "./screens/CaseComplete.jsx";
 import GuardianHandoff from "./screens/GuardianHandoff.jsx";
+import Jurisdiction from "./screens/Jurisdiction.jsx";
 import MessageWall from "./screens/MessageWall.jsx";
 import Palm from "./screens/Palm.jsx";
 import RaceView from "./screens/RaceView.jsx";
@@ -34,6 +36,7 @@ const STEP_FOR_STATE = {
   [ROK_STATES.MESSAGE_WALL]: 0,
   [ROK_STATES.SCOPE]: 1,
   [ROK_STATES.REACHED_VIA]: 2,
+  [ROK_STATES.JURISDICTION]: 2,
   [ROK_STATES.READ_BACK]: 3,
   [ROK_STATES.CASE_COMPLETE]: 4,
   [ROK_STATES.CALM_MODE]: 4,
@@ -179,6 +182,8 @@ export default function App() {
 
           <LanguagePicker locale={locale} onChange={chooseLocale} t={t} />
 
+          <AccessibilityMenu t={t} />
+
           <button
             className="rok-icon-btn"
             type="button"
@@ -252,6 +257,8 @@ function Screen({ machine, screenProps, debugMode }) {
       return <Scope {...screenProps} />;
     case ROK_STATES.REACHED_VIA:
       return <ReachedVia {...screenProps} debugMode={debugMode} />;
+    case ROK_STATES.JURISDICTION:
+      return <Jurisdiction {...screenProps} />;
     case ROK_STATES.READ_BACK:
       return <ReadBack {...screenProps} />;
     case ROK_STATES.CASE_COMPLETE:

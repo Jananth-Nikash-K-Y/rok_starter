@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Icon from "../components/Icon.jsx";
 import { announce, replayLastAnnouncement } from "../engines/a11yBus.js";
-import { canSpeak, whenVoicesReady } from "../engines/speech.js";
+import { canListen, canSpeak, listenOnce, whenVoicesReady } from "../engines/speech.js";
 import "./Palm.css";
 
 /**
@@ -17,9 +17,11 @@ import "./Palm.css";
  */
 export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
   const [voiceAvailable, setVoiceAvailable] = useState(true);
+  const [listening, setListening] = useState(false);
+  const [heardNothing, setHeardNothing] = useState(false);
 
   useEffect(() => {
-    announce(t("palm.spoken"), { locale });
+    announce(t("palm.spoken"), { locale, key: "palm.spoken" });
   }, [t, locale]);
 
   useEffect(() => {
@@ -33,6 +35,21 @@ export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
   const listen = () => {
     if (!speechOn) onEnableSpeech();
     replayLastAnnouncement();
+  };
+
+  /* The spoken entry point. Anything heard opens the case — see the note
+     on listenOnce for why this does not try to understand the words. */
+  const speakToStart = async () => {
+    setHeardNothing(false);
+    setListening(true);
+    try {
+      await listenOnce(locale);
+      send({ type: "OPEN_CASE" });
+    } catch {
+      setHeardNothing(true);
+    } finally {
+      setListening(false);
+    }
   };
 
   return (
@@ -56,6 +73,23 @@ export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
         <span className="palm__listen-icon"><Icon name="speaker" size={26} /></span>
         <span>{t("palm.listen")}</span>
       </button>
+
+      {canListen() && (
+        <button
+          className="palm__mic"
+          type="button"
+          onClick={speakToStart}
+          disabled={listening}
+          lang={locale}
+        >
+          <Icon name="mic" size={22} />
+          <span>{listening ? t("palm.listening") : t("palm.speak_to_start")}</span>
+        </button>
+      )}
+
+      {heardNothing && (
+        <p className="palm__no-voice" role="status" lang={locale}>{t("palm.heard_nothing")}</p>
+      )}
 
       {!voiceAvailable && (
         <p className="palm__no-voice" lang={locale} role="status">

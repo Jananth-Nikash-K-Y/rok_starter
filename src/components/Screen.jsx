@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Icon from "./Icon.jsx";
 import ListenButton from "./ListenButton.jsx";
 import { announce, replayLastAnnouncement } from "../engines/a11yBus.js";
@@ -17,6 +17,7 @@ export default function Screen({
   step,
   totalSteps = 4,
   why,
+  spokenKey,
   tone = "neutral",
   split = true,
   t,
@@ -25,10 +26,21 @@ export default function Screen({
   footer,
 }) {
   const announcement = spoken ?? question;
+  const heading = useRef(null);
 
   useEffect(() => {
-    announce(announcement, { locale });
-  }, [announcement, locale]);
+    announce(announcement, { locale, key: spokenKey });
+  }, [announcement, locale, spokenKey]);
+
+  /* Move focus to the new screen's heading on every transition.
+     Without this, focus falls back to <body> each time the screen changes:
+     a keyboard user has to tab past the whole header again on all eight
+     steps, and a screen reader user is left with focus nowhere. Moving it
+     here means the question is read, and the next Tab lands on the first
+     answer. */
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+  }, [question]);
 
   return (
     <section
@@ -49,7 +61,9 @@ export default function Screen({
           </p>
         )}
 
-        <h1 className="screen__question" lang={locale}>{question}</h1>
+        <h1 className="screen__question" lang={locale} ref={heading} tabIndex={-1}>
+          {question}
+        </h1>
 
         <ListenButton
           t={t}

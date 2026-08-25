@@ -13,6 +13,7 @@ export const ROK_STATES = Object.freeze({
   MESSAGE_WALL: "MESSAGE_WALL",
   SCOPE: "SCOPE",
   REACHED_VIA: "REACHED_VIA",
+  JURISDICTION: "JURISDICTION",
   READ_BACK: "READ_BACK",
   CASE_COMPLETE: "CASE_COMPLETE",
   CALM_MODE: "CALM_MODE",
@@ -186,8 +187,15 @@ export function rokReducer(state, event) {
           ncrpCategory: event.category ?? state.case.ncrpCategory,
           ncrpSubCategory: event.subCategory ?? state.case.ncrpSubCategory,
         },
-        ROK_STATES.READ_BACK,
+        ROK_STATES.JURISDICTION,
       );
+
+    /* NCRP routes a complaint to the State/UT the complainant selects, so
+       the packet is incomplete without it. The interface narrows 36 to a
+       few candidates; this records which one the user actually confirmed. */
+    case "CONFIRM_JURISDICTION":
+      if (state.value !== ROK_STATES.JURISDICTION || !event.stateUt) return state;
+      return updateCase(state, { stateUt: event.stateUt }, ROK_STATES.READ_BACK);
 
     case "CONFIRM_SENTENCE": {
       if (

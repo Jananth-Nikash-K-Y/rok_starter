@@ -94,7 +94,6 @@
   padding: var(--rok-s3) var(--rok-s4);
 }
 
-.complete__helpline-actions,
 .complete__downloads {
   display: flex;
   flex-wrap: wrap;
@@ -148,4 +147,72 @@
 .complete__reset-actions {
   display: flex;
   gap: var(--rok-s3);
+}
+
+/* Three peer routes: speak it, send it, or hand it to someone. None is
+   styled as the primary — a person uses whichever one they can. */
+.complete__routes-label {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--rok-s2);
+  text-transform: uppercase;
+}
+
+.complete__routes {
+  display: grid;
+  gap: var(--rok-s3);
+}
+
+.complete__route {
+  align-items: center;
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  color: var(--rok-ink);
+  display: flex;
+  gap: var(--rok-s3);
+  min-height: 76px;
+  padding: var(--rok-s3) var(--rok-s4);
+  text-align: left;
+  text-decoration: none;
+  transition: border-color var(--rok-fast) var(--rok-ease),
+    background var(--rok-fast) var(--rok-ease);
+  width: 100%;
+}
+
+.complete__route:hover {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo);
+}
+
+.complete__route-icon {
+  align-items: center;
+  background: var(--rok-indigo-tint);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-indigo);
+  display: flex;
+  flex: none;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
+}
+
+.complete__route-text { display: flex; flex-direction: column; gap: 2px; }
+
+.complete__route-title {
+  font-size: var(--rok-text-md);
+  font-weight: 650;
+}
+
+.complete__route-note {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+}
+
+@media (min-width: 720px) {
+  .complete__routes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .complete__route { flex-direction: column; text-align: center; min-height: 148px; }
+  .complete__route-text { align-items: center; }
 }

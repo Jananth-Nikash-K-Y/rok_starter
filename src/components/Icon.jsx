@@ -129,6 +129,27 @@ const PATHS = {
       <circle cx="12" cy="13" r="3.5" />
     </>
   ),
+  textSize: (
+    <>
+      <path d="M3 18 8 6l5 12" />
+      <path d="M4.6 14.5h6.8" />
+      <path d="M14 18l3.5-8 3.5 8" />
+      <path d="M15.1 15.6h4.8" />
+    </>
+  ),
+  contrast: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 3v18a9 9 0 0 0 0-18Z" fill="currentColor" stroke="none" />
+    </>
+  ),
+  mic: (
+    <>
+      <rect x="9" y="3" width="6" height="11" rx="3" />
+      <path d="M5 11a7 7 0 0 0 14 0" />
+      <path d="M12 18v3" />
+    </>
+  ),
   globe: (
     <>
       <circle cx="12" cy="12" r="9" />

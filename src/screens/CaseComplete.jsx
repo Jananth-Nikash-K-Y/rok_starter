@@ -19,12 +19,12 @@ export default function CaseComplete({ send, t, locale, caseData }) {
   const reference = caseReferenceFrom(caseData.id);
   const helplineLines = buildHelplineCard(caseData);
   const transaction = caseData.transactions[0] ?? {};
-  const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
   const [buildingPdf, setBuildingPdf] = useState(false);
   const [confirmingReset, setConfirmingReset] = useState(false);
 
   useEffect(() => {
-    announce(t("caseComplete.spoken", { reference }), { locale });
+    announce(t("caseComplete.spoken", { reference }), { locale, key: "caseComplete.spoken" });
   }, [t, locale, reference]);
 
   const download = (blob, filename) => {
@@ -50,12 +50,21 @@ export default function CaseComplete({ send, t, locale, caseData }) {
     }
   };
 
-  const copyHelpline = async () => {
+  /* The written route. Share sheet where the device offers one, clipboard
+     everywhere else — either way the complaint leaves as text, with no
+     spoken or heard step anywhere in the path. */
+  const sendInWriting = async () => {
+    const body = [t("caseComplete.written_intro"), "", ...helplineLines].join("\n");
     try {
-      await navigator.clipboard.writeText(helplineLines.join("\n"));
-      setCopied(true);
+      if (navigator.share) {
+        await navigator.share({ title: t("caseComplete.four_lines"), text: body });
+        setShared(true);
+        return;
+      }
+      await navigator.clipboard.writeText(body);
+      setShared(true);
     } catch {
-      setCopied(false);
+      setShared(false);
     }
   };
 
@@ -75,23 +84,56 @@ export default function CaseComplete({ send, t, locale, caseData }) {
         )}
       </div>
 
-      {/* The 1930 card: four lines, in the order an operator asks for them. */}
+      {/* Four lines, in the order an operator asks for them — and three
+          equally weighted ways to deliver them.
+
+          The 1930 helpline is a telephone line, which the concept document
+          notes excludes deaf users entirely. Making "call" the single
+          primary action would end the flow, for the exact people this
+          product exists for, at the last screen. So speaking, sending and
+          handing to someone else are offered as peers: whichever a person
+          can do is the right one. */}
       <article className="complete__card complete__card--helpline">
         <h2 className="rok-card__title">
-          <Icon name="phone" size={20} />
-          {t("caseComplete.helpline_card")}
+          <Icon name="document" size={20} />
+          {t("caseComplete.four_lines")}
         </h2>
         <ol className="complete__lines">
           {helplineLines.map((line) => <li key={line}>{line}</li>)}
         </ol>
-        <div className="complete__helpline-actions">
-          <a className="rok-btn rok-btn--danger" href="tel:1930">
-            <Icon name="phone" />
-            <span>{t("caseComplete.call_1930")}</span>
+
+        <p className="complete__routes-label" lang={locale}>{t("caseComplete.routes_label")}</p>
+
+        <div className="complete__routes">
+          <a className="complete__route" href="tel:1930">
+            <span className="complete__route-icon"><Icon name="phone" size={24} /></span>
+            <span className="complete__route-text">
+              <span className="complete__route-title">{t("caseComplete.route_call")}</span>
+              <span className="complete__route-note">{t("caseComplete.route_call_note")}</span>
+            </span>
           </a>
-          <Button variant="quiet" icon="document" onClick={copyHelpline}>
-            {copied ? t("caseComplete.copied") : t("caseComplete.copy_lines")}
-          </Button>
+
+          <button className="complete__route" type="button" onClick={sendInWriting}>
+            <span className="complete__route-icon"><Icon name="message" size={24} /></span>
+            <span className="complete__route-text">
+              <span className="complete__route-title">
+                {shared ? t("caseComplete.copied") : t("caseComplete.route_write")}
+              </span>
+              <span className="complete__route-note">{t("caseComplete.route_write_note")}</span>
+            </span>
+          </button>
+
+          <button
+            className="complete__route"
+            type="button"
+            onClick={() => send({ type: "OPEN_GUARDIAN_HANDOFF" })}
+          >
+            <span className="complete__route-icon"><Icon name="people" size={24} /></span>
+            <span className="complete__route-text">
+              <span className="complete__route-title">{t("caseComplete.route_helper")}</span>
+              <span className="complete__route-note">{t("caseComplete.route_helper_note")}</span>
+            </span>
+          </button>
         </div>
       </article>
 

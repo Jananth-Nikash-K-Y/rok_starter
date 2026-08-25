@@ -18,6 +18,7 @@ export default function Scope({ send, t, locale, caseData }) {
       t={t}
       locale={locale}
       question={t("scope.question")}
+      spokenKey="scope.question"
       why={t("scope.why")}
       footer={
         <ul className="scope__captured">

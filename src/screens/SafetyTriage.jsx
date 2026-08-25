@@ -17,7 +17,7 @@ export default function SafetyTriage({ send, t, locale, isHangupScript = false }
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
-    if (isHangupScript) announce(t("safetyTriage.hangup_spoken"), { locale });
+    if (isHangupScript) announce(t("safetyTriage.hangup_spoken"), { locale, key: "safetyTriage.hangup_spoken" });
   }, [t, locale, isHangupScript]);
 
   const alertContact = async () => {
@@ -85,6 +85,7 @@ export default function SafetyTriage({ send, t, locale, isHangupScript = false }
       t={t}
       locale={locale}
       question={t("safetyTriage.question")}
+      spokenKey="safetyTriage.question"
       why={t("safetyTriage.why")}
     >
       <div className="rok-choice-grid">

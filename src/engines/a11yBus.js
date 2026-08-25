@@ -8,11 +8,11 @@
  *  2. speechSynthesis, gated by the app-level speech setting
  */
 
-import { speak, stopSpeaking } from "./speech.js";
+import { speak, speakKey, stopSpeaking } from "./speech.js";
 
 let speechEnabled = false;
 /** The last thing announced, so a screen's Listen button can repeat it. */
-let lastAnnouncement = { text: "", locale: "en" };
+let lastAnnouncement = { text: "", locale: "en", key: null };
 
 export function setSpeechEnabled(enabled) {
   speechEnabled = Boolean(enabled);
@@ -31,18 +31,23 @@ export function isSpeechEnabled() {
  */
 export function replayLastAnnouncement(options = {}) {
   if (!lastAnnouncement.text) return false;
-  return speak(lastAnnouncement.text, lastAnnouncement.locale, options);
+  const { key, text, locale } = lastAnnouncement;
+  return key
+    ? speakKey(key, text, locale, options)
+    : speak(text, locale, options);
 }
 
 /**
  * @param {string} text
- * @param {{ locale?: string, speak?: boolean, onEnd?: () => void }} [options]
+ * @param {{ locale?: string, speak?: boolean, key?: string, onEnd?: () => void }} [options]
+ *   `key` names the i18n string, so a human recording can be used in place
+ *   of synthesis when one exists — see src/i18n/recordings.js.
  */
 export function announce(text, options = {}) {
   if (!text) return;
 
   const locale = options.locale ?? "en";
-  lastAnnouncement = { text, locale };
+  lastAnnouncement = { text, locale, key: options.key ?? null };
 
   const region = typeof document !== "undefined"
     ? document.getElementById("a11y-live-region")
@@ -55,5 +60,8 @@ export function announce(text, options = {}) {
   }
 
   const shouldSpeak = options.speak ?? speechEnabled;
-  if (shouldSpeak) speak(text, locale, options);
+  if (!shouldSpeak) return;
+
+  if (options.key) speakKey(options.key, text, locale, options);
+  else speak(text, locale, options);
 }

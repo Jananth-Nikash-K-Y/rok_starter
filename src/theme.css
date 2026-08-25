@@ -136,6 +136,54 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* User text-size control. Scales the root, so every value derived from rem
+   — type, spacing, tap targets — grows together and no layout breaks. */
+html[data-text-size="large"] { font-size: 112.5%; }
+html[data-text-size="largest"] { font-size: 125%; }
+
+/* High contrast. Only tokens are redefined, so every component follows
+   without knowing this mode exists. Ratios here clear WCAG AAA (7:1) for
+   body text rather than AA. */
+html[data-contrast="high"] {
+  --rok-ink: #000000;
+  --rok-ink-soft: #1a1f2e;
+  --rok-ink-mute: #2c3345;
+  --rok-surface: #ffffff;
+  --rok-surface-sunken: #ffffff;
+  --rok-surface-quiet: #ffffff;
+  --rok-line: #4a5265;
+  --rok-line-strong: #000000;
+
+  --rok-red: #9b0d16;
+  --rok-red-deep: #6b060c;
+  --rok-red-tint: #ffeaec;
+
+  --rok-indigo: #1c2678;
+  --rok-indigo-deep: #101748;
+  --rok-indigo-tint: #e8eaff;
+
+  --rok-green: #0a5334;
+  --rok-green-deep: #063620;
+  --rok-green-tint: #e2f5ea;
+
+  --rok-amber: #6b4000;
+  --rok-amber-tint: #fff3df;
+
+  --rok-shadow-sm: 0 0 0 1px #000000;
+  --rok-shadow: 0 0 0 1px #000000;
+  --rok-shadow-lg: 0 0 0 2px #000000;
+}
+
+/* Borders carry meaning in high contrast, so they must be visible. */
+html[data-contrast="high"] .rok-card,
+html[data-contrast="high"] .wall__card,
+html[data-contrast="high"] .rok-choice,
+html[data-contrast="high"] .lane,
+html[data-contrast="high"] .complete__card {
+  border-color: var(--rok-ink);
+  border-width: 2px;
+}
+
 body {
   background: var(--rok-surface-sunken);
   color: var(--rok-ink);
