@@ -3,8 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--rok-s4);
-  min-height: 70vh;
   justify-content: center;
+  min-height: 68vh;
   padding-block: var(--rok-s6);
   text-align: center;
 }
@@ -16,23 +16,17 @@
   border-radius: var(--rok-radius-pill);
   color: var(--rok-red);
   display: flex;
-  height: 108px;
+  height: 104px;
   justify-content: center;
-  width: 108px;
+  width: 104px;
 }
 
 .palm__title {
   font-size: var(--rok-text-3xl);
-  margin: 0;
+  max-width: 14ch;
 }
 
-.palm__sub {
-  color: var(--rok-ink-soft);
-  max-width: 26rem;
-}
-
-/* The one target on the screen. Sized so it cannot be missed by a shaking
-   hand, and captioned so it cannot be misread. */
+/* The one target on the screen. Sized so a shaking hand cannot miss it. */
 .palm__button {
   background: var(--rok-red);
   border-radius: var(--rok-radius-lg);
@@ -41,26 +35,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--rok-s1);
-  margin-top: var(--rok-s2);
   min-height: 104px;
-  padding: var(--rok-s5) var(--rok-s6);
+  padding: var(--rok-s5);
   transition: background var(--rok-fast) var(--rok-ease),
     transform var(--rok-fast) var(--rok-ease);
   width: 100%;
 }
 
-.palm__button:hover {
-  background: var(--rok-red-deep);
-}
-
-.palm__button:active {
-  transform: scale(0.99);
-}
+.palm__button:hover { background: var(--rok-red-deep); }
+.palm__button:active { transform: scale(0.99); }
 
 .palm__button-label {
   font-size: var(--rok-text-2xl);
   font-weight: 750;
-  letter-spacing: -0.02em;
 }
 
 .palm__button-hint {
@@ -69,35 +56,67 @@
   opacity: 0.92;
 }
 
+/* Sits directly under the main action, because this is where a user who
+   cannot read the screen has to be able to turn audio on. */
+.palm__listen {
+  align-items: center;
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-indigo-line);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-indigo-deep);
+  display: inline-flex;
+  font-size: var(--rok-text-md);
+  font-weight: 650;
+  gap: var(--rok-s3);
+  min-height: 60px;
+  padding: var(--rok-s2) var(--rok-s5) var(--rok-s2) var(--rok-s2);
+  transition: border-color var(--rok-fast) var(--rok-ease),
+    background var(--rok-fast) var(--rok-ease);
+}
+
+.palm__listen:hover {
+  background: var(--rok-indigo-tint);
+  border-color: var(--rok-indigo);
+}
+
+.palm__listen-icon {
+  align-items: center;
+  background: var(--rok-indigo);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-ink-invert);
+  display: flex;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.palm__no-voice {
+  color: var(--rok-amber);
+  font-size: var(--rok-text-sm);
+  max-width: 32ch;
+}
+
 .palm__promises {
   color: var(--rok-ink-mute);
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   font-size: var(--rok-text-sm);
-  gap: var(--rok-s2);
+  gap: var(--rok-s3) var(--rok-s5);
+  justify-content: center;
   list-style: none;
   margin: var(--rok-s4) 0 0;
   padding: 0;
-  text-align: left;
-  width: 100%;
 }
 
 .palm__promises li {
   align-items: center;
   display: flex;
-  gap: var(--rok-s3);
+  gap: var(--rok-s2);
 }
 
-.palm__promises svg {
-  color: var(--rok-indigo);
-  flex: none;
-}
+.palm__promises svg { color: var(--rok-indigo); flex: none; }
 
-@media (min-width: 700px) {
+@media (min-width: 720px) {
   .palm__title { font-size: var(--rok-text-4xl); }
-  .palm__promises {
-    flex-direction: row;
-    justify-content: center;
-    gap: var(--rok-s5);
-  }
+  .palm__button { max-width: 26rem; }
 }

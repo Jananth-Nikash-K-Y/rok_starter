@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button.jsx";
 import ConfidenceBadge from "../components/ConfidenceBadge.jsx";
 import Icon from "../components/Icon.jsx";
+import Screen from "../components/Screen.jsx";
 import { announce } from "../engines/a11yBus.js";
 import { parseTransactionImage, parseTransactionSms } from "../engines/smsParser.js";
 import { SAMPLE_INBOX } from "../fixtures/sampleSms.js";
@@ -30,16 +31,16 @@ export default function MessageWall({ send, t, locale }) {
   const fileInput = useRef(null);
 
   useEffect(() => {
-    announce(t("messageWall.title"), { locale });
-  }, [t, locale]);
-
-  useEffect(() => {
     setParsedInbox(
       SAMPLE_INBOX.map((message) => ({
         id: message.id,
         raw: message.text,
         parsed: parseTransactionSms(message.text),
-      })).filter((entry) => entry.parsed !== null),
+      }))
+        /* Money arriving is not a fraud to report, and offering it would
+           only give a frightened user a wrong answer to tap. Credits are
+           still parsed — they are simply never shown here. */
+        .filter((entry) => entry.parsed !== null && entry.parsed.direction !== "credit"),
     );
   }, []);
 
@@ -92,13 +93,16 @@ export default function MessageWall({ send, t, locale }) {
   }
 
   return (
-    <section className="rok-container rok-screen wall">
-      <p className="rok-eyebrow">
+    <Screen
+      step={1}
+      t={t}
+      locale={locale}
+      question={t("messageWall.title")}
+      why={t("messageWall.why")}
+    >
+      <p className="wall__demo">
         <span className="rok-badge rok-badge--demo">{t("messageWall.demo_label")}</span>
       </p>
-
-      <h1 className="rok-question" lang={locale}>{t("messageWall.title")}</h1>
-      <p className="rok-support" lang={locale}>{t("messageWall.support")}</p>
 
       <ul className="wall__list">
         {parsedInbox.map((entry) => (
@@ -180,7 +184,7 @@ export default function MessageWall({ send, t, locale }) {
           </p>
         )}
       </div>
-    </section>
+    </Screen>
   );
 }
 
@@ -207,7 +211,7 @@ function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }
   ];
 
   return (
-    <section className="rok-container rok-screen receipt">
+    <section className="rok-container screen receipt">
       <p className="rok-eyebrow">
         <Icon name="document" size={14} />
         {t("messageWall.receipt_title")}

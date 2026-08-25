@@ -1,12 +1,15 @@
 /**
- * Demo-mode inbox and parser test fixtures.
+ * Demo-mode inbox and parser fixtures.
  * Source formats: docs/BUILD_BRIEF.md, section 2.
  *
  * IMPORTANT: browsers cannot read a real device SMS inbox — this fixture
- * stands in for that on the Message Wall screen in demo mode. The real
- * working path is the "upload a screenshot" -> OCR flow in
- * parseTransactionImage(). Label demo mode clearly in the UI; do not let
- * a judge mistake this fixture for a live SMS read.
+ * stands in for that on the Message Wall in demo mode. The real working
+ * path is "upload a screenshot" -> OCR -> the same parser. Demo mode is
+ * labelled on screen; do not let a judge mistake it for a live SMS read.
+ *
+ * The set is deliberately not six clean debits. It includes a credit and an
+ * institution outside the recognised list, because a demo that only shows
+ * the happy path proves nothing about the engine underneath it.
  */
 export const SAMPLE_INBOX = [
   {
@@ -51,5 +54,23 @@ export const SAMPLE_INBOX = [
     text:
       "Rs 3,499 sent to 91XXXXXXXX21 from Paytm Wallet on 24 Aug 2026, 20:11. " +
       "Order ID PYTM88291736452. Helpline 01204456456",
+  },
+  {
+    /* An institution outside BANK_PATTERNS. Proves the parser recovers the
+       amount and reference from a bank it has never been taught. */
+    id: "sms-7",
+    bankLabel: "Suryoday Small Finance Bank",
+    text:
+      "Rs.9,750.00 debited from A/c XX3312 on 24-08-2026 21:15:30 to VPA " +
+      "quickcash@axl. UPI Ref No 774451920388. -Suryoday Small Finance Bank",
+  },
+  {
+    /* Money arriving, not leaving. Parsed, but never offered as something
+       to report — see MessageWall. */
+    id: "sms-8",
+    bankLabel: "HDFC Bank",
+    text:
+      "Rs 62,000.00 credited to a/c **4521 on 01-08-26 by SALARY AUG 2026. " +
+      "Ref No 220119384411. -HDFC Bank",
   },
 ];

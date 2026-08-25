@@ -44,8 +44,14 @@ red tests.
 - Functional components only, no class components.
 - One component per file, filename matches the default export.
 - All user-facing strings go through `src/i18n/` — never hard-code English
-  copy inside a component. Every string needs at minimum an `en` and `ta`
-  entry; other languages can be TODO-stubbed.
+  copy inside a component. Every string needs an entry in EVERY locale
+  listed in `src/i18n/locales.js` (currently en, hi, ta, te);
+  `npm run check:i18n` reads that registry and fails on any gap. Adding a
+  language means adding its file, not editing the check script.
+- Write for someone who cannot read. Questions are short enough to be
+  heard in one breath; choices are an icon plus one to three words; long
+  explanatory paragraphs do not belong on a question screen. Every screen
+  carries a visible Listen control, and nothing ever plays on its own.
 - Every interactive element must be reachable by keyboard and must have an
   accessible name. This is not optional polish for this project — treat a
   missing `aria-label` or an unreachable focus target as a bug, not a

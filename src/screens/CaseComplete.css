@@ -129,3 +129,23 @@
 @media (min-width: 700px) {
   .complete__cards { grid-template-columns: repeat(3, 1fr); }
 }
+
+.complete__reset {
+  align-items: center;
+  border-top: 1px solid var(--rok-line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+  padding-top: var(--rok-s5);
+  text-align: center;
+}
+
+.complete__reset p {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-sm);
+}
+
+.complete__reset-actions {
+  display: flex;
+  gap: var(--rok-s3);
+}

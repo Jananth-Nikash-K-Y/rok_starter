@@ -14,24 +14,27 @@
   border-radius: var(--rok-radius);
   color: var(--rok-green-deep);
   display: flex;
-  font-size: var(--rok-text-lg);
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
   gap: var(--rok-s3);
   padding: var(--rok-s3) var(--rok-s4);
 }
 
 .scope__captured svg { flex: none; }
 
+.scope__captured-amount {
+  font-size: var(--rok-text-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
 .scope__captured-bank {
   color: var(--rok-green);
   font-size: var(--rok-text-sm);
-  font-weight: 500;
   margin-left: auto;
+  text-align: right;
 }
 
 .scope__total {
-  font-size: var(--rok-text-md);
-  font-weight: 650;
-  text-align: right;
+  background: var(--rok-surface) !important;
+  border-color: var(--rok-line-strong) !important;
+  color: var(--rok-ink) !important;
 }

@@ -71,3 +71,45 @@
   font-size: var(--rok-text-xs);
   max-width: var(--rok-measure);
 }
+
+/* Shown once when the language was guessed rather than chosen, so the user
+   knows it is a guess and knows where to correct it. */
+.rok-lang-hint {
+  align-items: center;
+  background: var(--rok-indigo-tint);
+  border-bottom: 1px solid var(--rok-indigo-line);
+  color: var(--rok-indigo-deep);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+  padding: var(--rok-s2) var(--rok-s4);
+}
+
+.rok-lang-hint > svg { flex: none; }
+.rok-lang-hint > span { flex: 1 1 auto; }
+
+.rok-lang-hint button {
+  background: var(--rok-indigo);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-ink-invert);
+  flex: none;
+  font-size: var(--rok-text-sm);
+  font-weight: 650;
+  min-height: 36px;
+  padding-inline: var(--rok-s4);
+}
+
+.rok-lang-hint button:hover { background: var(--rok-indigo-deep); }
+
+/* Last-resort screen when a render fails. Still shows the one action that
+   matters when the interface has not. */
+.crash {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s4);
+  padding-block: var(--rok-s8);
+  text-align: center;
+}
+
+.crash__title { font-size: var(--rok-text-2xl); }
+.crash__body { color: var(--rok-ink-soft); }

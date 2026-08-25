@@ -7,7 +7,6 @@
  * submitted anything on the user's behalf.
  */
 
-import { jsPDF } from "jspdf";
 import { composeNarrative } from "./narrative.js";
 import { inferTaxonomy } from "./taxonomy.js";
 import { caseReferenceFrom } from "../state/machine.js";
@@ -77,9 +76,11 @@ export function buildHelplineCard(caseObj) {
 /**
  * Generates a PDF summary of the case using jsPDF.
  * @param {import('../state/machine.js').Case} caseObj
- * @returns {Blob}
+ * @returns {Promise<Blob>}
  */
-export function buildCasePdf(caseObj) {
+export async function buildCasePdf(caseObj) {
+  /* Loaded on demand — only reached when the user asks for a PDF. */
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;

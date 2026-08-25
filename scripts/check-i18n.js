@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 /**
- * Fails (non-zero exit) if src/i18n/en.json and src/i18n/ta.json don't
- * have identical key sets. Run via `npm run check:i18n`.
- * See AGENTS.md, i18n conventions.
+ * Fails (non-zero exit) if the locale files do not have identical key sets.
+ * Run via `npm run check:i18n`. See AGENTS.md, i18n conventions.
+ *
+ * The locale list is read from src/i18n/locales.js rather than hardcoded
+ * here, so adding a language cannot silently escape this check.
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -11,7 +13,13 @@ import path from "node:path";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const i18nDir = path.join(__dirname, "..", "src", "i18n");
 
-const LOCALES = ["en", "ta"];
+const localesSource = readFileSync(path.join(i18nDir, "locales.js"), "utf-8");
+const LOCALES = [...localesSource.matchAll(/\{\s*code:\s*"([a-z-]+)"/g)].map((m) => m[1]);
+
+if (LOCALES.length === 0) {
+  console.error("Could not read any locale codes from src/i18n/locales.js");
+  process.exit(1);
+}
 const IGNORE_KEYS = new Set(["_review_note"]);
 
 function loadKeys(locale) {
@@ -36,5 +44,8 @@ if (hasError) {
   console.error("\ni18n check failed — see AGENTS.md i18n conventions.");
   process.exit(1);
 } else {
-  console.log(`i18n check passed — ${allKeys.size} keys, ${LOCALES.length} locales, all in sync.`);
+  console.log(
+    `i18n check passed — ${allKeys.size} keys x ${LOCALES.length} locales ` +
+    `(${LOCALES.join(", ")}), all in sync.`,
+  );
 }

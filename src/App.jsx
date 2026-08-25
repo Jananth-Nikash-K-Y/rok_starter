@@ -7,8 +7,12 @@ import {
   ROK_STATES,
 } from "./state/machine.js";
 import { announce, setSpeechEnabled } from "./engines/a11yBus.js";
+import { detectLocale, rememberLocale } from "./i18n/detect.js";
+import { localeMeta } from "./i18n/locales.js";
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import GoldenHourClock from "./components/GoldenHourClock.jsx";
 import Icon from "./components/Icon.jsx";
+import LanguagePicker from "./components/LanguagePicker.jsx";
 import ProgressRail from "./components/ProgressRail.jsx";
 import CalmMode from "./screens/CalmMode.jsx";
 import CaseComplete from "./screens/CaseComplete.jsx";
@@ -24,7 +28,6 @@ import "./components/ui.css";
 import "./App.css";
 
 const SNAPSHOT_KEY = "rok:active-case";
-const LOCALE_KEY = "rok:locale";
 
 /** Which of the four freeze-relevant questions the user is on. */
 const STEP_FOR_STATE = {
@@ -58,14 +61,17 @@ function readSnapshot() {
 
 export default function App() {
   const [machine, setMachine] = useState(createInitialMachineState);
-  const [locale, setLocale] = useState(() => {
-    try {
-      return localStorage.getItem(LOCALE_KEY) ?? "en";
-    } catch {
-      return "en";
-    }
-  });
+  /* Guess the language before asking for it — a fraud victim should not
+     have to find a menu in a script they cannot read. The guess is always
+     visible and always changeable. */
+  const [detected] = useState(detectLocale);
+  const [locale, setLocale] = useState(detected.locale);
   const [speechOn, setSpeechOn] = useState(false);
+  /* Shown once when the language was guessed rather than chosen, so the
+     user knows it is a guess and knows it can be corrected. */
+  const [languageHintOpen, setLanguageHintOpen] = useState(
+    detected.source === "browser" || detected.source === "region",
+  );
   const [showRace, setShowRace] = useState(false);
   const t = useT(locale);
 
@@ -75,6 +81,13 @@ export default function App() {
   );
 
   const send = useCallback((event) => {
+    if (event.type === "RESET_CASE") {
+      try {
+        localStorage.removeItem(SNAPSHOT_KEY);
+      } catch {
+        /* Nothing to clear, or storage is blocked. */
+      }
+    }
     setMachine((current) => {
       const next = rokReducer(current, event);
       if (debugMode) {
@@ -106,12 +119,14 @@ export default function App() {
   }, [speechOn]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(LOCALE_KEY, locale);
-    } catch {
-      /* Locale preference is a convenience, not state worth failing over. */
-    }
+    document.documentElement.lang = locale;
   }, [locale]);
+
+  const chooseLocale = (code) => {
+    setLocale(code);
+    rememberLocale(code);
+    setLanguageHintOpen(false);
+  };
 
   const caseOpen = Boolean(machine.case.openedAt);
   const step = STEP_FOR_STATE[machine.value];
@@ -126,7 +141,13 @@ export default function App() {
     if (next) announce(t("app.speech_on"), { locale, speak: true });
   };
 
-  const screenProps = { send, t, locale, caseData: machine.case, speechOn };
+  const enableSpeech = () => {
+    if (!speechOn) setSpeechOn(true);
+  };
+
+  const screenProps = {
+    send, t, locale, caseData: machine.case, speechOn, onEnableSpeech: enableSpeech,
+  };
 
   if (showRace) {
     return (
@@ -156,16 +177,7 @@ export default function App() {
             <GoldenHourClock openedAt={machine.case.openedAt} label={t("app.clock_label")} />
           )}
 
-          <label className="rok-sr-only" htmlFor="rok-locale">{t("app.language")}</label>
-          <select
-            className="rok-lang"
-            id="rok-locale"
-            value={locale}
-            onChange={(event) => setLocale(event.target.value)}
-          >
-            <option value="en">English</option>
-            <option value="ta">தமிழ்</option>
-          </select>
+          <LanguagePicker locale={locale} onChange={chooseLocale} t={t} />
 
           <button
             className="rok-icon-btn"
@@ -194,12 +206,26 @@ export default function App() {
         <ProgressRail step={step} label={t("app.progress_label", { step: step + 1 })} />
       )}
 
+      {languageHintOpen && (
+        <p className="rok-lang-hint" role="status">
+          <Icon name="globe" size={18} />
+          <span lang={locale}>
+            {t("app.language_detected", { language: localeMeta(locale).native })}
+          </span>
+          <button type="button" onClick={() => setLanguageHintOpen(false)}>
+            {t("app.language_ok")}
+          </button>
+        </p>
+      )}
+
       {debugMode && (
         <p className="rok-debug-state">{t("app.current_state", { state: machine.value })}</p>
       )}
 
       <main className="rok-main" id="rok-main">
-        <Screen machine={machine} screenProps={screenProps} debugMode={debugMode} />
+        <ErrorBoundary t={t}>
+          <Screen machine={machine} screenProps={screenProps} debugMode={debugMode} />
+        </ErrorBoundary>
       </main>
 
       <footer className="rok-footer">

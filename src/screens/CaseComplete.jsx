@@ -20,6 +20,8 @@ export default function CaseComplete({ send, t, locale, caseData }) {
   const helplineLines = buildHelplineCard(caseData);
   const transaction = caseData.transactions[0] ?? {};
   const [copied, setCopied] = useState(false);
+  const [buildingPdf, setBuildingPdf] = useState(false);
+  const [confirmingReset, setConfirmingReset] = useState(false);
 
   useEffect(() => {
     announce(t("caseComplete.spoken", { reference }), { locale });
@@ -39,8 +41,13 @@ export default function CaseComplete({ send, t, locale, caseData }) {
     download(new Blob([packet], { type: "application/json" }), `rok-${reference}.json`);
   };
 
-  const downloadPdf = () => {
-    download(buildCasePdf(caseData), `rok-${reference}.pdf`);
+  const downloadPdf = async () => {
+    setBuildingPdf(true);
+    try {
+      download(await buildCasePdf(caseData), `rok-${reference}.pdf`);
+    } finally {
+      setBuildingPdf(false);
+    }
   };
 
   const copyHelpline = async () => {
@@ -128,7 +135,7 @@ export default function CaseComplete({ send, t, locale, caseData }) {
         <Button variant="quiet" icon="document" onClick={downloadPacket}>
           {t("caseComplete.download_packet")}
         </Button>
-        <Button variant="quiet" icon="document" onClick={downloadPdf}>
+        <Button variant="quiet" icon="document" disabled={buildingPdf} onClick={downloadPdf}>
           {t("caseComplete.download_pdf")}
         </Button>
       </div>
@@ -136,6 +143,28 @@ export default function CaseComplete({ send, t, locale, caseData }) {
       <Button variant="primary" block iconAfter="arrowRight" onClick={() => send({ type: "ENTER_CALM_MODE" })}>
         {t("app.calm_mode")}
       </Button>
+
+      {/* Discarding a case is the only destructive action in the app, and
+          the case exists nowhere but this browser — so it asks twice. */}
+      <div className="complete__reset">
+        {confirmingReset ? (
+          <>
+            <p lang={locale}>{t("caseComplete.reset_confirm")}</p>
+            <div className="complete__reset-actions">
+              <Button variant="ghost" onClick={() => setConfirmingReset(false)}>
+                {t("caseComplete.reset_cancel")}
+              </Button>
+              <Button variant="danger" onClick={() => send({ type: "RESET_CASE" })}>
+                {t("caseComplete.reset_yes")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Button variant="ghost" onClick={() => setConfirmingReset(true)}>
+            {t("caseComplete.reset")}
+          </Button>
+        )}
+      </div>
     </section>
   );
 }

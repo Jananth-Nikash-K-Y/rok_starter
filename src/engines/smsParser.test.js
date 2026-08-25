@@ -39,6 +39,22 @@ const expectations = [
     utr: "PYTM88291736452", beneficiaryVpa: null,
     direction: "debit", confidence: "high",
   },
+  {
+    /* Unlisted institution: everything is still recovered, but confidence
+       must not claim `high` for a bank we do not recognise. */
+    bank: "Suryoday Small Finance Bank", bankKnown: false, amount: 9750,
+    timestamp: "2026-08-24T15:45:30.000Z", timeKnown: true, accountTail: "3312",
+    utr: "774451920388", beneficiaryVpa: "quickcash@axl",
+    direction: "debit", confidence: "medium",
+  },
+  {
+    /* Money arriving. Parsed correctly, and filtered out of the Message
+       Wall — you cannot report a credit as a fraudulent debit. */
+    bank: "HDFC Bank", bankKnown: true, amount: 62000,
+    timestamp: "2026-07-31T18:30:00.000Z", timeKnown: false, accountTail: "4521",
+    utr: "220119384411", beneficiaryVpa: null,
+    direction: "credit", confidence: "high",
+  },
 ];
 
 describe("parseTransactionSms", () => {
@@ -119,5 +135,25 @@ describe("parseTransactionSms", () => {
     );
     expect(parsed.amount).toBeNull();
     expect(parsed.confidence).toBe("low");
+  });
+});
+
+describe("demo inbox integrity", () => {
+  /* The Message Wall must never offer a credit as something to report, and
+     must offer everything else. Guarding it here keeps the demo honest even
+     if the fixture set grows. */
+  it("contains exactly one credit and seven debits", () => {
+    const parsed = SAMPLE_INBOX.map((message) => parseTransactionSms(message.text));
+    expect(parsed.every(Boolean)).toBe(true);
+    expect(parsed.filter((entry) => entry.direction === "credit")).toHaveLength(1);
+    expect(parsed.filter((entry) => entry.direction === "debit")).toHaveLength(7);
+  });
+
+  it("recovers an amount and a reference from every message", () => {
+    SAMPLE_INBOX.forEach((message) => {
+      const parsed = parseTransactionSms(message.text);
+      expect(parsed.amount).toBeGreaterThan(0);
+      expect(parsed.utr).toBeTruthy();
+    });
   });
 });

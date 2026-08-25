@@ -1,3 +1,15 @@
+.triage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s5);
+  padding-block: var(--rok-s5) var(--rok-s7);
+}
+
+.triage__shout {
+  font-size: var(--rok-text-3xl);
+  line-height: 1.1;
+}
+
 .triage__alarm {
   align-items: center;
   background: var(--rok-red-tint);
@@ -20,18 +32,22 @@
   padding: 0;
 }
 
+/* Icon, number and words together — the instruction has to survive being
+   read, being heard, or only being looked at. */
 .triage__script li {
-  align-items: flex-start;
+  align-items: center;
   background: var(--rok-surface);
-  border: 1px solid var(--rok-line);
+  border: 2px solid var(--rok-line);
   border-radius: var(--rok-radius);
   counter-increment: step;
   display: flex;
   font-size: var(--rok-text-lg);
-  font-weight: 600;
+  font-weight: 650;
   gap: var(--rok-s3);
   padding: var(--rok-s4);
 }
+
+.triage__script li svg { color: var(--rok-red); flex: none; }
 
 .triage__script li::before {
   align-items: center;
@@ -43,9 +59,9 @@
   flex: none;
   font-size: var(--rok-text-sm);
   font-weight: 700;
-  height: 28px;
+  height: 30px;
   justify-content: center;
-  width: 28px;
+  width: 30px;
 }
 
 .triage__actions {

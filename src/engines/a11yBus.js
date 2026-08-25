@@ -1,56 +1,59 @@
 /**
  * Central announce() used by every screen on mount, so no screen can
- * silently forget to speak/announce its own prompt.
+ * silently forget to speak or announce its own prompt.
  * Full spec: docs/BUILD_BRIEF.md, section 6.
  *
  * Two subscribers:
- *  1. the aria-live region rendered once at the app root (id="a11y-live-region"
- *     already exists in index.html)
- *  2. speechSynthesis.speak(), gated by an app-level `speechEnabled` setting
+ *  1. the aria-live region rendered once at the app root
+ *  2. speechSynthesis, gated by the app-level speech setting
  */
 
-import { speak } from "./speech.js";
+import { speak, stopSpeaking } from "./speech.js";
 
-/** App-level speech toggle. Defaults to false (muted). */
 let speechEnabled = false;
+/** The last thing announced, so a screen's Listen button can repeat it. */
+let lastAnnouncement = { text: "", locale: "en" };
 
-/**
- * Enable or disable TTS announcements globally.
- * @param {boolean} enabled
- */
 export function setSpeechEnabled(enabled) {
   speechEnabled = Boolean(enabled);
+  if (!speechEnabled) stopSpeaking();
 }
 
-/** @returns {boolean} */
 export function isSpeechEnabled() {
   return speechEnabled;
 }
 
 /**
- * Announce text to assistive technology and optionally speak it aloud.
+ * Speak whatever the current screen last announced.
+ *
+ * This is what the Listen button calls. It works whether or not speech is
+ * globally on, because pressing it *is* the user asking for audio.
+ */
+export function replayLastAnnouncement(options = {}) {
+  if (!lastAnnouncement.text) return false;
+  return speak(lastAnnouncement.text, lastAnnouncement.locale, options);
+}
+
+/**
  * @param {string} text
- * @param {{ locale?: string, speak?: boolean }} [options]
+ * @param {{ locale?: string, speak?: boolean, onEnd?: () => void }} [options]
  */
 export function announce(text, options = {}) {
   if (!text) return;
 
-  /* 1. Update the aria-live region so screen readers pick it up. */
-  const liveRegion = typeof document !== "undefined"
+  const locale = options.locale ?? "en";
+  lastAnnouncement = { text, locale };
+
+  const region = typeof document !== "undefined"
     ? document.getElementById("a11y-live-region")
     : null;
 
-  if (liveRegion) {
-    /* Clear then set — forces assistive tech to re-read even if the
-       same text is announced twice in a row. */
-    liveRegion.textContent = "";
-    /* Use a microtask gap so the DOM mutation registers as two events. */
-    setTimeout(() => { liveRegion.textContent = text; }, 50);
+  if (region) {
+    /* Clear then set, so assistive tech re-reads even identical text. */
+    region.textContent = "";
+    setTimeout(() => { region.textContent = text; }, 50);
   }
 
-  /* 2. TTS via Web Speech API, if enabled. */
   const shouldSpeak = options.speak ?? speechEnabled;
-  if (shouldSpeak) {
-    speak(text, options.locale ?? "en-IN");
-  }
+  if (shouldSpeak) speak(text, locale, options);
 }

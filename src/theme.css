@@ -19,6 +19,12 @@
 @import "@fontsource/noto-sans-tamil/400.css";
 @import "@fontsource/noto-sans-tamil/600.css";
 @import "@fontsource/noto-sans-tamil/700.css";
+@import "@fontsource/noto-sans-devanagari/400.css";
+@import "@fontsource/noto-sans-devanagari/600.css";
+@import "@fontsource/noto-sans-devanagari/700.css";
+@import "@fontsource/noto-sans-telugu/400.css";
+@import "@fontsource/noto-sans-telugu/600.css";
+@import "@fontsource/noto-sans-telugu/700.css";
 
 :root {
   /* ── Ink ─────────────────────────────────────────────── */
@@ -85,6 +91,8 @@
   --rok-font: "Inter Variable", "Inter", "Noto Sans Tamil",
     system-ui, -apple-system, "Segoe UI", sans-serif;
   --rok-font-tamil: "Noto Sans Tamil", "Inter Variable", system-ui, sans-serif;
+  --rok-font-devanagari: "Noto Sans Devanagari", "Inter Variable", system-ui, sans-serif;
+  --rok-font-telugu: "Noto Sans Telugu", "Inter Variable", system-ui, sans-serif;
   --rok-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
 
   /* ── Shape ───────────────────────────────────────────── */
@@ -171,12 +179,22 @@ img, svg {
   max-width: 100%;
 }
 
-/* Tamil needs its own face and a little more line height to stay legible
-   at the sizes this audience needs. */
-:lang(ta) {
-  font-family: var(--rok-font-tamil);
-  line-height: 1.7;
+/* Indic scripts need their own faces, and more line height than Latin to
+   stay legible at the sizes this audience needs. Letter-spacing is reset to
+   zero because the negative tracking that suits Inter damages them. */
+:lang(ta) { font-family: var(--rok-font-tamil); }
+:lang(hi) { font-family: var(--rok-font-devanagari); }
+:lang(te) { font-family: var(--rok-font-telugu); }
+
+:lang(ta), :lang(hi), :lang(te) {
   letter-spacing: 0;
+  line-height: 1.65;
+}
+
+:lang(ta) h1, :lang(hi) h1, :lang(te) h1,
+:lang(ta) h2, :lang(hi) h2, :lang(te) h2 {
+  letter-spacing: 0;
+  line-height: 1.35;
 }
 
 /* ── Focus ──────────────────────────────────────────────
@@ -209,11 +227,28 @@ img, svg {
   border: 0;
 }
 
+/* Mobile is the design target; wider viewports get more room rather than a
+   stretched phone layout. Defined here beside the base rule so nothing in a
+   later stylesheet has to fight it. */
 .rok-container {
   width: 100%;
   max-width: 32rem;
   margin-inline: auto;
   padding-inline: var(--rok-s4);
+}
+
+@media (min-width: 720px) {
+  .rok-container {
+    max-width: 44rem;
+    padding-inline: var(--rok-s5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .rok-container {
+    max-width: 64rem;
+    padding-inline: var(--rok-s6);
+  }
 }
 
 .rok-stack {

@@ -63,8 +63,13 @@ opens only once the freeze-relevant complaint already exists.
 ## Status
 
 Built and running. The full flow works end to end, from the first tap to a
-downloadable complaint packet, in English and Tamil, with a live Golden Hour
-clock and a working screenshot-to-OCR path.
+downloadable complaint packet, with a live Golden Hour clock and a working
+screenshot-to-OCR path.
+
+The interface speaks **English, Hindi, Tamil and Telugu**, each in its own
+typeface. The language is detected from the browser before the user is asked
+for anything — a fraud victim should not have to find a menu in a script they
+cannot read — and the guess is shown, and changeable, from every screen.
 
 Every change must pass all five checks before it lands:
 
@@ -72,10 +77,11 @@ Every change must pass all five checks before it lands:
 npm run lint && npm run test && npm run build && npm run check:i18n && npm audit
 ```
 
-**Known gaps, stated plainly:** the Tamil copy has not been reviewed by a
-native speaker and should not be demoed as final until it has. A manual
-screen-reader pass and a Lighthouse run on the deployed build are still
-owed — the automated checks above do not replace either.
+**Known gaps, stated plainly:** none of the Hindi, Tamil or Telugu copy has
+been reviewed by a native speaker, and it should not be demoed as final
+until it has. A manual screen-reader pass and a Lighthouse run on the
+deployed build are still owed — the automated checks above do not replace
+either.
 
 ## What this deliberately is not
 
@@ -87,6 +93,9 @@ owed — the automated checks above do not replace either.
   the form is too slow, and it did not make the form shorter.
 - **Not a fake integration.** NCRP has no public API. Rok produces a
   validated packet and a 1930 read-aloud card, and says so on screen.
+- **Not a wall of text.** Every question is short enough to hear in one
+  breath, every answer is an icon plus a few words, and every screen has a
+  Listen button. Nothing autoplays.
 
 ## Stack
 

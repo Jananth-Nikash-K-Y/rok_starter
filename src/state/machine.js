@@ -114,6 +114,14 @@ export function rokReducer(state, event) {
       };
     }
 
+    /* Discards the current case and returns to the Palm. Only reachable
+       from a completed case, and the interface asks twice before sending
+       it — the case exists nowhere else, so this is the one destructive
+       action in the app. */
+    case "RESET_CASE":
+      if (!isCaseComplete(state.value)) return state;
+      return createInitialMachineState();
+
     case "OPEN_CASE":
       if (state.value !== ROK_STATES.IDLE) return state;
       return updateCase(

@@ -26,3 +26,12 @@
   text-align: left;
   white-space: nowrap;
 }
+
+/* Four channels read best as a 2x2 grid on a phone, one row on a laptop. */
+.rok-choice-grid--four {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 720px) {
+  .rok-choice-grid--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

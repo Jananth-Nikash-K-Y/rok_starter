@@ -16,8 +16,6 @@
  * forbids auto-submission.
  */
 
-import { createWorker } from "tesseract.js";
-
 /**
  * Known institutions, matched against the message body or its sign-off.
  * Order matters only where one name contains another.
@@ -237,6 +235,11 @@ export async function parseTransactionImage(file) {
 
   let worker;
   try {
+    /* Loaded on demand. Tesseract is by far the heaviest dependency here,
+       and most users never upload a screenshot — keeping it out of the
+       initial bundle is what lets the first screen appear immediately on a
+       slow connection, which is the only moment that matters. */
+    const { createWorker } = await import("tesseract.js");
     worker = await createWorker("eng", 1, {
       workerPath: "/tesseract/worker.min.js",
       corePath: "/tesseract/tesseract-core-simd-lstm.wasm.js",
