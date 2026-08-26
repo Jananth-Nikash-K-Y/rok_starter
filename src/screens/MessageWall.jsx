@@ -274,7 +274,10 @@ function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }
       </details>
 
       <div className="receipt__actions">
-        <Button variant="ghost" icon="arrowLeft" onClick={onBack}>
+        {/* `quiet`, not `ghost`: beside a filled confirm button, a
+            borderless one reads as secondary text rather than a control,
+            and going back is a first-class choice here. */}
+        <Button variant="quiet" icon="arrowLeft" onClick={onBack}>
           {t("messageWall.choose_different")}
         </Button>
         <Button variant="danger" iconAfter="arrowRight" onClick={onConfirm}>

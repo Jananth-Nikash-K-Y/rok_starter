@@ -61,6 +61,14 @@ Full design rationale, evidence register and diagrams:
 Everything else — ID, address, evidence — is deferred to a calm mode that
 opens only once the freeze-relevant complaint already exists.
 
+## For evaluators
+
+Sign in with **`evaluator` / `rok-2026`** (both printed on the sign-in
+screen). That one screen exists only because the submission asks for
+credentials — a citizen never sees it, and everything after it asks for
+nothing at all. Full submission details, including the video script and the
+250-word summary, are in [`SUBMISSION.md`](./SUBMISSION.md).
+
 ## See it in 60 seconds
 
 Open **NCRP today vs Rok** from the footer and press **Start the race**. Both

@@ -1,0 +1,23 @@
+# Normalise line endings on commit.
+#
+# A teammate editing on Windows produced a 12,000-line diff across 70 files
+# in which only 12 files had any real change: every other line differed only
+# by a carriage return. That destroys review, makes `git blame` useless, and
+# buries genuine work. Git now stores LF regardless of the editing platform.
+* text=auto eol=lf
+
+# Binary assets must never be line-ending normalised.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary
+*.docx binary
+*.wasm binary
+*.traineddata binary
+*.gz binary
+*.mp3 binary

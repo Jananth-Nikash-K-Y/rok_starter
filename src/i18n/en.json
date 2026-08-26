@@ -188,5 +188,21 @@
   "caseComplete.route_write_note": "No phone call needed",
   "caseComplete.route_helper": "Ask someone",
   "caseComplete.route_helper_note": "A helper continues your case",
-  "caseComplete.written_intro": "I am reporting a financial fraud. These are my case details."
+  "caseComplete.written_intro": "I am reporting a financial fraud. These are my case details.",
+  "gate.title": "Evaluator sign-in",
+  "gate.lede": "This submission asks for login credentials. Rok's whole argument is that a fraud victim should never be asked for any. So this screen exists for you, not for them — sign in once, and everything after it is the citizen experience, which asks for nothing at all.",
+  "gate.username": "Username",
+  "gate.password": "Password",
+  "gate.enter": "Enter the citizen experience",
+  "gate.wrong": "That did not match. The credentials are printed below.",
+  "gate.credentials": "Credentials:",
+  "gate.ncrp_asks": "Before NCRP accepts a complaint",
+  "gate.ncrp_1": "Register with name and mobile",
+  "gate.ncrp_2": "Wait for an OTP, valid 30 minutes",
+  "gate.ncrp_3": "Set a password",
+  "gate.ncrp_4": "Then begin a 21-step form",
+  "gate.rok_asks": "Before Rok opens a case",
+  "gate.nothing": "Nothing",
+  "gate.nothing_note": "The case is open on the first tap, before a single question is asked.",
+  "gate.disclaimer": "This gate is a demo affordance, not authentication. Rok has no server and no accounts; the check runs in your browser and protects nothing, because there is nothing behind it to protect."
 }

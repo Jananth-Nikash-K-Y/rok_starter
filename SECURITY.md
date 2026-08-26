@@ -18,6 +18,16 @@ PIN, password, or full account number.
 | A malicious browser extension could read `localStorage`. | Browser extensions can operate outside a website's normal security boundary, so CSP cannot fully prevent this. Rok keeps data local and does not create a server-side copy; users should use a trusted browser profile with only trusted extensions when handling a case. |
 | A helper could overshare case details through screen recording or screenshots. | Guardian handoff is limited to the same browser on the same device, avoiding a network relay. The POC does not promise cross-device sharing; helpers should only view or record case material with the victim's informed consent. |
 
+## The evaluator sign-in is not authentication
+
+The submission requires credentials, so `src/config/demoAccess.js` holds a
+username and password checked in the browser. This is a demo affordance and
+must never be described as a security control: the build is static, the
+value is readable in the source, and it is printed on the screen it guards.
+That is acceptable only because nothing sits behind it — no accounts, no
+server, no personal data, and no privileged action. Do not place anything
+sensitive behind it, and do not reuse the pattern.
+
 ## Out of scope for this submission
 
 No backend, serverless function, KV store, database, or network relay is

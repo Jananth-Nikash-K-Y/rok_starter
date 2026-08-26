@@ -17,6 +17,7 @@ import LanguagePicker from "./components/LanguagePicker.jsx";
 import ProgressRail from "./components/ProgressRail.jsx";
 import CalmMode from "./screens/CalmMode.jsx";
 import CaseComplete from "./screens/CaseComplete.jsx";
+import EvaluatorGate from "./screens/EvaluatorGate.jsx";
 import GuardianHandoff from "./screens/GuardianHandoff.jsx";
 import Jurisdiction from "./screens/Jurisdiction.jsx";
 import MessageWall from "./screens/MessageWall.jsx";
@@ -30,6 +31,9 @@ import "./components/ui.css";
 import "./App.css";
 
 const SNAPSHOT_KEY = "rok:active-case";
+/* Session, not local: an evaluator signs in once per visit, and a fresh
+   visitor always sees the contrast the gate is there to make. */
+const UNLOCK_KEY = "rok:evaluator";
 
 /** Which of the four freeze-relevant questions the user is on. */
 const STEP_FOR_STATE = {
@@ -70,6 +74,13 @@ export default function App() {
   const [detected] = useState(detectLocale);
   const [locale, setLocale] = useState(detected.locale);
   const [speechOn, setSpeechOn] = useState(false);
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return sessionStorage.getItem(UNLOCK_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
   /* Shown once when the language was guessed rather than chosen, so the
      user knows it is a guess and knows it can be corrected. */
   const [languageHintOpen, setLanguageHintOpen] = useState(
@@ -148,9 +159,52 @@ export default function App() {
     if (!speechOn) setSpeechOn(true);
   };
 
+  const unlock = () => {
+    try {
+      sessionStorage.setItem(UNLOCK_KEY, "1");
+    } catch {
+      /* Private browsing — the gate simply reappears on reload. */
+    }
+    setUnlocked(true);
+  };
+
   const screenProps = {
     send, t, locale, caseData: machine.case, speechOn, onEnableSpeech: enableSpeech,
   };
+
+  /* The gate keeps the language picker available, so an evaluator can read
+     it in their own language before they ever reach the product. */
+  if (!unlocked) {
+    return (
+      <div className="rok-app">
+        <p className="rok-otp-banner">
+          <Icon name="shield" size={16} />
+          <span>{t("neverAsk.otp_banner")}</span>
+        </p>
+
+        <header className="rok-appbar">
+          <span className="rok-appbar__brand">
+            <span>Rok</span>
+            <span lang="hi">रोक</span>
+          </span>
+          <div className="rok-appbar__tools">
+            <LanguagePicker locale={locale} onChange={chooseLocale} t={t} />
+            <AccessibilityMenu t={t} />
+          </div>
+        </header>
+
+        <main className="rok-main" id="rok-main">
+          <ErrorBoundary t={t}>
+            <EvaluatorGate onUnlock={unlock} t={t} locale={locale} />
+          </ErrorBoundary>
+        </main>
+
+        <footer className="rok-footer">
+          <p>{t("footer.not_official")}</p>
+        </footer>
+      </div>
+    );
+  }
 
   if (showRace) {
     return (
