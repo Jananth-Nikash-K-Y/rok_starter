@@ -15,6 +15,9 @@ import Icon from "./Icon.jsx";
  * survive the reload that also restores an in-progress case.
  */
 const TEXT_SIZES = ["normal", "large", "largest"];
+/* System first: a victim reaching for their phone at midnight should get
+   the theme their device already decided on, not a white flash. */
+const THEMES = ["system", "light", "dark"];
 const STORAGE_KEY = "rok:display";
 
 function readStored() {
@@ -30,19 +33,26 @@ export default function AccessibilityMenu({ t }) {
   const stored = useRef(readStored()).current;
   const [textSize, setTextSize] = useState(stored?.textSize ?? "normal");
   const [highContrast, setHighContrast] = useState(stored?.highContrast ?? false);
+  const [theme, setTheme] = useState(stored?.theme ?? "system");
   const [open, setOpen] = useState(false);
   const panel = useRef(null);
   const trigger = useRef(null);
 
   useEffect(() => {
-    document.documentElement.dataset.textSize = textSize;
-    document.documentElement.dataset.contrast = highContrast ? "high" : "normal";
+    const root = document.documentElement;
+    root.dataset.textSize = textSize;
+    root.dataset.contrast = highContrast ? "high" : "normal";
+    /* Absent attribute means "follow the system", which the media query in
+       theme.css handles. Only an explicit choice is stamped. */
+    if (theme === "system") delete root.dataset.theme;
+    else root.dataset.theme = theme;
+
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ textSize, highContrast }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ textSize, highContrast, theme }));
     } catch {
       /* A display preference is never worth failing over. */
     }
-  }, [textSize, highContrast]);
+  }, [textSize, highContrast, theme]);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -90,6 +100,27 @@ export default function AccessibilityMenu({ t }) {
                 >
                   <span style={{ fontSize: `${0.9 + index * 0.35}rem` }}>A</span>
                   <span className="rok-sr-only">{t(`display.size_${size}`)}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="a11y__group">
+            <legend>{t("display.theme")}</legend>
+            <div className="a11y__sizes">
+              {THEMES.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className="a11y__theme"
+                  aria-pressed={theme === option}
+                  onClick={() => setTheme(option)}
+                >
+                  <Icon
+                    name={option === "light" ? "sun" : option === "dark" ? "moon" : "contrast"}
+                    size={18}
+                  />
+                  <span>{t(`display.theme_${option}`)}</span>
                 </button>
               ))}
             </div>

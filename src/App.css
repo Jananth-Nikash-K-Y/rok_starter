@@ -29,8 +29,8 @@
 
 .rok-otp-banner {
   align-items: center;
-  background: var(--rok-ink);
-  color: var(--rok-ink-invert);
+  background: var(--rok-banner-bg);
+  color: var(--rok-banner-ink);
   display: flex;
   font-size: var(--rok-text-xs);
   font-weight: 600;

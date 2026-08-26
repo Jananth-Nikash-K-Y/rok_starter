@@ -1,0 +1,21 @@
+{
+  "name": "Rok — stop the money",
+  "short_name": "Rok",
+  "description": "Report a financial cyber fraud in under a minute. No typing, no OTP, no English required.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f8f6",
+  "theme_color": "#0c2354",
+  "lang": "en-IN",
+  "dir": "ltr",
+  "categories": ["government", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

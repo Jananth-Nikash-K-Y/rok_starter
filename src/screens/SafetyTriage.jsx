@@ -80,7 +80,6 @@ export default function SafetyTriage({ send, t, locale, isHangupScript = false }
 
   return (
     <Screen
-      step={1}
       tone="neutral"
       t={t}
       locale={locale}

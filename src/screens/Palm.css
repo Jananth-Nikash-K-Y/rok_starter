@@ -9,26 +9,46 @@
   text-align: center;
 }
 
+/* The mark breathes rather than sits. One slow pulse, no loop urgency —
+   the screen should feel alive and calm at the same time, because the
+   person looking at it is neither. */
+/* The mark stands on its own — no plate, no ring. A single slow ripple
+   behind it reads as an invitation rather than an alarm. */
 .palm__mark {
-  align-items: center;
-  background: var(--rok-red-tint);
-  border: 2px solid var(--rok-red-line);
-  border-radius: var(--rok-radius-pill);
   color: var(--rok-red);
-  display: flex;
-  height: 104px;
-  justify-content: center;
-  width: 104px;
+  position: relative;
+}
+
+.palm__mark::after {
+  animation: palm-pulse 3.4s var(--rok-ease) infinite;
+  border: 1px solid var(--rok-red);
+  border-radius: 22px;
+  content: "";
+  inset: -6px;
+  position: absolute;
+}
+
+@keyframes palm-pulse {
+  0%   { opacity: 0.4; transform: scale(1); }
+  70%  { opacity: 0; transform: scale(1.22); }
+  100% { opacity: 0; transform: scale(1.22); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .palm__mark::after { display: none; }
 }
 
 .palm__title {
   font-size: var(--rok-text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.03em;
   max-width: 14ch;
 }
 
 /* The one target on the screen. Sized so a shaking hand cannot miss it. */
 .palm__button {
   background: var(--rok-red);
+  border: 2px solid transparent;
   border-radius: var(--rok-radius-lg);
   box-shadow: var(--rok-shadow-lg);
   color: var(--rok-ink-invert);

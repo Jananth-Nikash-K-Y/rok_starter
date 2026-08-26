@@ -102,7 +102,6 @@ export default function MessageWall({ send, t, locale, caseData }) {
 
   return (
     <Screen
-      step={1}
       t={t}
       locale={locale}
       question={t("messageWall.title")}

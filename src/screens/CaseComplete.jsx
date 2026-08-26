@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button.jsx";
 import Icon from "../components/Icon.jsx";
 import { announce } from "../engines/a11yBus.js";
-import { buildCasePdf, buildHelplineCard, buildNcrpPacket } from "../engines/outputs.js";
+import { buildHelplineCard, buildNcrpPacket } from "../engines/outputs.js";
+import { buildCaseDocument } from "../engines/caseDocument.js";
 import { caseReferenceFrom } from "../state/machine.js";
 import { formatIndianCurrency } from "../i18n/format.js";
 import "./CaseComplete.css";
@@ -21,6 +22,10 @@ export default function CaseComplete({ send, t, locale, caseData }) {
   const transaction = caseData.transactions[0] ?? {};
   const [shared, setShared] = useState(false);
   const [buildingPdf, setBuildingPdf] = useState(false);
+  const [autoSave, setAutoSave] = useState("pending");
+  /* Which case has already been auto-saved, so a re-mount cannot produce a
+     second file in the user's downloads folder. */
+  const autoSavedCaseId = useRef(null);
   const [confirmingReset, setConfirmingReset] = useState(false);
 
   useEffect(() => {
@@ -44,11 +49,38 @@ export default function CaseComplete({ send, t, locale, caseData }) {
   const downloadPdf = async () => {
     setBuildingPdf(true);
     try {
-      download(await buildCasePdf(caseData), `rok-${reference}.pdf`);
+      download(await buildCaseDocument(caseData, t, locale), `rok-${reference}.pdf`);
+      setAutoSave("saved");
+    } catch {
+      setAutoSave("failed");
     } finally {
       setBuildingPdf(false);
     }
   };
+
+  /* The record saves itself the moment the case exists.
+     A victim should not have to notice a download button to end up holding
+     the evidence — and this runs off the tap that completed the read-back,
+     so it is a user-initiated download, not a drive-by one. A browser that
+     blocks it still leaves the button below, and `failed` says so. */
+  useEffect(() => {
+    if (autoSavedCaseId.current === caseData.id) return;
+    autoSavedCaseId.current = caseData.id;
+
+    /* No cleanup cancellation here on purpose. StrictMode mounts an effect
+       twice in development; cancelling on the first unmount killed the only
+       in-flight build and the notice sat on "saving" forever. Guarding by
+       case id gives exactly one file per case in both dev and production. */
+    buildCaseDocument(caseData, t, locale)
+      .then((blob) => {
+        download(blob, `rok-${reference}.pdf`);
+        setAutoSave("saved");
+      })
+      .catch(() => setAutoSave("failed"));
+    /* Once per case: rebuilding on a locale change would save a second
+       copy. The manual button below covers wanting it in another language. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caseData.id]);
 
   /* The written route. Share sheet where the device offers one, clipboard
      everywhere else — either way the complaint leaves as text, with no
@@ -172,6 +204,11 @@ export default function CaseComplete({ send, t, locale, caseData }) {
           <p lang={locale}>{t("caseComplete.not_submitted_detail")}</p>
         </div>
       </div>
+
+      <p className={`complete__autosave complete__autosave--${autoSave}`} role="status" lang={locale}>
+        <Icon name={autoSave === "saved" ? "check" : autoSave === "failed" ? "alert" : "clock"} size={18} />
+        <span>{t(`caseComplete.autosave_${autoSave}`)}</span>
+      </p>
 
       <div className="complete__downloads">
         <Button variant="quiet" icon="document" onClick={downloadPacket}>

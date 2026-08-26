@@ -8,13 +8,17 @@
  * belongs on the control that wraps them.
  */
 
+/* 1.6 rather than 2. A two-pixel stroke on a 24 grid reads heavy and
+   slightly crude next to text set in Inter; 1.6 sits at the same optical
+   weight as a 600 label, which is what makes a set look drawn rather than
+   assembled. Contrast is unaffected — these are never the only signal. */
 const BASE = {
   width: 24,
   height: 24,
   viewBox: "0 0 24 24",
   fill: "none",
   stroke: "currentColor",
-  strokeWidth: 2,
+  strokeWidth: 1.6,
   strokeLinecap: "round",
   strokeLinejoin: "round",
   "aria-hidden": "true",
@@ -150,6 +154,13 @@ const PATHS = {
       <path d="M12 18v3" />
     </>
   ),
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4.2" />
+      <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" />
+    </>
+  ),
+  moon: <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />,
   globe: (
     <>
       <circle cx="12" cy="12" r="9" />
@@ -162,8 +173,11 @@ const PATHS = {
 export default function Icon({ name, size = 24, className }) {
   const path = PATHS[name];
   if (!path) return null;
+  /* Scale the stroke with the glyph so a 14px icon does not look hairline
+     and a 40px one does not look bloated. */
+  const strokeWidth = size >= 32 ? 1.5 : size <= 16 ? 1.9 : 1.6;
   return (
-    <svg {...BASE} width={size} height={size} className={className}>
+    <svg {...BASE} width={size} height={size} strokeWidth={strokeWidth} className={className}>
       {path}
     </svg>
   );

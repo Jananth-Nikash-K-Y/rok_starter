@@ -14,8 +14,6 @@ import { announce, replayLastAnnouncement } from "../engines/a11yBus.js";
 export default function Screen({
   question,
   spoken,
-  step,
-  totalSteps = 4,
   why,
   spokenKey,
   tone = "neutral",
@@ -53,14 +51,9 @@ export default function Screen({
         split ? "screen--split" : "",
       ].filter(Boolean).join(" ")}
     >
+      {/* The numbered strip under the masthead already states the step, so
+          repeating it here was two answers to the same question. */}
       <header className="screen__head">
-        {step !== undefined && (
-          <p className="screen__step">
-            <span className="screen__step-count">{step}</span>
-            <span className="screen__step-of">/ {totalSteps}</span>
-          </p>
-        )}
-
         <h1 className="screen__question" lang={locale} ref={heading} tabIndex={-1}>
           {question}
         </h1>

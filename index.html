@@ -4,7 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="description" content="Rok — report a financial fraud in under a minute, using only your own bank messages." />
-    <meta name="theme-color" content="#C62828" />
+    <!-- The masthead navy, so the browser chrome continues the page rather
+         than clashing with it. The value here was three palettes stale. -->
+    <meta name="theme-color" content="#0c2354" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a121f" media="(prefers-color-scheme: dark)" />
+
+    <!-- SVG favicon: one file, every size, no export step. There is no
+         apple-touch-icon link because iOS needs a PNG and shipping a link
+         to a file that does not exist is worse than shipping none — see
+         BACKLOG.md. -->
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>Rok — रोक</title>
   </head>
   <body>

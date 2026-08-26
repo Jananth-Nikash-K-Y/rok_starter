@@ -14,7 +14,6 @@ export default function Scope({ send, t, locale, caseData }) {
 
   return (
     <Screen
-      step={2}
       t={t}
       locale={locale}
       question={t("scope.question")}

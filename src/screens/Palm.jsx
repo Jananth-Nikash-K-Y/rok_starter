@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Icon from "../components/Icon.jsx";
+import Logo from "../components/Logo.jsx";
 import { announce, replayLastAnnouncement } from "../engines/a11yBus.js";
 import { canListen, canSpeak, listenOnce, whenVoicesReady } from "../engines/speech.js";
 import "./Palm.css";
@@ -55,7 +56,7 @@ export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
   return (
     <section className="rok-container palm">
       <div className="palm__mark" aria-hidden="true">
-        <Icon name="palm" size={64} />
+        <Logo size={88} />
       </div>
 
       <h1 className="palm__title" lang={locale}>{t("palm.caption")}</h1>

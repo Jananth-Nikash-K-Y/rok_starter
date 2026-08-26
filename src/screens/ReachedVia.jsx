@@ -27,7 +27,6 @@ export default function ReachedVia({ send, t, locale, caseData, debugMode }) {
 
   return (
     <Screen
-      step={3}
       t={t}
       locale={locale}
       question={t("reachedVia.question")}

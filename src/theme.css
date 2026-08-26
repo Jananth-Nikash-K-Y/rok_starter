@@ -15,7 +15,8 @@
   component. If something is missing, add a token here.
 */
 
-@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/instrument-sans/index.css";
+@import "@fontsource/instrument-serif/400.css";
 @import "@fontsource/noto-sans-tamil/400.css";
 @import "@fontsource/noto-sans-tamil/600.css";
 @import "@fontsource/noto-sans-tamil/700.css";
@@ -28,45 +29,61 @@
 
 :root {
   /* ── Ink ─────────────────────────────────────────────── */
-  --rok-ink: #0f1626;
-  --rok-ink-soft: #454e69;
-  --rok-ink-mute: #656e8a;
+  --rok-ink: #16181d;
+  --rok-ink-soft: #4a4f59;
+  --rok-ink-mute: #6b7079;
   --rok-ink-invert: #ffffff;
 
+  /* The permanent OTP warning. It has its own tokens because deriving it
+     from --rok-ink would invert it in dark mode into a bright white bar
+     across the top of the screen — the opposite of what someone reaching
+     for their phone at midnight needs. */
+  --rok-banner-bg: #0f1626;
+  --rok-banner-ink: #ffffff;
+
+  /* The identity band at the top of every screen. */
+  --rok-masthead: #0c2354;
+  --rok-masthead-ink: #ffffff;
+
   /* ── Surfaces ────────────────────────────────────────── */
+  /* Near-white with the faintest warmth. Enough to soften a screen read at
+     2am, nowhere near enough to look beige. */
   --rok-surface: #ffffff;
-  --rok-surface-sunken: #f3f5fa;
-  --rok-surface-quiet: #fafbfd;
+  --rok-surface-sunken: #f8f8f6;
+  --rok-surface-quiet: #fcfcfb;
   /* Decorative separators; no contrast requirement. */
-  --rok-line: #dce1ec;
+  --rok-line: #e7e7e3;
   /* Borders of interactive components (quiet buttons, inputs, dashed drop
      zones). WCAG 1.4.11 requires 3:1 against the adjacent surface, so this
      is darker than it looks like it needs to be: 3.46:1 on white and
      3.17:1 on the sunken page background. */
-  --rok-line-strong: #7f8aa3;
+  --rok-line-strong: #8c8c95;
 
   /* ── Semantic colour ─────────────────────────────────────
      Red = the money is leaving. Indigo = trusted action.
      Green = the case exists. Amber = check this yourself.
      Never used decoratively, and never as the only signal. */
-  --rok-red: #bc1f29;
-  --rok-red-deep: #8b1119;
-  --rok-red-tint: #fdeced;
-  --rok-red-line: #f3bfc3;
+  --rok-red: #b32219;
+  --rok-red-deep: #85160f;
+  --rok-red-tint: #fdf2f0;
+  --rok-red-line: #eecdc7;
 
-  --rok-indigo: #2d3a9e;
-  --rok-indigo-deep: #1e2770;
-  --rok-indigo-tint: #eceefb;
-  --rok-indigo-line: #c3c9ef;
+  /* One deep, quiet navy carries almost everything. Restraint is what
+     separates a considered interface from a decorated one: colour appears
+     where it means something and nowhere else. */
+  --rok-indigo: #1b2f63;
+  --rok-indigo-deep: #101d42;
+  --rok-indigo-tint: #f0f2f7;
+  --rok-indigo-line: #ccd2e2;
 
-  --rok-green: #0e6b47;
-  --rok-green-deep: #084c32;
-  --rok-green-tint: #e4f3ec;
-  --rok-green-line: #b3ddc8;
+  --rok-green: #0b6046;
+  --rok-green-deep: #064331;
+  --rok-green-tint: #eef6f2;
+  --rok-green-line: #bcdccc;
 
-  --rok-amber: #855000;
-  --rok-amber-tint: #fdf2e0;
-  --rok-amber-line: #efd3a5;
+  --rok-amber: #7a4c07;
+  --rok-amber-tint: #fdf6ea;
+  --rok-amber-line: #e8d5b0;
 
   /* ── Spacing scale — use only these ──────────────────── */
   --rok-s1: 4px;
@@ -79,42 +96,173 @@
   --rok-s8: 64px;
 
   /* ── Type scale ──────────────────────────────────────── */
+  /* Closer steps than before. Large jumps read as shouting; a tighter
+     ratio reads as considered, and still clears every legibility floor
+     this audience needs. */
   --rok-text-xs: 0.8125rem;
   --rok-text-sm: 0.9375rem;
   --rok-text-md: 1.0625rem;
-  --rok-text-lg: 1.25rem;
-  --rok-text-xl: 1.5rem;
-  --rok-text-2xl: 2rem;
-  --rok-text-3xl: 2.625rem;
-  --rok-text-4xl: 3.25rem;
+  --rok-text-lg: 1.1875rem;
+  --rok-text-xl: 1.4375rem;
+  --rok-text-2xl: 1.75rem;
+  --rok-text-3xl: 2.25rem;
+  --rok-text-4xl: 2.875rem;
 
-  --rok-font: "Inter Variable", "Inter", "Noto Sans Tamil",
+  /* Instrument Sans: a grotesque with slightly narrow proportions and open
+     apertures. It fits more of a long Tamil or Hindi sentence on a phone
+     line than Inter does, and its higher x-height keeps small labels
+     legible — both of which matter more here than novelty. Indic scripts
+     stay on Noto, which is the only family with complete coverage. */
+  --rok-font: "Instrument Sans Variable", "Instrument Sans",
     system-ui, -apple-system, "Segoe UI", sans-serif;
-  --rok-font-tamil: "Noto Sans Tamil", "Inter Variable", system-ui, sans-serif;
-  --rok-font-devanagari: "Noto Sans Devanagari", "Inter Variable", system-ui, sans-serif;
-  --rok-font-telugu: "Noto Sans Telugu", "Inter Variable", system-ui, sans-serif;
+  --rok-font-tamil: "Noto Sans Tamil", "Instrument Sans Variable", system-ui, sans-serif;
+  --rok-font-devanagari: "Noto Sans Devanagari", "Instrument Sans Variable", system-ui, sans-serif;
+  --rok-font-telugu: "Noto Sans Telugu", "Instrument Sans Variable", system-ui, sans-serif;
   --rok-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  /* Instrument Serif, drawn as a companion to the sans above, so the mark
+     and the interface look related rather than merely adjacent. Used for
+     the wordmark and the two numbers that deserve emphasis — the amount
+     and the case reference — and nowhere else. */
+  --rok-font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
 
   /* ── Shape ───────────────────────────────────────────── */
-  --rok-radius-sm: 10px;
-  --rok-radius: 16px;
-  --rok-radius-lg: 24px;
+  /* Squared. Heavily rounded corners read as a consumer app; a public
+     service reads as a document. 2/4/8 keeps edges crisp at every text
+     size without ever looking harsh. */
+  --rok-radius-sm: 2px;
+  --rok-radius: 4px;
+  --rok-radius-lg: 8px;
   --rok-radius-pill: 999px;
 
   /* ── Elevation — navy-tinted, never neutral grey ─────── */
-  --rok-shadow-sm: 0 1px 2px rgba(15, 22, 38, 0.06), 0 1px 3px rgba(15, 22, 38, 0.04);
-  --rok-shadow: 0 2px 4px rgba(15, 22, 38, 0.06), 0 6px 16px rgba(15, 22, 38, 0.08);
-  --rok-shadow-lg: 0 4px 8px rgba(15, 22, 38, 0.07), 0 16px 40px rgba(15, 22, 38, 0.12);
+  /* Hairlines and the faintest lift. Structure still carries hierarchy —
+     it survives high-contrast mode where a blurred shadow would not — but
+     stated quietly rather than with a heavy ledge. */
+  --rok-shadow-sm: none;
+  --rok-shadow: 0 1px 2px rgba(22, 24, 29, 0.05);
+  --rok-shadow-lg: 0 4px 16px rgba(22, 24, 29, 0.08);
 
-  /* ── Motion ──────────────────────────────────────────── */
+  /* ── Motion ──────────────────────────────────────────────
+     `ease` decelerates: things arrive and settle rather than sliding to a
+     stop. `spring` overshoots very slightly and is reserved for a moment
+     that deserves emphasis — the case reference landing, the receipt
+     resolving. Never for routine state changes. */
   --rok-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --rok-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
   --rok-fast: 150ms;
   --rok-base: 220ms;
   --rok-slow: 320ms;
+  /* Gap between staged reveals within one screen. */
+  --rok-stagger: 55ms;
 
   /* WCAG 2.5.5 minimum target, raised for the audience. */
   --rok-tap-target-min: 56px;
   --rok-measure: 34rem;
+}
+
+/* ── Dark theme ────────────────────────────────────────────
+   The fraud in this product's own scenario happens at 11:47 PM. A victim
+   reaching for their phone in a dark room should not be hit with a full
+   white screen, so Rok follows the system preference by default and can be
+   pinned either way from the display menu.
+
+   This is a token swap and nothing more: no component knows the theme
+   exists. Surfaces are deep navy rather than black — pure black on OLED
+   smears during scrolling and raises the contrast of every edge past
+   comfort — and semantic colours are lifted, not merely inverted, because
+   a dark-red on near-black is unreadable. */
+
+/* Dark, chosen explicitly from the display menu. This block is the reason
+   the menu's Dark option works at all on a machine whose system is set to
+   light — the media query below only covers the system preference. The two
+   token lists are identical and must stay that way. */
+:root[data-theme="dark"] {
+  --rok-ink: #eef2f9;
+  --rok-ink-soft: #b4bed3;
+  --rok-ink-mute: #8b96ad;
+  --rok-ink-invert: #0b0f1a;
+  --rok-banner-bg: #1c1218;
+  --rok-banner-ink: #ffd9dc;
+  --rok-masthead: #0a121f;
+  --rok-masthead-ink: #eef2f9;
+
+  --rok-surface: #191b21;
+  --rok-surface-sunken: #0e0f13;
+  --rok-surface-quiet: #202329;
+  --rok-line: #33363f;
+  --rok-line-strong: #6d7280;
+
+  --rok-red: #ef4d57;
+  --rok-red-deep: #ff7a82;
+  --rok-red-tint: #2c1418;
+  --rok-red-line: #5e2830;
+
+  --rok-indigo: #8ea6e8;
+  --rok-indigo-deep: #b6c6f5;
+  --rok-indigo-tint: #161d2e;
+  --rok-indigo-line: #34405c;
+
+  --rok-green: #34b37c;
+  --rok-green-deep: #5fd39c;
+  --rok-green-tint: #0f2620;
+  --rok-green-line: #1f4d3a;
+
+  --rok-amber: #e0a94a;
+  --rok-amber-tint: #2a2010;
+  --rok-amber-line: #55431c;
+
+  /* On a dark ground a shadow reads as nothing. Elevation is carried by
+     a hairline plus a deeper, softer shadow instead. */
+  --rok-shadow-sm: none;
+  --rok-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  --rok-shadow-lg: 0 2px 0 rgba(0, 0, 0, 0.6);
+  --rok-ledge: #000000;
+}
+
+/* Dark, inherited from the operating system. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --rok-ink: #eef2f9;
+    --rok-ink-soft: #b4bed3;
+    --rok-ink-mute: #8b96ad;
+    --rok-ink-invert: #0b0f1a;
+    --rok-banner-bg: #1c1218;
+    --rok-banner-ink: #ffd9dc;
+    --rok-masthead: #0a121f;
+    --rok-masthead-ink: #eef2f9;
+
+    --rok-surface: #191b21;
+    --rok-surface-sunken: #0e0f13;
+    --rok-surface-quiet: #202329;
+    --rok-line: #33363f;
+    --rok-line-strong: #6d7280;
+
+    --rok-red: #ef4d57;
+    --rok-red-deep: #ff7a82;
+    --rok-red-tint: #2c1418;
+    --rok-red-line: #5e2830;
+
+    --rok-indigo: #8ea6e8;
+    --rok-indigo-deep: #b6c6f5;
+    --rok-indigo-tint: #161d2e;
+    --rok-indigo-line: #34405c;
+
+    --rok-green: #34b37c;
+    --rok-green-deep: #5fd39c;
+    --rok-green-tint: #0f2620;
+    --rok-green-line: #1f4d3a;
+
+    --rok-amber: #e0a94a;
+    --rok-amber-tint: #2a2010;
+    --rok-amber-line: #55431c;
+
+    /* On a dark ground a shadow reads as nothing. Elevation is carried by
+       a hairline plus a deeper, softer shadow instead. */
+    --rok-shadow-sm: none;
+    --rok-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+    --rok-shadow-lg: 0 2px 0 rgba(0, 0, 0, 0.6);
+    --rok-ledge: #000000;
+  }
 }
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -144,6 +292,7 @@ html[data-text-size="largest"] { font-size: 125%; }
 /* High contrast. Only tokens are redefined, so every component follows
    without knowing this mode exists. Ratios here clear WCAG AAA (7:1) for
    body text rather than AA. */
+html[data-contrast="high"][data-theme="light"],
 html[data-contrast="high"] {
   --rok-ink: #000000;
   --rok-ink-soft: #1a1f2e;
@@ -174,6 +323,100 @@ html[data-contrast="high"] {
   --rok-shadow-lg: 0 0 0 2px #000000;
 }
 
+/* High contrast, dark.
+   Needed because the dark selector `:root:not([data-theme="light"])` scores
+   higher than `html[data-contrast="high"]`, so without this pair the
+   high-contrast switch silently did nothing for anyone in dark mode. Both
+   forms below out-specify it. Every pairing here clears AAA. */
+/* High contrast on an explicitly dark theme. */
+html[data-contrast="high"][data-theme="dark"] {
+  --rok-ink: #ffffff;
+  --rok-ink-soft: #e8ecf5;
+  --rok-ink-mute: #cdd4e2;
+  --rok-ink-invert: #000000;
+
+  --rok-surface: #000000;
+  --rok-surface-sunken: #000000;
+  --rok-surface-quiet: #0a0d15;
+  --rok-line: #8892a8;
+  --rok-line-strong: #ffffff;
+
+  --rok-red: #ff7079;
+  --rok-red-deep: #ff9aa1;
+  --rok-red-tint: #2a0a0e;
+  --rok-red-line: #ff7079;
+
+  --rok-indigo: #9dabff;
+  --rok-indigo-deep: #c2ccff;
+  --rok-indigo-tint: #0d1130;
+  --rok-indigo-line: #9dabff;
+
+  --rok-green: #4fe3a4;
+  --rok-green-deep: #86f0c3;
+  --rok-green-tint: #042014;
+  --rok-green-line: #4fe3a4;
+
+  --rok-amber: #ffc95e;
+  --rok-amber-tint: #241a05;
+  --rok-amber-line: #ffc95e;
+
+  --rok-banner-bg: #000000;
+  --rok-banner-ink: #ffffff;
+  --rok-masthead: #000000;
+  --rok-masthead-ink: #ffffff;
+
+  --rok-shadow-sm: 0 0 0 1px #ffffff;
+  --rok-shadow: 0 0 0 1px #ffffff;
+  --rok-shadow-lg: 0 0 0 2px #ffffff;
+}
+
+/* High contrast on a system-dark theme. This must stay inside the media
+   query: as a bare `:not([data-theme="light"])` it also matched a system
+   LIGHT machine with no explicit theme set, turning high contrast into
+   white-on-black for someone who never asked for dark. */
+@media (prefers-color-scheme: dark) {
+  html[data-contrast="high"]:not([data-theme="light"]) {
+    --rok-ink: #ffffff;
+    --rok-ink-soft: #e8ecf5;
+    --rok-ink-mute: #cdd4e2;
+    --rok-ink-invert: #000000;
+
+    --rok-surface: #000000;
+    --rok-surface-sunken: #000000;
+    --rok-surface-quiet: #0a0d15;
+    --rok-line: #8892a8;
+    --rok-line-strong: #ffffff;
+
+    --rok-red: #ff7079;
+    --rok-red-deep: #ff9aa1;
+    --rok-red-tint: #2a0a0e;
+    --rok-red-line: #ff7079;
+
+    --rok-indigo: #9dabff;
+    --rok-indigo-deep: #c2ccff;
+    --rok-indigo-tint: #0d1130;
+    --rok-indigo-line: #9dabff;
+
+    --rok-green: #4fe3a4;
+    --rok-green-deep: #86f0c3;
+    --rok-green-tint: #042014;
+    --rok-green-line: #4fe3a4;
+
+    --rok-amber: #ffc95e;
+    --rok-amber-tint: #241a05;
+    --rok-amber-line: #ffc95e;
+
+    --rok-banner-bg: #000000;
+    --rok-banner-ink: #ffffff;
+    --rok-masthead: #000000;
+    --rok-masthead-ink: #ffffff;
+
+    --rok-shadow-sm: 0 0 0 1px #ffffff;
+    --rok-shadow: 0 0 0 1px #ffffff;
+    --rok-shadow-lg: 0 0 0 2px #ffffff;
+  }
+}
+
 /* Borders carry meaning in high contrast, so they must be visible. */
 html[data-contrast="high"] .rok-card,
 html[data-contrast="high"] .wall__card,
@@ -195,8 +438,8 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   line-height: 1.15;
   margin: 0;
   text-wrap: balance;

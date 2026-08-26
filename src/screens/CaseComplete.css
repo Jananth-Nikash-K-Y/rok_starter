@@ -1,5 +1,7 @@
 .complete__hero {
   background: var(--rok-green-tint);
+  overflow: hidden;
+  position: relative;
   border: 1px solid var(--rok-green-line);
   border-radius: var(--rok-radius-lg);
   display: flex;
@@ -12,7 +14,7 @@
 
 .complete__tick {
   align-items: center;
-  animation: complete-pop var(--rok-slow) var(--rok-ease) both;
+  animation: complete-pop 420ms var(--rok-spring) both;
   background: var(--rok-green);
   border-radius: var(--rok-radius-pill);
   color: var(--rok-ink-invert);
@@ -23,8 +25,13 @@
 }
 
 @keyframes complete-pop {
-  from { opacity: 0; transform: scale(0.7); }
+  from { opacity: 0; transform: scale(0.6); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes complete-reference {
+  from { opacity: 0; letter-spacing: 0.16em; transform: translateY(6px); }
+  to { opacity: 1; letter-spacing: 0.01em; transform: none; }
 }
 
 .complete__heading {
@@ -44,6 +51,9 @@
    one line at every width — a reference broken across two lines gets read
    out as two things. */
 .complete__reference {
+  /* The one thing a victim has to be able to read out loud, so it lands
+     last and lands deliberately. */
+  animation: complete-reference 360ms var(--rok-spring) 140ms both;
   color: var(--rok-ink);
   font-size: clamp(1.75rem, 9vw, 3.25rem);
   font-variant-numeric: tabular-nums;
@@ -215,4 +225,32 @@
   .complete__routes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .complete__route { flex-direction: column; text-align: center; min-height: 148px; }
   .complete__route-text { align-items: center; }
+}
+
+/* The record saves itself; this says so rather than leaving the user to
+   wonder whether anything happened. */
+.complete__autosave {
+  align-items: center;
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+  padding: var(--rok-s3) var(--rok-s4);
+}
+
+.complete__autosave svg { flex: none; }
+
+.complete__autosave--pending { color: var(--rok-ink-mute); }
+
+.complete__autosave--saved {
+  background: var(--rok-green-tint);
+  border-color: var(--rok-green-line);
+  color: var(--rok-green-deep);
+}
+
+.complete__autosave--failed {
+  background: var(--rok-amber-tint);
+  border-color: var(--rok-amber-line);
+  color: var(--rok-amber);
 }

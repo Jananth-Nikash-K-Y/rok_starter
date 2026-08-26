@@ -38,7 +38,6 @@ export default function Jurisdiction({ send, t, locale }) {
 
   return (
     <Screen
-      step={3}
       t={t}
       locale={locale}
       question={t("jurisdiction.question")}

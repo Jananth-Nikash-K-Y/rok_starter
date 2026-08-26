@@ -14,6 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import GoldenHourClock from "./components/GoldenHourClock.jsx";
 import Icon from "./components/Icon.jsx";
 import LanguagePicker from "./components/LanguagePicker.jsx";
+import Logo from "./components/Logo.jsx";
 import ProgressRail from "./components/ProgressRail.jsx";
 import CalmMode from "./screens/CalmMode.jsx";
 import CaseComplete from "./screens/CaseComplete.jsx";
@@ -184,8 +185,9 @@ export default function App() {
 
         <header className="rok-appbar">
           <span className="rok-appbar__brand">
-            <span>Rok</span>
-            <span lang="hi">रोक</span>
+            <Logo size={30} className="rok-appbar__logo" title="Rok" />
+            <span className="rok-appbar__word">Rok</span>
+            <span className="rok-appbar__native" lang="hi">रोक</span>
           </span>
           <div className="rok-appbar__tools">
             <LanguagePicker locale={locale} onChange={chooseLocale} t={t} />
@@ -225,8 +227,9 @@ export default function App() {
 
       <header className="rok-appbar">
         <span className="rok-appbar__brand">
-          <span>Rok</span>
-          <span lang="hi">रोक</span>
+          <Logo size={30} className="rok-appbar__logo" title="Rok" />
+          <span className="rok-appbar__word">Rok</span>
+          <span className="rok-appbar__native" lang="hi">रोक</span>
         </span>
 
         <div className="rok-appbar__tools">

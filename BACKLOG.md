@@ -52,7 +52,9 @@ demo.
 | 3.4 | **Offline / installable PWA** | Service worker plus manifest. The app is already fully client-side, so this is cheap, and "works with no signal" is a real claim for a rural user, not a checkbox. |
 | 3.5 | **Bhashini as the production voice path** | MeitY's national platform covers all 22 scheduled languages. As a runtime API it is a dependency Rok deliberately avoids, but "in production the voice is the Government's own language stack" is a strong line for the pitch and a genuine path to 22 languages. |
 | 3.6 | **More bank SMS templates** | 24 institutions plus a bank-agnostic fallback today. Every added template moves a message from `medium` to `high` confidence. |
-| 3.7 | **Print stylesheet** | A victim taking the case to a cyber cell will print it. Today that prints the app chrome. |
+| 3.7 | **Verify the four display modes on real devices** | Light, dark, light+high-contrast and dark+high-contrast all pass contrast audits and the 360px sweep in a browser. An OLED phone and an actual low-vision user are a different test. |
+| 3.8 | **PNG icon exports for iOS** | The SVG favicon covers browsers and Android install. iOS home-screen icons need PNG (180px `apple-touch-icon`, plus 192/512 for a fuller manifest), and no rasteriser is installed here. Export once from `public/icon.svg` in any design tool, drop into `public/`, then add the `apple-touch-icon` link back to `index.html`. Until then iOS falls back to a screenshot — degraded, not broken, and no 404. |
+| 3.9 | **Print stylesheet** | A victim taking the case to a cyber cell will print it. Today that prints the app chrome. |
 
 ---
 

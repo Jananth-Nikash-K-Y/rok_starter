@@ -21,7 +21,6 @@ export default function ReadBack({ send, t, locale, caseData }) {
 
   return (
     <Screen
-      step={4}
       t={t}
       locale={locale}
       question={t("readBack.question")}

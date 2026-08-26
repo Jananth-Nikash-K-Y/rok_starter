@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!--
+    The Rok mark, drawn slightly heavier than the in-app Logo component.
+    A favicon is read at 16px in a tab strip and at 60px on a home screen,
+    so the fingers are thicker and the gaps wider than they need to be at
+    poster size — detail that survives 16px is the only detail worth having.
+
+    Not any state insignia: the State Emblem, Ashoka Chakra and national
+    flag are restricted under the State Emblem of India Act, 2005.
+  -->
+  <rect width="48" height="48" rx="11" fill="#b32219"/>
+  <g fill="#ffffff">
+    <rect x="16.6" y="10" width="4.9" height="15.5" rx="2.45"/>
+    <rect x="23.1" y="7.2" width="4.9" height="18.3" rx="2.45"/>
+    <rect x="29.6" y="11.2" width="4.9" height="14.3" rx="2.45"/>
+    <rect x="10.2" y="16" width="4.9" height="11.6" rx="2.45" transform="rotate(-20 12.65 21.8)"/>
+    <path d="M12.6 24.2h25.2v6.4A10.7 10.7 0 0 1 27.1 41.3h-3.8A10.7 10.7 0 0 1 12.6 30.6v-6.4Z"/>
+  </g>
+</svg>
