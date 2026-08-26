@@ -36,7 +36,6 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "jsdom": "^24.1.1",
-    "sharp": "^0.35.4",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   },
