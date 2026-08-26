@@ -2,7 +2,7 @@
   "name": "rok",
   "version": "0.1.0",
   "private": true,
-  "description": "Rok — stopping the money before the paperwork starts. Build What Moves India hackathon POC.",
+  "description": "Rok \u2014 stopping the money before the paperwork starts. Build What Moves India hackathon POC.",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,9 @@
     "lint": "eslint src --ext .js,.jsx",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:i18n": "node scripts/check-i18n.js"
+    "check:i18n": "node scripts/check-i18n.js",
+    "audio:script": "node scripts/audio-script.js",
+    "audio:register": "node scripts/register-audio.js"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

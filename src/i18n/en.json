@@ -147,7 +147,7 @@
   "raceView.source_note": "Field list from cybercrime.gov.in's own pre-login instructions and FAQ. Step count from citizen procedure manuals published by Bank of India and L&T Finance.",
   "raceView.back": "Back",
   "neverAsk.otp_banner": "Rok never asks for your OTP or PIN. Anyone who does is a fraud.",
-  "footer.not_official": "Not an official Government of India platform — hackathon proof of concept.",
+  "footer.not_official": "Not an official Government of India platform",
   "error.title": "Something went wrong on this screen",
   "error.body": "Your case has not been lost. Call 1930 now — they can take your report by phone.",
   "error.reload": "Try again",

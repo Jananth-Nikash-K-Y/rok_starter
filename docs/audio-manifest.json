@@ -1,0 +1,730 @@
+{
+  "locales": [
+    "en",
+    "hi",
+    "ta",
+    "te"
+  ],
+  "clips": [
+    {
+      "locale": "en",
+      "key": "palm.spoken",
+      "file": "palm-spoken.mp3",
+      "text": "My money is gone. Press the big red button to start. It takes less than a minute."
+    },
+    {
+      "locale": "en",
+      "key": "palm.listen",
+      "file": "palm-listen.mp3",
+      "text": "Read this to me"
+    },
+    {
+      "locale": "en",
+      "key": "safetyTriage.question",
+      "file": "safetyTriage-question.mp3",
+      "text": "Are they still on the phone?"
+    },
+    {
+      "locale": "en",
+      "key": "safetyTriage.hangup_spoken",
+      "file": "safetyTriage-hangup_spoken.mp3",
+      "text": "Hang up now. Do not tell them anything. Do not send any more money."
+    },
+    {
+      "locale": "en",
+      "key": "safetyTriage.step_hangup",
+      "file": "safetyTriage-step_hangup.mp3",
+      "text": "End the call"
+    },
+    {
+      "locale": "en",
+      "key": "safetyTriage.step_silence",
+      "file": "safetyTriage-step_silence.mp3",
+      "text": "Tell them nothing"
+    },
+    {
+      "locale": "en",
+      "key": "safetyTriage.step_nothing",
+      "file": "safetyTriage-step_nothing.mp3",
+      "text": "Send nothing more"
+    },
+    {
+      "locale": "en",
+      "key": "messageWall.title",
+      "file": "messageWall-title.mp3",
+      "text": "Which one is wrong?"
+    },
+    {
+      "locale": "en",
+      "key": "messageWall.why",
+      "file": "messageWall-why.mp3",
+      "text": "Look at the amount. You do not need to read the message."
+    },
+    {
+      "locale": "en",
+      "key": "messageWall.receipt_title",
+      "file": "messageWall-receipt_title.mp3",
+      "text": "This is what we read"
+    },
+    {
+      "locale": "en",
+      "key": "scope.question",
+      "file": "scope-question.mp3",
+      "text": "Only this one?"
+    },
+    {
+      "locale": "en",
+      "key": "scope.why",
+      "file": "scope-why.mp3",
+      "text": "Each payment may need its own hold."
+    },
+    {
+      "locale": "en",
+      "key": "reachedVia.question",
+      "file": "reachedVia-question.mp3",
+      "text": "How did they reach you?"
+    },
+    {
+      "locale": "en",
+      "key": "reachedVia.why",
+      "file": "reachedVia-why.mp3",
+      "text": "This files your case under the right heading. You never pick a category."
+    },
+    {
+      "locale": "en",
+      "key": "jurisdiction.question",
+      "file": "jurisdiction-question.mp3",
+      "text": "Where are you?"
+    },
+    {
+      "locale": "en",
+      "key": "jurisdiction.why",
+      "file": "jurisdiction-why.mp3",
+      "text": "Your complaint goes to the police in your own State. This is the only reason we ask."
+    },
+    {
+      "locale": "en",
+      "key": "readBack.question",
+      "file": "readBack-question.mp3",
+      "text": "Is this true?"
+    },
+    {
+      "locale": "en",
+      "key": "readBack.why",
+      "file": "readBack-why.mp3",
+      "text": "We write the complaint. You only say yes or no."
+    },
+    {
+      "locale": "en",
+      "key": "readBack.confirm_yes",
+      "file": "readBack-confirm_yes.mp3",
+      "text": "Yes"
+    },
+    {
+      "locale": "en",
+      "key": "readBack.confirm_no",
+      "file": "readBack-confirm_no.mp3",
+      "text": "No"
+    },
+    {
+      "locale": "en",
+      "key": "caseComplete.heading",
+      "file": "caseComplete-heading.mp3",
+      "text": "Your case is open"
+    },
+    {
+      "locale": "en",
+      "key": "caseComplete.four_lines",
+      "file": "caseComplete-four_lines.mp3",
+      "text": "Your case in four lines"
+    },
+    {
+      "locale": "en",
+      "key": "caseComplete.route_call",
+      "file": "caseComplete-route_call.mp3",
+      "text": "Speak it"
+    },
+    {
+      "locale": "en",
+      "key": "caseComplete.route_write",
+      "file": "caseComplete-route_write.mp3",
+      "text": "Send it in writing"
+    },
+    {
+      "locale": "en",
+      "key": "caseComplete.route_helper",
+      "file": "caseComplete-route_helper.mp3",
+      "text": "Ask someone"
+    },
+    {
+      "locale": "en",
+      "key": "calmMode.heading",
+      "file": "calmMode-heading.mp3",
+      "text": "When you are ready"
+    },
+    {
+      "locale": "en",
+      "key": "calmMode.support",
+      "file": "calmMode-support.mp3",
+      "text": "None of this is urgent. None of it was needed to open your case. Come back tomorrow if you like."
+    },
+    {
+      "locale": "en",
+      "key": "guardianHandoff.title",
+      "file": "guardianHandoff-title.mp3",
+      "text": "Let someone help"
+    },
+    {
+      "locale": "en",
+      "key": "app.listen",
+      "file": "app-listen.mp3",
+      "text": "Listen"
+    },
+    {
+      "locale": "en",
+      "key": "neverAsk.otp_banner",
+      "file": "neverAsk-otp_banner.mp3",
+      "text": "Rok never asks for your OTP or PIN. Anyone who does is a fraud."
+    },
+    {
+      "locale": "hi",
+      "key": "palm.spoken",
+      "file": "palm-spoken.mp3",
+      "text": "मेरे पैसे चले गए। शुरू करने के लिए बड़ा लाल बटन दबाएँ। एक मिनट से भी कम लगेगा।"
+    },
+    {
+      "locale": "hi",
+      "key": "palm.listen",
+      "file": "palm-listen.mp3",
+      "text": "मुझे पढ़कर सुनाएँ"
+    },
+    {
+      "locale": "hi",
+      "key": "safetyTriage.question",
+      "file": "safetyTriage-question.mp3",
+      "text": "क्या वे अब भी फ़ोन पर हैं?"
+    },
+    {
+      "locale": "hi",
+      "key": "safetyTriage.hangup_spoken",
+      "file": "safetyTriage-hangup_spoken.mp3",
+      "text": "अभी फ़ोन काट दें। उन्हें कुछ न बताएँ। और पैसे न भेजें।"
+    },
+    {
+      "locale": "hi",
+      "key": "safetyTriage.step_hangup",
+      "file": "safetyTriage-step_hangup.mp3",
+      "text": "कॉल काटें"
+    },
+    {
+      "locale": "hi",
+      "key": "safetyTriage.step_silence",
+      "file": "safetyTriage-step_silence.mp3",
+      "text": "कुछ न बताएँ"
+    },
+    {
+      "locale": "hi",
+      "key": "safetyTriage.step_nothing",
+      "file": "safetyTriage-step_nothing.mp3",
+      "text": "और कुछ न भेजें"
+    },
+    {
+      "locale": "hi",
+      "key": "messageWall.title",
+      "file": "messageWall-title.mp3",
+      "text": "इनमें से गलत कौन सा है?"
+    },
+    {
+      "locale": "hi",
+      "key": "messageWall.why",
+      "file": "messageWall-why.mp3",
+      "text": "रकम देखिए। पूरा संदेश पढ़ने की ज़रूरत नहीं।"
+    },
+    {
+      "locale": "hi",
+      "key": "messageWall.receipt_title",
+      "file": "messageWall-receipt_title.mp3",
+      "text": "हमने यह पढ़ा"
+    },
+    {
+      "locale": "hi",
+      "key": "scope.question",
+      "file": "scope-question.mp3",
+      "text": "सिर्फ़ यही एक?"
+    },
+    {
+      "locale": "hi",
+      "key": "scope.why",
+      "file": "scope-why.mp3",
+      "text": "हर भुगतान को अलग से रोकना पड़ सकता है।"
+    },
+    {
+      "locale": "hi",
+      "key": "reachedVia.question",
+      "file": "reachedVia-question.mp3",
+      "text": "उन्होंने आपसे कैसे संपर्क किया?"
+    },
+    {
+      "locale": "hi",
+      "key": "reachedVia.why",
+      "file": "reachedVia-why.mp3",
+      "text": "इससे शिकायत सही श्रेणी में दर्ज होगी। आपको कुछ चुनना नहीं है।"
+    },
+    {
+      "locale": "hi",
+      "key": "jurisdiction.question",
+      "file": "jurisdiction-question.mp3",
+      "text": "आप कहाँ हैं?"
+    },
+    {
+      "locale": "hi",
+      "key": "jurisdiction.why",
+      "file": "jurisdiction-why.mp3",
+      "text": "आपकी शिकायत आपके अपने राज्य की पुलिस को जाती है। हम सिर्फ़ इसीलिए पूछ रहे हैं।"
+    },
+    {
+      "locale": "hi",
+      "key": "readBack.question",
+      "file": "readBack-question.mp3",
+      "text": "क्या यह सही है?"
+    },
+    {
+      "locale": "hi",
+      "key": "readBack.why",
+      "file": "readBack-why.mp3",
+      "text": "शिकायत हम लिखते हैं। आपको सिर्फ़ हाँ या ना कहना है।"
+    },
+    {
+      "locale": "hi",
+      "key": "readBack.confirm_yes",
+      "file": "readBack-confirm_yes.mp3",
+      "text": "हाँ"
+    },
+    {
+      "locale": "hi",
+      "key": "readBack.confirm_no",
+      "file": "readBack-confirm_no.mp3",
+      "text": "नहीं"
+    },
+    {
+      "locale": "hi",
+      "key": "caseComplete.heading",
+      "file": "caseComplete-heading.mp3",
+      "text": "आपकी शिकायत दर्ज हो गई"
+    },
+    {
+      "locale": "hi",
+      "key": "caseComplete.four_lines",
+      "file": "caseComplete-four_lines.mp3",
+      "text": "आपकी शिकायत, चार पंक्तियों में"
+    },
+    {
+      "locale": "hi",
+      "key": "caseComplete.route_call",
+      "file": "caseComplete-route_call.mp3",
+      "text": "बोलकर बताएँ"
+    },
+    {
+      "locale": "hi",
+      "key": "caseComplete.route_write",
+      "file": "caseComplete-route_write.mp3",
+      "text": "लिखकर भेजें"
+    },
+    {
+      "locale": "hi",
+      "key": "caseComplete.route_helper",
+      "file": "caseComplete-route_helper.mp3",
+      "text": "किसी से कहें"
+    },
+    {
+      "locale": "hi",
+      "key": "calmMode.heading",
+      "file": "calmMode-heading.mp3",
+      "text": "जब आप तैयार हों"
+    },
+    {
+      "locale": "hi",
+      "key": "calmMode.support",
+      "file": "calmMode-support.mp3",
+      "text": "इसमें कुछ भी जल्दी का नहीं है। शिकायत दर्ज करने के लिए इनमें से कुछ भी ज़रूरी नहीं था। चाहें तो कल आइए।"
+    },
+    {
+      "locale": "hi",
+      "key": "guardianHandoff.title",
+      "file": "guardianHandoff-title.mp3",
+      "text": "किसी को मदद करने दें"
+    },
+    {
+      "locale": "hi",
+      "key": "app.listen",
+      "file": "app-listen.mp3",
+      "text": "सुनें"
+    },
+    {
+      "locale": "hi",
+      "key": "neverAsk.otp_banner",
+      "file": "neverAsk-otp_banner.mp3",
+      "text": "Rok कभी आपका OTP या PIN नहीं पूछता। जो पूछे वह ठग है।"
+    },
+    {
+      "locale": "ta",
+      "key": "palm.spoken",
+      "file": "palm-spoken.mp3",
+      "text": "என் பணம் போய்விட்டது. தொடங்க பெரிய சிவப்பு பொத்தானை அழுத்துங்கள். ஒரு நிமிடத்திற்குள் முடிந்துவிடும்."
+    },
+    {
+      "locale": "ta",
+      "key": "palm.listen",
+      "file": "palm-listen.mp3",
+      "text": "எனக்குப் படித்துக் காட்டுங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "safetyTriage.question",
+      "file": "safetyTriage-question.mp3",
+      "text": "அவர்கள் இன்னும் பேசுகிறார்களா?"
+    },
+    {
+      "locale": "ta",
+      "key": "safetyTriage.hangup_spoken",
+      "file": "safetyTriage-hangup_spoken.mp3",
+      "text": "இப்போதே அழைப்பைத் துண்டியுங்கள். அவர்களிடம் எதுவும் சொல்ல வேண்டாம். இனி பணம் அனுப்ப வேண்டாம்."
+    },
+    {
+      "locale": "ta",
+      "key": "safetyTriage.step_hangup",
+      "file": "safetyTriage-step_hangup.mp3",
+      "text": "அழைப்பை முடியுங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "safetyTriage.step_silence",
+      "file": "safetyTriage-step_silence.mp3",
+      "text": "எதுவும் சொல்ல வேண்டாம்"
+    },
+    {
+      "locale": "ta",
+      "key": "safetyTriage.step_nothing",
+      "file": "safetyTriage-step_nothing.mp3",
+      "text": "இனி எதுவும் அனுப்ப வேண்டாம்"
+    },
+    {
+      "locale": "ta",
+      "key": "messageWall.title",
+      "file": "messageWall-title.mp3",
+      "text": "இதில் எது தவறு?"
+    },
+    {
+      "locale": "ta",
+      "key": "messageWall.why",
+      "file": "messageWall-why.mp3",
+      "text": "தொகையைப் பாருங்கள். செய்தியை முழுவதும் படிக்க வேண்டாம்."
+    },
+    {
+      "locale": "ta",
+      "key": "messageWall.receipt_title",
+      "file": "messageWall-receipt_title.mp3",
+      "text": "நாங்கள் படித்தது"
+    },
+    {
+      "locale": "ta",
+      "key": "scope.question",
+      "file": "scope-question.mp3",
+      "text": "இது ஒன்று மட்டுமா?"
+    },
+    {
+      "locale": "ta",
+      "key": "scope.why",
+      "file": "scope-why.mp3",
+      "text": "ஒவ்வொரு பரிவர்த்தனையையும் தனியாக நிறுத்த வேண்டியிருக்கும்."
+    },
+    {
+      "locale": "ta",
+      "key": "reachedVia.question",
+      "file": "reachedVia-question.mp3",
+      "text": "அவர்கள் எப்படித் தொடர்பு கொண்டார்கள்?"
+    },
+    {
+      "locale": "ta",
+      "key": "reachedVia.why",
+      "file": "reachedVia-why.mp3",
+      "text": "இது புகாரைச் சரியான தலைப்பில் பதிவு செய்யும். நீங்கள் எதையும் தேர்ந்தெடுக்க வேண்டாம்."
+    },
+    {
+      "locale": "ta",
+      "key": "jurisdiction.question",
+      "file": "jurisdiction-question.mp3",
+      "text": "நீங்கள் எங்கே இருக்கிறீர்கள்?"
+    },
+    {
+      "locale": "ta",
+      "key": "jurisdiction.why",
+      "file": "jurisdiction-why.mp3",
+      "text": "உங்கள் புகார் உங்கள் மாநிலக் காவல்துறைக்குச் செல்லும். அதற்காக மட்டுமே கேட்கிறோம்."
+    },
+    {
+      "locale": "ta",
+      "key": "readBack.question",
+      "file": "readBack-question.mp3",
+      "text": "இது சரியா?"
+    },
+    {
+      "locale": "ta",
+      "key": "readBack.why",
+      "file": "readBack-why.mp3",
+      "text": "புகாரை நாங்கள் எழுதுகிறோம். நீங்கள் ஆம் அல்லது இல்லை சொன்னால் போதும்."
+    },
+    {
+      "locale": "ta",
+      "key": "readBack.confirm_yes",
+      "file": "readBack-confirm_yes.mp3",
+      "text": "ஆம்"
+    },
+    {
+      "locale": "ta",
+      "key": "readBack.confirm_no",
+      "file": "readBack-confirm_no.mp3",
+      "text": "இல்லை"
+    },
+    {
+      "locale": "ta",
+      "key": "caseComplete.heading",
+      "file": "caseComplete-heading.mp3",
+      "text": "உங்கள் புகார் பதிவாகிவிட்டது"
+    },
+    {
+      "locale": "ta",
+      "key": "caseComplete.four_lines",
+      "file": "caseComplete-four_lines.mp3",
+      "text": "உங்கள் புகார், நான்கு வரிகளில்"
+    },
+    {
+      "locale": "ta",
+      "key": "caseComplete.route_call",
+      "file": "caseComplete-route_call.mp3",
+      "text": "பேசிச் சொல்லுங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "caseComplete.route_write",
+      "file": "caseComplete-route_write.mp3",
+      "text": "எழுதி அனுப்புங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "caseComplete.route_helper",
+      "file": "caseComplete-route_helper.mp3",
+      "text": "யாரிடமாவது சொல்லுங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "calmMode.heading",
+      "file": "calmMode-heading.mp3",
+      "text": "நீங்கள் தயாராகும்போது"
+    },
+    {
+      "locale": "ta",
+      "key": "calmMode.support",
+      "file": "calmMode-support.mp3",
+      "text": "இதில் எதுவும் அவசரம் இல்லை. புகாரைத் தொடங்க இவை தேவைப்படவில்லை. வேண்டுமானால் நாளை வாருங்கள்."
+    },
+    {
+      "locale": "ta",
+      "key": "guardianHandoff.title",
+      "file": "guardianHandoff-title.mp3",
+      "text": "யாராவது உதவட்டும்"
+    },
+    {
+      "locale": "ta",
+      "key": "app.listen",
+      "file": "app-listen.mp3",
+      "text": "கேளுங்கள்"
+    },
+    {
+      "locale": "ta",
+      "key": "neverAsk.otp_banner",
+      "file": "neverAsk-otp_banner.mp3",
+      "text": "Rok உங்கள் OTP அல்லது PIN ஐ ஒருபோதும் கேட்காது. கேட்பவர் மோசடிக்காரர்."
+    },
+    {
+      "locale": "te",
+      "key": "palm.spoken",
+      "file": "palm-spoken.mp3",
+      "text": "నా డబ్బు పోయింది. మొదలుపెట్టడానికి పెద్ద ఎరుపు బటన్ నొక్కండి. ఒక నిమిషం లోపే అవుతుంది."
+    },
+    {
+      "locale": "te",
+      "key": "palm.listen",
+      "file": "palm-listen.mp3",
+      "text": "నాకు చదివి వినిపించండి"
+    },
+    {
+      "locale": "te",
+      "key": "safetyTriage.question",
+      "file": "safetyTriage-question.mp3",
+      "text": "వాళ్లు ఇంకా ఫోన్‌లో ఉన్నారా?"
+    },
+    {
+      "locale": "te",
+      "key": "safetyTriage.hangup_spoken",
+      "file": "safetyTriage-hangup_spoken.mp3",
+      "text": "ఇప్పుడే ఫోన్ కట్ చేయండి. వాళ్లకి ఏమీ చెప్పకండి. ఇంకా డబ్బు పంపకండి."
+    },
+    {
+      "locale": "te",
+      "key": "safetyTriage.step_hangup",
+      "file": "safetyTriage-step_hangup.mp3",
+      "text": "కాల్ కట్ చేయండి"
+    },
+    {
+      "locale": "te",
+      "key": "safetyTriage.step_silence",
+      "file": "safetyTriage-step_silence.mp3",
+      "text": "ఏమీ చెప్పకండి"
+    },
+    {
+      "locale": "te",
+      "key": "safetyTriage.step_nothing",
+      "file": "safetyTriage-step_nothing.mp3",
+      "text": "ఇంకేమీ పంపకండి"
+    },
+    {
+      "locale": "te",
+      "key": "messageWall.title",
+      "file": "messageWall-title.mp3",
+      "text": "వీటిలో తప్పు ఏది?"
+    },
+    {
+      "locale": "te",
+      "key": "messageWall.why",
+      "file": "messageWall-why.mp3",
+      "text": "మొత్తాన్ని చూడండి. సందేశం అంతా చదవనవసరం లేదు."
+    },
+    {
+      "locale": "te",
+      "key": "messageWall.receipt_title",
+      "file": "messageWall-receipt_title.mp3",
+      "text": "మేము చదివింది ఇది"
+    },
+    {
+      "locale": "te",
+      "key": "scope.question",
+      "file": "scope-question.mp3",
+      "text": "ఇది ఒక్కటేనా?"
+    },
+    {
+      "locale": "te",
+      "key": "scope.why",
+      "file": "scope-why.mp3",
+      "text": "ప్రతి చెల్లింపును విడిగా ఆపవలసి రావచ్చు."
+    },
+    {
+      "locale": "te",
+      "key": "reachedVia.question",
+      "file": "reachedVia-question.mp3",
+      "text": "వాళ్లు మిమ్మల్ని ఎలా సంప్రదించారు?"
+    },
+    {
+      "locale": "te",
+      "key": "reachedVia.why",
+      "file": "reachedVia-why.mp3",
+      "text": "ఇది మీ ఫిర్యాదును సరైన విభాగంలో నమోదు చేస్తుంది. మీరు ఏదీ ఎంచుకోనవసరం లేదు."
+    },
+    {
+      "locale": "te",
+      "key": "jurisdiction.question",
+      "file": "jurisdiction-question.mp3",
+      "text": "మీరు ఎక్కడ ఉన్నారు?"
+    },
+    {
+      "locale": "te",
+      "key": "jurisdiction.why",
+      "file": "jurisdiction-why.mp3",
+      "text": "మీ ఫిర్యాదు మీ రాష్ట్ర పోలీసులకు వెళ్తుంది. అందుకే మాత్రమే అడుగుతున్నాం."
+    },
+    {
+      "locale": "te",
+      "key": "readBack.question",
+      "file": "readBack-question.mp3",
+      "text": "ఇది నిజమేనా?"
+    },
+    {
+      "locale": "te",
+      "key": "readBack.why",
+      "file": "readBack-why.mp3",
+      "text": "ఫిర్యాదు మేము రాస్తాం. మీరు అవును లేదా కాదు చెబితే చాలు."
+    },
+    {
+      "locale": "te",
+      "key": "readBack.confirm_yes",
+      "file": "readBack-confirm_yes.mp3",
+      "text": "అవును"
+    },
+    {
+      "locale": "te",
+      "key": "readBack.confirm_no",
+      "file": "readBack-confirm_no.mp3",
+      "text": "కాదు"
+    },
+    {
+      "locale": "te",
+      "key": "caseComplete.heading",
+      "file": "caseComplete-heading.mp3",
+      "text": "మీ ఫిర్యాదు నమోదైంది"
+    },
+    {
+      "locale": "te",
+      "key": "caseComplete.four_lines",
+      "file": "caseComplete-four_lines.mp3",
+      "text": "మీ ఫిర్యాదు, నాలుగు వాక్యాల్లో"
+    },
+    {
+      "locale": "te",
+      "key": "caseComplete.route_call",
+      "file": "caseComplete-route_call.mp3",
+      "text": "మాట్లాడి చెప్పండి"
+    },
+    {
+      "locale": "te",
+      "key": "caseComplete.route_write",
+      "file": "caseComplete-route_write.mp3",
+      "text": "రాసి పంపండి"
+    },
+    {
+      "locale": "te",
+      "key": "caseComplete.route_helper",
+      "file": "caseComplete-route_helper.mp3",
+      "text": "ఎవరినైనా అడగండి"
+    },
+    {
+      "locale": "te",
+      "key": "calmMode.heading",
+      "file": "calmMode-heading.mp3",
+      "text": "మీరు సిద్ధమైనప్పుడు"
+    },
+    {
+      "locale": "te",
+      "key": "calmMode.support",
+      "file": "calmMode-support.mp3",
+      "text": "ఇందులో ఏదీ అత్యవసరం కాదు. ఫిర్యాదు మొదలుపెట్టడానికి ఇవి అవసరం లేదు. కావాలంటే రేపు రండి."
+    },
+    {
+      "locale": "te",
+      "key": "guardianHandoff.title",
+      "file": "guardianHandoff-title.mp3",
+      "text": "ఎవరైనా సాయం చేయనివ్వండి"
+    },
+    {
+      "locale": "te",
+      "key": "app.listen",
+      "file": "app-listen.mp3",
+      "text": "వినండి"
+    },
+    {
+      "locale": "te",
+      "key": "neverAsk.otp_banner",
+      "file": "neverAsk-otp_banner.mp3",
+      "text": "Rok మీ OTP లేదా PIN ఎప్పుడూ అడగదు. అడిగేవాడు మోసగాడు."
+    }
+  ]
+}

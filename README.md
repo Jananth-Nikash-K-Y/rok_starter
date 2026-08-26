@@ -45,21 +45,83 @@ fast path are the same path.
 Full design rationale, evidence register and diagrams:
 [`docs/Rok_NCRP_Concept.pdf`](./docs/Rok_NCRP_Concept.pdf)
 
-## What a victim actually does
+## The journey, as a wireframe
 
-| | |
-| --- | --- |
-| **Tap** | The case opens and is timestamped. Nothing has been asked yet. |
-| **Are they still on the phone?** | If yes: hang up now, tell nobody, alert someone you trust. |
-| **Which one is the wrong one?** | Their own bank messages, read aloud. One tap extracts amount, time, bank, reference and beneficiary. |
-| **Only this one, or more?** | Each payment may need its own hold. |
-| **How did they reach you?** | Four icons. The victim never sees the taxonomy. |
-| **Is this true?** | Three plain sentences in their language, yes or no on each. |
-| **Where are you?** | Location narrows 36 States and UTs to a shortlist. One tap confirms who investigates. |
-| **Green screen** | A case reference, and three equal ways to send it: speak it to 1930, send it in writing, or hand it to a helper. |
+Eight screens. Four of them are questions. Nothing is typed.
 
-Everything else — ID, address, evidence — is deferred to a calm mode that
-opens only once the freeze-relevant complaint already exists.
+```
+   ENTRY                                                    THE CLOCK STARTS HERE
+     │                                                                │
+     ▼                                                                ▼
+┌──────────────────┐   tap    ┌──────────────────┐         ┌──────────────────┐
+│       ✋         │  ──────▶ │  Are they still  │  ─ No ─▶ │ Which one is     │
+│                  │          │  on the phone?   │         │ wrong?           │
+│  My money is     │          │                  │         │                  │
+│  gone            │          │  ┌─────┐ ┌─────┐ │         │ ┌──────────────┐ │
+│ ┌──────────────┐ │          │  │ 📞  │ │ 📵  │ │         │ │ SBI          │ │
+│ │  START NOW   │ │          │  │ Yes │ │ No  │ │         │ │ ₹45,000      │ │◀── the
+│ └──────────────┘ │          │  └─────┘ └─────┘ │         │ │ 23:47   [🔊] │ │    only
+│  🔊 Read to me   │          │        │         │         │ ├──────────────┤ │    cue
+└──────────────────┘          └────────┼─────────┘         │ │ HDFC         │ │    that
+   case opens                          │ Yes               │ │ ₹12,500      │ │    matters
+   on this tap                         ▼                   │ └──────────────┘ │
+                              ┌──────────────────┐         │ 📷 Upload photo  │
+                              │  HANG UP NOW.    │         └────────┬─────────┘
+                              │  1 End the call  │                  │
+                              │  2 Tell them     │                  ▼
+                              │    nothing       │         ┌──────────────────┐
+                              │  3 Send nothing  │         │ This is what we  │
+                              │  [Tell someone]  │         │ read             │
+                              └────────┬─────────┘         │  ₹45,000         │
+                                       │                   │  ✓ Read clearly  │
+                                       └──────────────────▶│  UTR 4125839…    │
+                                                           │  [Fix it here]   │
+                                                           └────────┬─────────┘
+                                                                    │
+     ┌──────────────────┐         ┌──────────────────┐         ┌────▼─────────────┐
+     │ Is this true?    │ ◀────── │ Where are you?   │ ◀────── │ Only this one?   │
+     │                  │         │                  │         │                  │
+     │ "₹45,000 left    │         │ ┌────┐┌────┐┌───┐│         │ ┌─────┐ ┌──────┐ │
+     │  your SBI        │         │ │T.N.││Kar.││AP ││         │ │ ✓   │ │ More │ │
+     │  account…"       │         │ └────┘└────┘└───┘│         │ └─────┘ └──────┘ │
+     │ ┌────┐  ┌──────┐ │         │  36 → 3 by GPS   │         └──────────────────┘
+     │ │ No │  │ YES  │ │         └──────────────────┘              ▲
+     │ └────┘  └──────┘ │                                           │ "there were
+     │  ●●○  3 sentences│         ┌──────────────────┐              │  more" loops
+     └────────┬─────────┘         │ How did they     │──────────────┘
+              │                   │ reach you?       │
+              │                   │ 📞  💬  🟢  🔗   │
+              │                   └──────────────────┘
+              ▼                      taxonomy inferred
+     ┌────────────────────────────────────────────┐
+     │              ✓  YOUR CASE IS OPEN          │   ◀── under 60 seconds
+     │                                            │
+     │              ROK-NX7-V4K                   │
+     │                 For ₹45,000                │
+     ├────────────────────────────────────────────┤
+     │  Your case in four lines                   │
+     │  1 My case reference is ROK-NX7-V4K.       │
+     │  2 Rs.45,000 left my SBI account on…       │
+     │  3 The transaction reference is 4125…      │
+     │  4 The money went to scammer123@…          │
+     │                                            │
+     │  SEND IT WHICHEVER WAY SUITS YOU           │
+     │  ┌──────────┐ ┌──────────┐ ┌────────────┐  │
+     │  │ 📞 Speak │ │ 💬 Write │ │ 👥 Ask     │  │  ◀── peers, not
+     │  │ Call 1930│ │ No call  │ │ someone    │  │      a primary
+     │  └──────────┘ └──────────┘ └────────────┘  │      and fallbacks
+     └───────────────────┬────────────────────────┘
+                         │
+                         ▼   the clock and progress bar disappear here
+              ┌──────────────────────┐
+              │  When you are ready  │   Calm mode: ID, address, evidence.
+              │  (no clock, no red)  │   None of it was needed to open the case.
+              └──────────────────────┘
+```
+
+Every screen carries the same three things in the same place: the step count,
+the question, and a **Listen** button. A user who cannot read learns one
+layout, not eight.
 
 ## For evaluators
 
@@ -74,6 +136,12 @@ nothing at all. Full submission details, including the video script and the
 Open **NCRP today vs Rok** from the footer and press **Start the race**. Both
 lanes run against one clock, in real time and unaccelerated: Rok files at
 0:50, while the portal is still waiting on an OTP at step 3 of 21.
+
+## Where the work stands
+
+[`BACKLOG.md`](./BACKLOG.md) is the live list of what is outstanding, what is
+owed before anyone judges it, and — importantly — which limitations are
+deliberate and should not be "fixed".
 
 ## Status
 
