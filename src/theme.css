@@ -470,6 +470,24 @@ img, svg {
   max-width: 100%;
 }
 
+/* An icon sitting beside text must never decide its own vertical position.
+   `svg { display: block }` above is right for standalone marks and wrong
+   the moment an icon lands next to a word: the two sit on different
+   baselines and the icon floats. Every icon-and-text pair in the app uses
+   this row, which centres them and stops the icon shrinking. */
+.rok-inline {
+  align-items: center;
+  display: flex;
+  gap: var(--rok-s2);
+}
+
+.rok-inline > svg { flex: none; }
+
+/* When the text runs to more than one line, centring looks wrong — the
+   icon should sit with the first line instead. */
+.rok-inline--top { align-items: flex-start; }
+.rok-inline--top > svg { margin-top: 0.15em; }
+
 /* Indic scripts need their own faces, and more line height than Latin to
    stay legible at the sizes this audience needs. Letter-spacing is reset to
    zero because the negative tracking that suits Inter damages them. */

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useT } from "./i18n/useT.js";
 import {
+  caseReferenceFrom,
   createInitialMachineState,
   isCaseComplete,
   rokReducer,
@@ -75,13 +76,16 @@ export default function App() {
   const [detected] = useState(detectLocale);
   const [locale, setLocale] = useState(detected.locale);
   const [speechOn, setSpeechOn] = useState(false);
-  const [unlocked, setUnlocked] = useState(() => {
+  /* Reviewer tools on/off. Nothing is gated by this — it only adds the
+     taxonomy ribbon and the Race for someone evaluating the project. */
+  const [reviewer, setReviewer] = useState(() => {
     try {
       return sessionStorage.getItem(UNLOCK_KEY) === "1";
     } catch {
       return false;
     }
   });
+  const [showGate, setShowGate] = useState(false);
   /* Shown once when the language was guessed rather than chosen, so the
      user knows it is a guess and knows it can be corrected. */
   const [languageHintOpen, setLanguageHintOpen] = useState(
@@ -90,10 +94,13 @@ export default function App() {
   const [showRace, setShowRace] = useState(false);
   const t = useT(locale);
 
-  const debugMode = useMemo(
+  const queryDebug = useMemo(
     () => new URLSearchParams(window.location.search).has("debug"),
     [],
   );
+  /* Signing in is what turns these on. ?debug=1 still works for local
+     development. */
+  const debugMode = queryDebug || reviewer;
 
   const send = useCallback((event) => {
     if (event.type === "RESET_CASE") {
@@ -113,12 +120,23 @@ export default function App() {
   }, [debugMode]);
 
   /* Mechanic M1: a case, once open, survives anything the user does —
-     including closing the tab. Without this restore, "you cannot fail
-     halfway" is only true until the page reloads. */
+     including closing the tab.
+     It is offered rather than forced: a returning user lands on the same
+     opening screen everyone else sees, with "continue" as a second button.
+     Restoring silently would drop someone back into question three with no
+     idea why. */
+  const [savedSnapshot, setSavedSnapshot] = useState(null);
+
   useEffect(() => {
     const snapshot = readSnapshot();
-    if (snapshot?.case?.openedAt) send({ type: "RESTORE_CASE", snapshot });
-  }, [send]);
+    if (snapshot?.case?.openedAt) setSavedSnapshot(snapshot);
+  }, []);
+
+  const resumeSavedCase = () => {
+    if (!savedSnapshot) return;
+    send({ type: "RESTORE_CASE", snapshot: savedSnapshot });
+    setSavedSnapshot(null);
+  };
 
   useEffect(() => {
     if (!machine.case.openedAt) return;
@@ -164,18 +182,20 @@ export default function App() {
     try {
       sessionStorage.setItem(UNLOCK_KEY, "1");
     } catch {
-      /* Private browsing — the gate simply reappears on reload. */
+      /* Private browsing — reviewer tools simply reset on reload. */
     }
-    setUnlocked(true);
+    setReviewer(true);
+    setShowGate(false);
   };
 
   const screenProps = {
     send, t, locale, caseData: machine.case, speechOn, onEnableSpeech: enableSpeech,
+    savedCase: savedSnapshot ? caseReferenceFrom(savedSnapshot.case.id) : null,
+    onResume: resumeSavedCase,
   };
 
-  /* The gate keeps the language picker available, so an evaluator can read
-     it in their own language before they ever reach the product. */
-  if (!unlocked) {
+  /* Shown only when someone opens it from the footer. */
+  if (showGate) {
     return (
       <div className="rok-app">
         <p className="rok-otp-banner">
@@ -197,7 +217,7 @@ export default function App() {
 
         <main className="rok-main" id="rok-main">
           <ErrorBoundary t={t}>
-            <EvaluatorGate onUnlock={unlock} t={t} locale={locale} />
+            <EvaluatorGate onUnlock={unlock} onSkip={() => setShowGate(false)} t={t} locale={locale} />
           </ErrorBoundary>
         </main>
 
@@ -265,7 +285,15 @@ export default function App() {
       </header>
 
       {step !== undefined && machine.value !== ROK_STATES.CALM_MODE && (
-        <ProgressRail step={step} label={t("app.progress_label", { step: step + 1 })} />
+        <ProgressRail
+          step={step}
+          label={t("app.progress_label", { step: String(step + 1) })}
+          remaining={
+            step >= 4
+              ? t("app.progress_done")
+              : t("app.progress_label", { step: String(step + 1) })
+          }
+        />
       )}
 
       {languageHintOpen && (
@@ -291,9 +319,17 @@ export default function App() {
       </main>
 
       <footer className="rok-footer">
-        <button className="rok-btn rok-btn--ghost" type="button" onClick={() => setShowRace(true)}>
-          {t("raceView.title")}
-        </button>
+        {/* Reviewer entrances live down here, out of a citizen's way. */}
+        {reviewer && (
+          <button className="rok-btn rok-btn--ghost" type="button" onClick={() => setShowRace(true)}>
+            {t("raceView.title")}
+          </button>
+        )}
+        {!reviewer && (
+          <button className="rok-btn rok-btn--ghost" type="button" onClick={() => setShowGate(true)}>
+            {t("gate.footer_link")}
+          </button>
+        )}
         <p>{t("footer.not_official")}</p>
       </footer>
     </div>

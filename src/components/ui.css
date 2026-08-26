@@ -313,43 +313,36 @@
   .rok-clock__value { font-size: var(--rok-text-sm); }
 }
 
-/* ── Step strip ────────────────────────────────────────────
-   Four numbered steps, named and countable. A bare progress bar tells you
-   how far along you are; numbers tell you how few are left, which is the
-   reassuring fact when you are frightened. */
+/* ── Progress ──────────────────────────────────────────────
+   A filling bar plus the count in words. See ProgressRail for why the
+   bare numerals went. */
 
 .rok-progress {
   background: var(--rok-surface);
   border-bottom: 1px solid var(--rok-line);
-  display: flex;
-  gap: 0;
-  padding: 0;
+  padding: var(--rok-s3) var(--rok-s4) var(--rok-s3);
 }
 
-.rok-progress__step {
-  align-items: center;
-  border-bottom: 2px solid var(--rok-line);
-  color: var(--rok-ink-mute);
-  display: flex;
-  flex: 1;
+.rok-progress__bar {
+  background: var(--rok-line);
+  border-radius: var(--rok-radius-pill);
+  height: 6px;
+  overflow: hidden;
+}
+
+.rok-progress__fill {
+  background: var(--rok-indigo);
+  border-radius: var(--rok-radius-pill);
+  display: block;
+  height: 100%;
+  transition: width var(--rok-slow) var(--rok-ease);
+}
+
+.rok-progress__label {
+  color: var(--rok-ink-soft);
   font-size: var(--rok-text-sm);
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  gap: var(--rok-s2);
-  justify-content: center;
-  min-height: 44px;
-  transition: border-color var(--rok-base) var(--rok-ease),
-    color var(--rok-base) var(--rok-ease);
-}
-
-.rok-progress__step--done {
-  border-bottom-color: var(--rok-green);
-  color: var(--rok-green-deep);
-}
-
-.rok-progress__step--current {
-  border-bottom-color: var(--rok-red);
-  color: var(--rok-ink);
+  margin-top: var(--rok-s2);
 }
 
 /* The Golden Hour clock. Not decoration: it states what is still worth
@@ -759,4 +752,33 @@
   background: var(--rok-indigo-tint);
   border-color: var(--rok-indigo);
   color: var(--rok-indigo-deep);
+}
+
+
+/* ── Eyebrow ───────────────────────────────────────────────
+   The small label above a heading. This class was used by three screens
+   while having no definition at all, which is why their icons floated
+   above the text. */
+.rok-eyebrow {
+  align-items: center;
+  color: var(--rok-ink-mute);
+  display: flex;
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  gap: var(--rok-s2);
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.rok-eyebrow > svg { flex: none; }
+
+/* Safety net: any icon that ends up beside text in a flex row it does not
+   control still lands centred rather than on its own baseline. */
+.rok-card__title > svg,
+.complete__route > svg,
+.scope__captured li > svg,
+.triage__script li > svg,
+.palm__promises li > svg {
+  flex: none;
 }

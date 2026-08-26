@@ -44,10 +44,6 @@ export default function GuardianHandoff({ send, t, locale, caseData }) {
 
   return (
     <section className="rok-container rok-screen guardian">
-      <p className="rok-eyebrow">
-        <Icon name="people" size={14} />
-        {t("guardianHandoff.eyebrow")}
-      </p>
 
       <h1 className="rok-question" lang={locale}>{t("guardianHandoff.title")}</h1>
       <p className="rok-support" lang={locale}>{t("guardianHandoff.support")}</p>

@@ -160,3 +160,39 @@
 .palm__mic:hover { color: var(--rok-indigo); }
 .palm__mic:disabled { color: var(--rok-indigo); text-decoration: none; }
 .palm__mic svg { flex: none; }
+
+/* Offered, not forced. Sits below the main action because reporting a new
+   fraud is the urgent case; continuing an old one never is. */
+.palm__resume {
+  /* Aligned to the first line, not the middle: the note below wraps to two
+     or three lines and a centred icon then sits beside the wrong one. */
+  align-items: flex-start;
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  color: var(--rok-ink);
+  display: flex;
+  gap: var(--rok-s3);
+  min-height: 64px;
+  padding: var(--rok-s3) var(--rok-s4);
+  text-align: left;
+  transition: background var(--rok-fast) var(--rok-ease),
+    border-color var(--rok-fast) var(--rok-ease);
+  width: 100%;
+}
+
+.palm__resume:hover {
+  background: var(--rok-surface-quiet);
+  border-color: var(--rok-ink-soft);
+}
+
+.palm__resume > svg { color: var(--rok-indigo); flex: none; margin-top: 2px; }
+.palm__resume > span { display: flex; flex-direction: column; gap: 1px; }
+
+.palm__resume-title { font-size: var(--rok-text-md); font-weight: 600; }
+
+.palm__resume-note {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+}
+

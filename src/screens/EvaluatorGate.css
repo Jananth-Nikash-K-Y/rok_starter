@@ -165,3 +165,15 @@
   .gate__contrast { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gate__title { font-size: var(--rok-text-3xl); }
 }
+
+.gate__badge {
+  align-self: flex-start;
+  background: var(--rok-indigo-tint);
+  border-radius: var(--rok-radius-sm);
+  color: var(--rok-indigo-deep);
+  font-size: var(--rok-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: var(--rok-s1) var(--rok-s3);
+  text-transform: uppercase;
+}

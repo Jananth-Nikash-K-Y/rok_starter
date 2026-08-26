@@ -47,18 +47,32 @@ credentials below, and complete one full case.
 Both are printed on the sign-in screen itself, so an evaluator never has to
 hunt for them. The username is case- and whitespace-insensitive.
 
-### Why there is a sign-in at all
+### The sign-in grants, it does not block
 
 Rok's entire argument is that a fraud victim should never be asked to
-register — NCRP's OTP gate is the thing that costs people their money. A
-login placed in front of the citizen journey would contradict the product.
+register. A login placed in front of the citizen journey contradicted the
+product — so it no longer sits there.
 
-So the gate is deliberately **not part of the citizen journey**. It is one
-screen, shown once per session, addressed to evaluators, and it uses the
-requirement to make the case: beside the sign-in form it lists what NCRP
-demands before a complaint can begin (register, OTP, password, then a
-21-step form) against what Rok demands before a case is open (**nothing**).
-Sign in once and everything after it asks for nothing at all.
+**The citizen experience is the landing page.** Anyone who opens the URL
+lands on "My money is gone" and can report a fraud immediately. There is no
+gate.
+
+The credentials now *unlock the reviewer tools* rather than unlocking the
+product: signing in turns on the inferred-NCRP-taxonomy ribbon and the
+side-by-side Race. Evaluators experience the platform using the supplied
+credentials, which is what this submission asks for, and nobody in a crisis
+ever meets a login screen.
+
+**Reviewers:** open the app, then use **"Reviewing this project? Sign in"**
+in the footer. The sign-in screen also makes the argument directly — beside
+the form it sets what NCRP demands before a complaint can begin (register,
+OTP, password, then a 21-step form) against what Rok demands before a case
+is open (**nothing**).
+
+There is no citizen login and no case-status lookup, because there is no
+server: a case lives in the browser that created it. A returning user is
+offered "Continue my report" on the opening screen when a case really is on
+that device — no code, nothing to remember, nothing to forget.
 
 It is a doorbell, not a lock, and says so on screen: the check runs in the
 browser, there is no server, no accounts and no personal data behind it.

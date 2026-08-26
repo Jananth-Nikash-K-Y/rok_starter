@@ -16,7 +16,7 @@ import "./Palm.css";
  * Nothing speaks until they press it — which satisfies GIGW's no-autoplay
  * rule and the accessibility need with the same control.
  */
-export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
+export default function Palm({ send, t, locale, speechOn, onEnableSpeech, savedCase, onResume }) {
   const [voiceAvailable, setVoiceAvailable] = useState(true);
   const [listening, setListening] = useState(false);
   const [heardNothing, setHeardNothing] = useState(false);
@@ -69,6 +69,22 @@ export default function Palm({ send, t, locale, speechOn, onEnableSpeech }) {
         <span className="palm__button-label" lang={locale}>{t("palm.action")}</span>
         <span className="palm__button-hint" lang={locale}>{t("palm.action_hint")}</span>
       </button>
+
+      {/* Appears only when a case really is on this device. No code, no
+          password, nothing to remember — the phone already knows. There is
+          no server, so there is nothing to "log in" to and no honest way to
+          offer this on a different device. */}
+      {savedCase && (
+        <button className="palm__resume" type="button" onClick={onResume} lang={locale}>
+          <Icon name="document" size={22} />
+          <span>
+            <span className="palm__resume-title">{t("palm.resume")}</span>
+            <span className="palm__resume-note">
+              {t("palm.resume_note", { reference: savedCase })}
+            </span>
+          </span>
+        </button>
+      )}
 
       <button className="palm__listen" type="button" onClick={listen} lang={locale}>
         <span className="palm__listen-icon"><Icon name="speaker" size={26} /></span>

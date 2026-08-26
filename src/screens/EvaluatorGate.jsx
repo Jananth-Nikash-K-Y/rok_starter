@@ -4,18 +4,22 @@ import { DEMO_ACCESS, checkDemoAccess } from "../config/demoAccess.js";
 import "./EvaluatorGate.css";
 
 /**
- * The one screen a citizen never sees.
+ * The evaluator's door. A citizen never arrives here.
  *
- * The submission asks for credentials; Rok's thesis is that asking a fraud
- * victim to register is what costs them their money. Rather than pretend
- * those two things are compatible, this screen states the tension outright
- * and uses it: an evaluator signs in once, reads what NCRP demands before a
- * complaint can even begin, and is then dropped into a flow that asks for
- * none of it. The contrast is the first beat of the pitch.
+ * This used to gate the product, which quietly contradicted the whole
+ * argument: a victim was asked to sign in before they could report a
+ * theft. Now the citizen experience is the landing page and this screen is
+ * optional, reached from a small link in the footer.
+ *
+ * The credentials therefore *grant* something instead of *blocking*
+ * something — they turn on the reviewer tools: the inferred NCRP taxonomy
+ * ribbon and the side-by-side Race. Evaluators still experience the
+ * platform using the supplied credentials, which is what the submission
+ * asks for, and nobody in a crisis meets a login.
  *
  * Not authentication — see src/config/demoAccess.js.
  */
-export default function EvaluatorGate({ onUnlock, t, locale }) {
+export default function EvaluatorGate({ onUnlock, onSkip, t, locale }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [failed, setFailed] = useState(false);
@@ -43,6 +47,7 @@ export default function EvaluatorGate({ onUnlock, t, locale }) {
       <h1 className="gate__title" ref={heading} tabIndex={-1} lang={locale}>
         {t("gate.title")}
       </h1>
+      <p className="gate__badge">{t("gate.badge")}</p>
       <p className="gate__lede" lang={locale}>{t("gate.lede")}</p>
 
       <form className="gate__form" onSubmit={submit}>
@@ -78,6 +83,11 @@ export default function EvaluatorGate({ onUnlock, t, locale }) {
 
         <button className="rok-btn rok-btn--primary rok-btn--block rok-btn--lg" type="submit">
           {t("gate.enter")}
+        </button>
+
+        {/* Nobody is trapped here. */}
+        <button className="rok-btn rok-btn--ghost rok-btn--block" type="button" onClick={onSkip}>
+          {t("gate.skip")}
         </button>
       </form>
 

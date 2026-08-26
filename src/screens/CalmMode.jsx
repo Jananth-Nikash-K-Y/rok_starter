@@ -33,10 +33,6 @@ export default function CalmMode({ send, t, locale, caseData }) {
   return (
     <section className="rok-container rok-screen calm">
       <header className="calm__header">
-        <p className="rok-eyebrow">
-          <Icon name="check" size={14} />
-          {t("calmMode.eyebrow")}
-        </p>
         <h1 className="calm__heading" lang={locale}>{t("calmMode.heading")}</h1>
         <p className="rok-support" lang={locale}>{t("calmMode.support")}</p>
       </header>
