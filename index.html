@@ -9,11 +9,10 @@
     <meta name="theme-color" content="#0c2354" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0a121f" media="(prefers-color-scheme: dark)" />
 
-    <!-- SVG favicon: one file, every size, no export step. There is no
-         apple-touch-icon link because iOS needs a PNG and shipping a link
-         to a file that does not exist is worse than shipping none — see
-         BACKLOG.md. -->
+    <!-- Favicon: .ico for legacy browsers, SVG for modern ones, PNG for iOS -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Rok — रोक</title>
   </head>

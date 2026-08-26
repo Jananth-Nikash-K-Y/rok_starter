@@ -529,8 +529,15 @@
   white-space: nowrap;
 }
 
+/* Both popovers are DOM children of the masthead, which sets a white
+   text colour for the dark band. Visually they float on a white surface,
+   so without an explicit colour here every label inside them inherits
+   white and disappears — which is exactly what happened to the Tamil and
+   Telugu names. Setting it on the panel covers everything inside it,
+   including anything added later. */
 .lang__panel {
   background: var(--rok-surface);
+  color: var(--rok-ink);
   border: 1px solid var(--rok-line-strong);
   border-radius: var(--rok-radius);
   box-shadow: var(--rok-shadow-lg);
@@ -549,10 +556,12 @@
 .lang__option {
   align-items: center;
   border-radius: var(--rok-radius-sm);
+  color: var(--rok-ink);
   display: flex;
-  gap: var(--rok-s3);
+  flex-wrap: wrap;
+  gap: 0 var(--rok-s2);
   min-height: 56px;
-  padding: var(--rok-s2) var(--rok-s3);
+  padding: var(--rok-s3);
   text-align: left;
   width: 100%;
 }
@@ -563,8 +572,10 @@
 
 /* Native name leads, at reading size; the English name is the small hint. */
 .lang__native {
+  color: var(--rok-ink);
   font-size: var(--rok-text-lg);
-  font-weight: 650;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .lang__english {
@@ -612,6 +623,7 @@
 
 .a11y__panel {
   background: var(--rok-surface);
+  color: var(--rok-ink);
   border: 1px solid var(--rok-line-strong);
   border-radius: var(--rok-radius);
   box-shadow: var(--rok-shadow-lg);
@@ -641,6 +653,7 @@
 
 .a11y__size {
   align-items: center;
+  color: var(--rok-ink);
   border: 2px solid var(--rok-line-strong);
   border-radius: var(--rok-radius-sm);
   display: flex;
@@ -735,6 +748,7 @@
 
 .a11y__theme {
   align-items: center;
+  color: var(--rok-ink);
   border: 2px solid var(--rok-line-strong);
   border-radius: var(--rok-radius-sm);
   display: flex;

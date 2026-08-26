@@ -82,68 +82,74 @@ Credentials live in `src/config/demoAccess.js`.
 
 ## 3. Two-minute video script
 
-Record at 1080p portrait or landscape, real device or browser at 390×844.
-Speak at a normal pace — the timings below assume roughly 150 words/minute.
-Do not accelerate the app; the point is that it is genuinely this fast.
+Reflects the actual shipped flow as of 26 August 2026: ungated landing,
+four questions, live in English/Hindi/Tamil/Telugu, auto-saving PDF, three
+equal ways to send the case (call, write, or hand to a helper). Do not
+accelerate anything on screen — the real timing is the point. Speak at a
+natural pace; the lines below run close to 150 words/minute, which lands
+inside 60 seconds each half with room to breathe.
 
-### Minute one — the user's perspective (0:00–1:00)
+### First 60 seconds — the user demo (no narration of tech, no jargon)
 
-| Time | On screen | Say |
-| --- | --- | --- |
-| 0:00–0:10 | The concept doc's list of NCRP demands, or the Race view paused | "It's 11:47 at night and ₹45,000 has just left Kamala's account. To report it, the national portal asks her to register, wait for an OTP, classify her own crime, find a twelve-digit transaction ID, and write two hundred characters — about twenty-one steps, in Hindi or English. She reads neither." |
-| 0:10–0:16 | Rok opens. One red button. Tamil selected. | "Rok asks her for one thing." |
-| 0:16–0:22 | Tap **Start now**. Clock appears at 59:5x. | "Her case is open. Timestamped. Before a single question." |
-| 0:22–0:30 | "Are they still on the phone?" → tap **No** | "First question is her safety, not her money." |
-| 0:30–0:42 | Message Wall. Slow scroll past the amounts. Tap **₹45,000**. Receipt appears. | "Then the only question that matters: which one is the wrong one? She recognises the amount. Rok reads out the bank, the time, the reference number and where the money went — from her own message. She typed nothing." |
-| 0:42–0:50 | **Only this one** → **Phone call** → **Where are you?** → tap the State | "Only this one. They called her. She confirms her State — the app narrowed thirty-six down to three." |
-| 0:50–0:56 | Read-back, three sentences, tap Yes each time | "It writes the complaint for her, and reads it back. She only says yes." |
-| 0:56–1:00 | Green screen, case reference large | "Fifty seconds. Nothing typed. No English." |
-
-### Minute two — design and development decisions (1:00–2:00)
+Record one clean, uninterrupted run. Do several takes and pick the one
+where nothing stumbles — this half has to look effortless because the
+product is supposed to be.
 
 | Time | On screen | Say |
 | --- | --- | --- |
-| 1:00–1:12 | Race view, running | "The machinery to freeze that money already works — over seven thousand crore recovered. The bottleneck is intake. So we changed what a report *is*: NCRP is a prove-it document for the investigator who reads it later. Rok is a stop-it signal for the money moving now." |
-| 1:12–1:24 | Message Wall again | "That changes the unit of success: an open case plus one freeze-relevant identifier, not a completed form. And it means recognition, not recall — the answer is already in her pocket. Recognition is the one thing that survives panic, age, low literacy and blindness." |
-| 1:24–1:34 | Golden Hour clock, then Calm Mode | "The clock isn't decoration — it decides what the screen is allowed to ask. ID, address and paperwork are deferred to a calm mode that opens only after the case exists." |
-| 1:34–1:46 | Code or architecture figure | "It's a hundred percent client-side. No backend isn't a shortcut — a server that never receives fraud evidence can't leak it. Parsing is deterministic regex, no model in the critical path, works offline. OCR runs on the device." |
-| 1:46–1:54 | Language picker, then the three send routes | "Four languages, auto-detected. And because 1930 is a telephone line that excludes deaf users, sending in writing and handing the case to a helper are equal options, not fallbacks." |
-| 1:54–2:00 | The "not yet filed" notice | "NCRP has no public API, so Rok doesn't fake a submission. It produces a validated packet and a helpline card, and says so on screen." |
+| 0:00–0:08 | Black, or the NCRP instructions page for one beat | "It's midnight. Forty-five thousand rupees just left Kamala's account. To report it today, she'd need to register, wait for an OTP, and fill a twenty-one step form — in a language she doesn't read." |
+| 0:08–0:14 | Rok's landing screen. Tamil selected. Just the red button. | "Rok asks her one thing." |
+| 0:14–0:19 | Tap the button. Nothing else on screen. | *(no narration — let the silence land)* "That's it. Her case is already open." |
+| 0:19–0:26 | "Are they still on the phone?" → tap No | "First question is about her, not the money." |
+| 0:26–0:38 | The message wall. Slow pan across the amounts. Tap ₹45,000. The receipt fills in. | "Then the only real question: which one is wrong? She recognizes her own money — she never typed a number." |
+| 0:38–0:48 | Only this one → How they were contacted (tap the phone icon) → the state auto-narrows to three, tap one | "A few taps confirm what happened. No forms, no categories to understand." |
+| 0:48–0:55 | Read-back: three short sentences, tap Yes each time | "Rok writes the complaint. She just says yes." |
+| 0:55–1:00 | Green screen, case number large, PDF already saving | "Done. Under a minute. She never typed a word." |
 
-**Shots to capture in advance:** one clean uninterrupted run of the citizen
-flow (this is the hardest to get right — do it several times), the Race
-reaching 1:05, the language picker open, and the three send routes.
+### Second 60 seconds — why it was built this way
 
----
+| Time | On screen | Say |
+| --- | --- | --- |
+| 1:00–1:10 | Split screen or the NCRP step list again | "The system that freezes stolen money already works — it's recovered thousands of crores. What fails is the first sixty seconds: the intake form. So we rebuilt the intake, not the backend." |
+| 1:10–1:20 | Message wall again, tap-to-select | "The core idea is recognition over recall. A victim in shock can't remember a transaction ID, but she can recognize her own bank message. So Rok shows her the evidence and asks her to point, not type." |
+| 1:20–1:30 | Language switcher: English → Hindi → Tamil → Telugu | "It runs in four languages, speaks every screen aloud, and works for someone who can't read at all — because the fast path and the accessible path are the same path here, not two separate builds." |
+| 1:30–1:38 | The three "send it" options on the final screen | "Filing still needs a human step today, so we give three equal ways to finish: call it in, send it in writing, or hand it to a helper — because a phone-only option would exclude anyone who's deaf." |
+| 1:38–1:48 | The auto-saving PDF notice | "The moment the case is ready, a PDF saves itself in her own language — so even if she closes the app, she's holding proof." |
+| 1:48–1:58 | The landing screen again, empty | "There's no login for a citizen, no account, nothing to remember. It's a browser proof of concept — no backend, so there's nothing of hers stored anywhere but her own phone." |
+| 1:58–2:00 | Rok wordmark | "Rok — stop the money, not the paperwork." |
 
-## 4. Summary (250 words)
+**Shots to capture before editing:** one uninterrupted full run of the
+citizen flow start to finish; the language switcher; the three send
+options; the auto-save notice appearing.
 
-Rok reimagines citizen intake for India's National Cyber Crime Reporting
-Portal.
+## 4. Summary (max 250 words)
 
-India's fraud-freeze machinery already works: the system connecting police,
-banks and telecoms has saved over ₹7,000 crore across 23 lakh complaints.
-The bottleneck is intake. To report a fraud today, a victim must register
-with a mobile number and an OTP, classify their own crime into a government
-taxonomy, select the investigating State, locate a twelve-digit transaction
-ID, upload a scanned photo ID, and write a 200-character description without
-special characters: roughly 21 steps, offered only in Hindi and English. An
-incomplete form is not a partial complaint — it is no complaint at all. The
-golden hour is spent filling the form.
+Rok rebuilds how citizens report financial cyber fraud to India's
+National Cyber Crime Reporting Portal.
 
-Rok opens a timestamped case on the first tap, before anything is known. It
-never asks for a transaction ID: it shows victims their own bank messages,
-reads them aloud in their language, and asks one question — which one is the
-wrong one? It extracts the amount, time, bank, reference and beneficiary
-from that message, infers the taxonomy from four icon taps, narrows 36
-jurisdictions to one confirmation, composes the mandatory description, and
-reads it back for a yes or no.
+The freeze machinery behind the portal already works and has recovered
+thousands of crores. What fails is the first sixty seconds: reporting a
+fraud today means registering, waiting for an OTP, and completing a
+roughly twenty-one step form — in Hindi or English only — while recalling
+a twelve-digit transaction ID from memory. That is often impossible for a
+frightened or low-literacy victim, and every lost minute is money gone.
 
-The result is a submittable complaint in under a minute, with zero words
-typed and no English required, in four languages. Accessibility is not a
-layer added afterwards: recognising your own evidence is simultaneously the
-fastest, spoken and icon path. Abandon it halfway and a live case still
-exists.
+Rok replaces recall with recognition. One tap opens the case immediately,
+before anything else is known. Instead of typing a transaction ID, the
+citizen is shown their own bank messages and asked to point at the wrong
+one — Rok reads the amount, time, and reference number from it directly.
+A few short questions later, Rok has written the complaint and read it
+back for a yes. It runs in English, Hindi, Tamil, and Telugu, speaks
+every screen aloud, and needs no account, login, or typing.
+
+The finished case saves itself as a document in the citizen's own
+language, and can be filed by phone, in writing, or through a helper.
+
+Rok is built for the people existing portals fail hardest: elderly
+citizens, low-literacy users, non-English speakers, and anyone too
+frightened to navigate a government form. It is a working browser proof
+of concept, not a mockup — citizen-first, accessible by default, and far
+simpler than the system it replaces.
 
 ---
 
@@ -153,7 +159,7 @@ exists.
 | --- | --- |
 | Browser-based POC, not a mobile app | React + Vite single page, runs in any modern browser |
 | Live public link anyone can test | Static build ready; deploy step needs your Vercel/GitHub login |
-| Login credentials for evaluators | `evaluator` / `rok-2026`, printed on the sign-in screen |
-| Citizen perspective reachable with them | Sign-in leads directly into the full citizen flow |
+| Login credentials for evaluators | `evaluator` / `rok-2026`, printed on the sign-in screen (reached via the "Reviewing this project? Sign in" link in the footer) |
+| Citizen perspective reachable with them | The citizen flow needs no credentials at all — it is the landing page. Signing in unlocks reviewer-only tools (taxonomy ribbon, side-by-side Race) on top of it |
 | 2-minute video | Script above, timed and shot-listed |
 | 250-word summary | Above |
