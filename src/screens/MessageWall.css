@@ -453,6 +453,9 @@
   background: var(--rok-surface);
   border: 1px solid var(--rok-line);
   border-radius: var(--rok-radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s4);
   margin-inline: 2px;
   padding: var(--rok-s5);
 }
