@@ -60,6 +60,8 @@ export default function MessageWall({ send, t, locale, caseData }) {
     })),
   );
   const [corrections, setCorrections] = useState({});
+  const [reviewIndex, setReviewIndex] = useState(0);
+  const touchStartX = useRef(null);
 
   useEffect(() => {
     setParsedInbox(
@@ -88,6 +90,12 @@ export default function MessageWall({ send, t, locale, caseData }) {
   const remove = (entry) => {
     setSelected((current) => current.filter((row) => !sameTransaction(row, entry)));
   };
+
+  /* Removing a card mid-review can leave the index pointing past the end
+     of the (now shorter) deck; clamp it back onto the last remaining one. */
+  useEffect(() => {
+    setReviewIndex((current) => Math.min(current, Math.max(selected.length - 1, 0)));
+  }, [selected.length]);
 
   const available = parsedInbox.filter((entry) => !isSelected(entry));
   const total = selected.reduce((sum, entry) => sum + (entry.parsed.amount ?? 0), 0);
@@ -124,6 +132,30 @@ export default function MessageWall({ send, t, locale, caseData }) {
     setSelected((current) => [...current, { id: `ocr-${Date.now()}`, raw: parsed.raw, parsed }]);
   };
 
+  /* One card in view at a time on the review screen instead of a long
+     stack — several disputed payments read easier as a swipe-through deck
+     than as an ever-growing scroll, and the total sits above it, outside
+     any single card, so it never reads as belonging to just the one in
+     view. Only the current card is rendered (not a row of every card with
+     the rest scrolled off-screen), so a short card never sits inside a
+     box sized for a taller sibling — swiping never leaves dead space
+     underneath it. */
+  const goToIndex = (index) => {
+    setReviewIndex(Math.min(Math.max(index, 0), selected.length - 1));
+  };
+
+  const onTouchStart = (event) => {
+    touchStartX.current = event.touches[0].clientX;
+  };
+
+  const onTouchEnd = (event) => {
+    if (touchStartX.current === null) return;
+    const delta = event.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    goToIndex(delta > 0 ? reviewIndex - 1 : reviewIndex + 1);
+  };
+
   const confirmAll = () => {
     const transactions = selected.map((entry) => ({
       ...entry.parsed,
@@ -142,27 +174,57 @@ export default function MessageWall({ send, t, locale, caseData }) {
         spokenKey="messageWall.receipt_title"
       >
         <div className="wall__review">
-          {selected.map((entry) => (
-            <ReceiptCard
-              key={entry.id}
-              entry={entry}
-              correction={corrections[entry.id]}
-              onCorrect={(field, value) => setCorrections((current) => ({
-                ...current,
-                [entry.id]: { ...current[entry.id], [field]: value },
-              }))}
-              onRemove={() => remove(entry)}
-              t={t}
-              locale={locale}
-            />
-          ))}
-
           {selected.length > 1 && (
             <p className="wall__review-total">
               <Icon name="rupee" size={18} />
               <span>{t("scope.total_label")}</span>
               <strong>{formatIndianCurrency(total)}</strong>
             </p>
+          )}
+
+          <div
+            className="wall__review-slide"
+            onTouchStart={selected.length > 1 ? onTouchStart : undefined}
+            onTouchEnd={selected.length > 1 ? onTouchEnd : undefined}
+          >
+            <ReceiptCard
+              key={selected[reviewIndex].id}
+              entry={selected[reviewIndex]}
+              correction={corrections[selected[reviewIndex].id]}
+              onCorrect={(field, value) => setCorrections((current) => ({
+                ...current,
+                [selected[reviewIndex].id]: { ...current[selected[reviewIndex].id], [field]: value },
+              }))}
+              onRemove={() => remove(selected[reviewIndex])}
+              t={t}
+              locale={locale}
+            />
+          </div>
+
+          {selected.length > 1 && (
+            <div className="wall__review-nav">
+              <button
+                type="button"
+                className="wall__review-nav-btn"
+                disabled={reviewIndex === 0}
+                aria-label={t("messageWall.previous_transaction")}
+                onClick={() => goToIndex(reviewIndex - 1)}
+              >
+                <Icon name="arrowLeft" size={18} />
+              </button>
+              <span className="wall__review-nav-count" aria-live="polite">
+                {t("messageWall.review_progress", { index: reviewIndex + 1, total: selected.length })}
+              </span>
+              <button
+                type="button"
+                className="wall__review-nav-btn"
+                disabled={reviewIndex === selected.length - 1}
+                aria-label={t("messageWall.next_transaction")}
+                onClick={() => goToIndex(reviewIndex + 1)}
+              >
+                <Icon name="arrowRight" size={18} />
+              </button>
+            </div>
           )}
         </div>
 

@@ -394,10 +394,66 @@
   gap: var(--rok-s4);
 }
 
+/* One card in view at a time, swipeable, rather than a stack that grows
+   past the fold as more payments are ticked. Only the current card is in
+   the DOM — a row holding every card (even off-screen ones) forces the
+   container to the height of the tallest one, which leaves dead space
+   under every shorter card. touch-action: pan-y lets the page still
+   scroll vertically while a horizontal drag is read as a swipe. */
+.wall__review-slide {
+  animation: wall-review-slide-in 160ms var(--rok-ease);
+  touch-action: pan-y;
+}
+
+@keyframes wall-review-slide-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* A named Back/Next pair rather than a row of tap-sized-for-a-mouse dots —
+   bigger targets for a shaking hand, and the label says which transaction
+   is next instead of leaving it to a dot's position to communicate. */
+.wall__review-nav {
+  align-items: center;
+  display: flex;
+  gap: var(--rok-s3);
+  justify-content: center;
+}
+
+.wall__review-nav-btn {
+  align-items: center;
+  background: var(--rok-surface);
+  border: 2px solid var(--rok-line-strong);
+  border-radius: var(--rok-radius);
+  color: var(--rok-ink);
+  display: flex;
+  flex: none;
+  height: 44px;
+  justify-content: center;
+  transition: border-color var(--rok-fast) var(--rok-ease), opacity var(--rok-fast) var(--rok-ease);
+  width: 44px;
+}
+
+.wall__review-nav-btn:hover:not(:disabled) { border-color: var(--rok-indigo); }
+
+.wall__review-nav-btn:disabled {
+  opacity: 0.35;
+}
+
+.wall__review-nav-count {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-sm);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  min-width: 7.5em;
+  text-align: center;
+}
+
 .receipt--card {
   background: var(--rok-surface);
   border: 1px solid var(--rok-line);
   border-radius: var(--rok-radius-lg);
+  margin-inline: 2px;
   padding: var(--rok-s5);
 }
 
