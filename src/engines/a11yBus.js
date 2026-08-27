@@ -1,7 +1,6 @@
 /**
  * Central announce() used by every screen on mount, so no screen can
  * silently forget to speak or announce its own prompt.
- * Full spec: docs/BUILD_BRIEF.md, section 6.
  *
  * Two subscribers:
  *  1. the aria-live region rendered once at the app root

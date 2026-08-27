@@ -1,6 +1,6 @@
 /**
  * Output adapters: NCRP-shaped packet, 1930 read-aloud card, case PDF,
- * guardian handoff code. Full spec: docs/BUILD_BRIEF.md, section 5.
+ * guardian handoff code.
  *
  * Reminder: buildNcrpPacket produces a packet for the user to review and
  * self-submit — NCRP has no public API, this must never claim to have
@@ -172,8 +172,7 @@ export async function buildCasePdf(caseObj) {
  *
  * DEMO SIMPLIFICATION: This is a localStorage-backed, same-browser/
  * same-device-only mechanism. A real implementation would need a relay
- * server, which is out of scope for this POC. See AGENTS.md security
- * posture section for the rationale.
+ * server, which is out of scope for this POC — see SECURITY.md.
  *
  * @param {import('../state/machine.js').Case} caseObj
  * @returns {string}

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Fails (non-zero exit) if the locale files do not have identical key sets.
- * Run via `npm run check:i18n`. See AGENTS.md, i18n conventions.
+ * Run via `npm run check:i18n`.
  *
  * The locale list is read from src/i18n/locales.js rather than hardcoded
  * here, so adding a language cannot silently escape this check.
@@ -41,7 +41,7 @@ for (const key of allKeys) {
 }
 
 if (hasError) {
-  console.error("\ni18n check failed — see AGENTS.md i18n conventions.");
+  console.error("\ni18n check failed — every locale file must have the same key set.");
   process.exit(1);
 } else {
   console.log(

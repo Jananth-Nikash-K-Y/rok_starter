@@ -36,4 +36,4 @@ being built. Guardian handoff is a same-device, same-browser
 decision, not an oversight: keeping financial-fraud evidence out of a server
 eliminates a server-side attack surface for this proof of concept. Real NCRP
 submission, inbox access, bank integrations, payment integrations, accounts,
-and authentication remain out of scope as listed in `docs/BUILD_BRIEF.md`.
+and authentication remain out of scope for this proof of concept.

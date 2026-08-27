@@ -24,7 +24,7 @@ export default class ErrorBoundary extends Component {
 
   componentDidCatch(error) {
     /* No error-reporting SDK: one could exfiltrate case data as a side
-       effect of its normal operation (see AGENTS.md). Console only. */
+       effect of its normal operation. Console only. */
     console.error("[Rok] render failed", error);
   }
 

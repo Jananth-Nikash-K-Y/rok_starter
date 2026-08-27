@@ -1,6 +1,6 @@
 /**
  * India-specific formatting. Do not reach for `Intl` defaults inline —
- * everything user-facing goes through here (see AGENTS.md).
+ * everything user-facing goes through here.
  */
 
 const INDIA_OFFSET_MILLISECONDS = (5 * 60 + 30) * 60 * 1000;

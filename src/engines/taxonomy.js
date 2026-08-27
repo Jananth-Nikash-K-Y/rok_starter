@@ -1,6 +1,6 @@
 /**
  * Maps a REACHED_VIA icon selection to an NCRP-shaped category and
- * sub-category. Full spec: docs/BUILD_BRIEF.md, section 3.
+ * sub-category.
  *
  * Taxonomy wording verified against cybercrime.gov.in categories as of
  * August 2026. Portal taxonomies are revised periodically — re-verify

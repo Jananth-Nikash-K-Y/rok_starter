@@ -2,7 +2,8 @@
  * Web Speech API wrapper — TTS for every screen, and the optional spoken
  * trigger on the Palm screen.
  *
- * No cloud TTS/STT dependency (see AGENTS.md). Web Speech coverage for
+ * No cloud TTS/STT dependency — deliberately, to keep the app backend-free.
+ * Web Speech coverage for
  * Indian languages is uneven across browsers, so this treats speech as an
  * enhancement that reports whether it actually worked, rather than assuming
  * it did. The interface must stay fully usable when it did not.

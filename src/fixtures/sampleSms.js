@@ -1,6 +1,5 @@
 /**
  * Demo-mode inbox and parser fixtures.
- * Source formats: docs/BUILD_BRIEF.md, section 2.
  *
  * IMPORTANT: browsers cannot read a real device SMS inbox — this fixture
  * stands in for that on the Message Wall in demo mode. The real working

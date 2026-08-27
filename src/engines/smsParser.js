@@ -1,6 +1,5 @@
 /**
  * Evidence Recognition Engine.
- * Full spec + seed fixtures: docs/BUILD_BRIEF.md, section 2.
  *
  * Deterministic only. No network calls, no ML model, must work offline.
  *
@@ -12,8 +11,8 @@
  * exactly the case the screenshot/OCR path has to survive. So the parser
  * extracts whatever it can find, names the bank when it recognises one, and
  * downgrades `confidence` when it cannot. The UI is responsible for making
- * the user confirm anything below high confidence — see AGENTS.md, which
- * forbids auto-submission.
+ * the user confirm anything below high confidence — this app never
+ * auto-submits anything on the strength of a parse alone.
  */
 
 /**
@@ -225,7 +224,7 @@ export function parseTransactionSms(text) {
 /**
  * OCRs an image via Tesseract.js, then runs the result through
  * parseTransactionSms. Tesseract assets are served from /public so nothing
- * is fetched from a third-party origin at runtime (see AGENTS.md).
+ * is fetched from a third-party origin at runtime.
  *
  * @param {File} file
  * @returns {Promise<ReturnType<typeof parseTransactionSms> & { raw: string } | null>}

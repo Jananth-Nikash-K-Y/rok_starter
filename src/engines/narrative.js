@@ -1,7 +1,6 @@
 /**
  * Composes the mandatory NCRP-style incident description (>=200 chars,
  * plain ASCII) and the shorter spoken read-back sentences.
- * Full spec + example template: docs/BUILD_BRIEF.md, section 4.
  *
  * Deterministic template composition — no model call.
  *

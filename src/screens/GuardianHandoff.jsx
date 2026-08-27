@@ -14,9 +14,8 @@ import "./GuardianHandoff.css";
  *
  * Scope note, stated on screen as well as here: this build stores the case
  * under a code in localStorage, so it continues on THIS device and browser
- * only. Real cross-device handoff needs a relay, and AGENTS.md records the
- * deliberate decision not to build a backend for this submission. The copy
- * must never imply otherwise.
+ * only. Real cross-device handoff needs a relay — deliberately out of scope
+ * for a backend-free submission. The copy must never imply otherwise.
  */
 export default function GuardianHandoff({ send, t, locale, caseData }) {
   const [code, setCode] = useState(null);

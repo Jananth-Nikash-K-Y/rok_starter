@@ -15,10 +15,10 @@ import "./RaceView.css";
  * is still on step 4 of 21, which is the entire argument, and it lands
  * inside the first minute of a demo.
  *
- * NCRP's step list and its ~21-step count come from the citizen procedure
- * manuals cited in docs/Rok_NCRP_Concept.pdf, Appendix A. The per-step
- * timings are an illustration of a competent user working steadily, and the
- * screen says so rather than implying they were measured.
+ * NCRP's step list and its ~21-step count come from cybercrime.gov.in's
+ * own published citizen filing procedure. The per-step timings are an
+ * illustration of a competent user working steadily, and the screen says
+ * so rather than implying they were measured.
  */
 
 /** Rok's beats, in seconds, from the journey in the concept document. */

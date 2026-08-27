@@ -5,6 +5,9 @@
 A browser-based reimagining of India's National Cyber Crime Reporting Portal
 (cybercrime.gov.in), built for the **Build What Moves India** hackathon.
 
+| 21 steps → 4 questions | ~10 minutes → under 60 seconds | 0 words typed | 4 languages, spoken aloud | No login, no backend |
+| --- | --- | --- | --- | --- |
+
 ## The problem
 
 India's fraud-freeze machinery already works. The Citizen Financial Cyber
@@ -42,12 +45,9 @@ The result is a complete, submittable complaint in under a minute, with
 zero words typed and no English required — and the accessible path and the
 fast path are the same path.
 
-Full design rationale, evidence register and diagrams:
-[`docs/Rok_NCRP_Concept.pdf`](./docs/Rok_NCRP_Concept.pdf)
-
 ## The journey, as a wireframe
 
-Eight screens. Four of them are questions. Nothing is typed.
+Seven screens. Four of them are questions. Nothing is typed.
 
 ```
    ENTRY                                                    THE CLOCK STARTS HERE
@@ -59,50 +59,48 @@ Eight screens. Four of them are questions. Nothing is typed.
 │  My money is     │          │                  │         │                  │
 │  gone            │          │  ┌─────┐ ┌─────┐ │         │ ┌──────────────┐ │
 │ ┌──────────────┐ │          │  │ 📞  │ │ 📵  │ │         │ │ SBI          │ │
-│ │  START NOW   │ │          │  │ Yes │ │ No  │ │         │ │ ₹45,000      │ │◀── the
-│ └──────────────┘ │          │  └─────┘ └─────┘ │         │ │ 23:47   [🔊] │ │    only
-│  🔊 Read to me   │          │        │         │         │ ├──────────────┤ │    cue
-└──────────────────┘          └────────┼─────────┘         │ │ HDFC         │ │    that
-   case opens                          │ Yes               │ │ ₹12,500      │ │    matters
-   on this tap                         ▼                   │ └──────────────┘ │
-                              ┌──────────────────┐         │ 📷 Upload photo  │
+│ │  START NOW   │ │          │  │ Yes │ │ No  │ │         │ │ ₹45,000   ✓  │ │◀── tap
+│ └──────────────┘ │          │  └─────┘ └─────┘ │         │ ├──────────────┤ │    every
+│  🔊 Read to me   │          │        │         │         │ │ HDFC         │ │    one
+└──────────────────┘          └────────┼─────────┘         │ │ ₹12,500   ✓  │ │    that's
+   case opens                          │ Yes               │ └──────────────┘ │    wrong —
+   on this tap                         ▼                   │ 📷 Upload photo  │    not just
+                              ┌──────────────────┐         │ [ Continue → ]   │    the first
                               │  HANG UP NOW.    │         └────────┬─────────┘
                               │  1 End the call  │                  │
                               │  2 Tell them     │                  ▼
                               │    nothing       │         ┌──────────────────┐
                               │  3 Send nothing  │         │ This is what we  │
                               │  [Tell someone]  │         │ read             │
-                              └────────┬─────────┘         │  ₹45,000         │
+                              └────────┬─────────┘         │  ₹45,000  SBI    │
                                        │                   │  ✓ Read clearly  │
-                                       └──────────────────▶│  UTR 4125839…    │
-                                                           │  [Fix it here]   │
+                                       └──────────────────▶│  [Fix it here]   │
+                                                           │  ◀ 1 of 2 ▶      │◀── swipe
+                                                           │ [Yes, right → ]  │    each one
                                                            └────────┬─────────┘
                                                                     │
      ┌──────────────────┐         ┌──────────────────┐         ┌────▼─────────────┐
-     │ Is this true?    │ ◀────── │ Where are you?   │ ◀────── │ Only this one?   │
-     │                  │         │                  │         │                  │
-     │ "₹45,000 left    │         │ ┌────┐┌────┐┌───┐│         │ ┌─────┐ ┌──────┐ │
-     │  your SBI        │         │ │T.N.││Kar.││AP ││         │ │ ✓   │ │ More │ │
-     │  account…"       │         │ └────┘└────┘└───┘│         │ └─────┘ └──────┘ │
-     │ ┌────┐  ┌──────┐ │         │  36 → 3 by GPS   │         └──────────────────┘
-     │ │ No │  │ YES  │ │         └──────────────────┘              ▲
-     │ └────┘  └──────┘ │                                           │ "there were
-     │  ●●○  3 sentences│         ┌──────────────────┐              │  more" loops
-     └────────┬─────────┘         │ How did they     │──────────────┘
-              │                   │ reach you?       │
-              │                   │ 📞  💬  🟢  🔗   │
-              │                   └──────────────────┘
-              ▼                      taxonomy inferred
+     │ Is this true?    │ ◀────── │ Which state are  │ ◀────── │ How did they     │
+     │                  │         │ you in?          │         │ reach you?       │
+     │ "₹57,500 left    │         │ ┌────┐┌────┐┌───┐│         │                  │
+     │  your accounts…" │         │ │T.N.││Kar.││AP ││         │ 📞  💬  🟢  🔗   │
+     │ ┌────┐  ┌──────┐ │         │ └────┘└────┘└───┘│         └──────────────────┘
+     │ │ No │  │ YES  │ │         │  36 → 3 by GPS   │            taxonomy inferred
+     │ └────┘  └──────┘ │         └──────────────────┘
+     │  ●●○  3 sentences│
+     └────────┬─────────┘
+              │
+              ▼
      ┌────────────────────────────────────────────┐
      │              ✓  YOUR CASE IS OPEN          │   ◀── under 60 seconds
      │                                            │
      │              ROK-NX7-V4K                   │
-     │                 For ₹45,000                │
+     │                 For ₹57,500                │
      ├────────────────────────────────────────────┤
      │  Your case in four lines                   │
      │  1 My case reference is ROK-NX7-V4K.       │
      │  2 Rs.45,000 left my SBI account on…       │
-     │  3 The transaction reference is 4125…      │
+     │  3 Rs.12,500 left my HDFC account on…      │
      │  4 The money went to scammer123@…          │
      │                                            │
      │  SEND IT WHICHEVER WAY SUITS YOU           │
@@ -118,6 +116,10 @@ Eight screens. Four of them are questions. Nothing is typed.
               │  (no clock, no red)  │   None of it was needed to open the case.
               └──────────────────────┘
 ```
+
+Selecting more than one wrong payment carries all the way through — the
+total, the read-back, the four-lines helpline card, and the downloaded PDF
+each account for every transaction the citizen ticked, not just the first.
 
 Every screen carries the same three things in the same place: the step count,
 the question, and a **Listen** button. A user who cannot read learns one
@@ -136,12 +138,6 @@ nothing at all. Full submission details, including the video script and the
 Open **NCRP today vs Rok** from the footer and press **Start the race**. Both
 lanes run against one clock, in real time and unaccelerated: Rok files at
 0:50, while the portal is still waiting on an OTP at step 3 of 21.
-
-## Where the work stands
-
-[`BACKLOG.md`](./BACKLOG.md) is the live list of what is outstanding, what is
-owed before anyone judges it, and — importantly — which limitations are
-deliberate and should not be "fixed".
 
 ## Status
 
@@ -199,8 +195,7 @@ either.
 - **No backend.** A server that never receives fraud evidence cannot leak
   it. Nothing is transmitted anywhere until the user exports a file.
 
-See [`AGENTS.md`](./AGENTS.md) for the rules every change follows, and
-[`docs/BUILD_BRIEF.md`](./docs/BUILD_BRIEF.md) for the master specification.
+Security posture and threat model: [`SECURITY.md`](./SECURITY.md).
 
 ## Local development
 
