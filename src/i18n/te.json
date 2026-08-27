@@ -64,10 +64,7 @@
   "messageWall.correct_note": "మీరు నిర్ధారించినది మాత్రమే పంపుతాం. తప్పు నంబర్ వల్ల తప్పు ఖాతా ఆగిపోవచ్చు.",
   "messageWall.choose_different": "వేరేది ఎంచుకోండి",
   "messageWall.confirm_this": "అవును, ఇదే",
-  "scope.question": "ఇది ఒక్కటేనా?",
   "scope.why": "ప్రతి చెల్లింపును విడిగా ఆపవలసి రావచ్చు.",
-  "scope.only_this_one": "ఇది ఒక్కటే",
-  "scope.there_were_more": "ఇంకా ఉన్నాయి",
   "scope.total_label": "మొత్తం",
   "reachedVia.question": "వాళ్లు మిమ్మల్ని ఎలా సంప్రదించారు?",
   "reachedVia.why": "ఇది మీ ఫిర్యాదును సరైన విభాగంలో నమోదు చేస్తుంది. మీరు ఏదీ ఎంచుకోనవసరం లేదు.",
@@ -242,5 +239,15 @@
   "gate.badge": "ఈ ప్రాజెక్టును సమీక్షించే వారి కోసం",
   "gate.footer_link": "ఈ ప్రాజెక్టును సమీక్షిస్తున్నారా? సైన్ ఇన్ చేయండి",
   "palm.resume": "నా ఫిర్యాదు కొనసాగించండి",
-  "palm.resume_note": "ఫిర్యాదు {reference}, ఈ ఫోన్‌లో సేవ్ చేయబడింది"
+  "palm.resume_note": "ఫిర్యాదు {reference}, ఈ ఫోన్‌లో సేవ్ చేయబడింది",
+  "messageWall.continue": "కొనసాగించండి",
+  "messageWall.select_hint": "తప్పు అయిన ప్రతి చెల్లింపును తాకండి. మీరు ఒకటి కంటే ఎక్కువ ఎంచుకోవచ్చు.",
+  "messageWall.remove_message": "మీ జాబితా నుండి {bank} యొక్క {amount} తీసివేయండి",
+  "messageWall.review_confirm": "అవును, ఇవి సరైనవే",
+  "app.back": "వెనక్కి",
+  "app.cancel": "ఈ ఫిర్యాదును రద్దు చేయండి",
+  "app.cancel_title": "ఈ ఫిర్యాదును రద్దు చేయాలా?",
+  "app.cancel_body": "ఇప్పటివరకు మీరు నమోదు చేసినవి ఈ పరికరం నుండి తొలగించబడతాయి. దీన్ని వెనక్కి తీసుకోలేరు.",
+  "app.cancel_confirm": "అవును, రద్దు చేయండి",
+  "app.cancel_keep": "వద్దు, కొనసాగించండి"
 }

@@ -64,10 +64,7 @@
   "messageWall.correct_note": "जो आप पक्का करेंगे वही भेजा जाएगा। गलत नंबर से गलत खाता रुक सकता है।",
   "messageWall.choose_different": "दूसरा चुनें",
   "messageWall.confirm_this": "हाँ, यही",
-  "scope.question": "सिर्फ़ यही एक?",
   "scope.why": "हर भुगतान को अलग से रोकना पड़ सकता है।",
-  "scope.only_this_one": "सिर्फ़ यही एक",
-  "scope.there_were_more": "और भी थे",
   "scope.total_label": "कुल",
   "reachedVia.question": "उन्होंने आपसे कैसे संपर्क किया?",
   "reachedVia.why": "इससे शिकायत सही श्रेणी में दर्ज होगी। आपको कुछ चुनना नहीं है।",
@@ -242,5 +239,15 @@
   "gate.badge": "इस परियोजना की समीक्षा करने वालों के लिए",
   "gate.footer_link": "परियोजना की समीक्षा कर रहे हैं? साइन इन करें",
   "palm.resume": "मेरी शिकायत जारी रखें",
-  "palm.resume_note": "शिकायत {reference}, इसी फ़ोन में सहेजी गई"
+  "palm.resume_note": "शिकायत {reference}, इसी फ़ोन में सहेजी गई",
+  "messageWall.continue": "आगे बढ़ें",
+  "messageWall.select_hint": "जो भी भुगतान गलत है, उस पर टैप करें। आप एक से ज़्यादा चुन सकते हैं।",
+  "messageWall.remove_message": "अपनी सूची से {bank} का {amount} हटाएँ",
+  "messageWall.review_confirm": "हाँ, ये सही हैं",
+  "app.back": "पीछे",
+  "app.cancel": "यह शिकायत रद्द करें",
+  "app.cancel_title": "इस शिकायत को रद्द करें?",
+  "app.cancel_body": "अब तक जो कुछ भरा है वह इस फ़ोन से मिट जाएगा। इसे वापस नहीं लाया जा सकता।",
+  "app.cancel_confirm": "हाँ, रद्द करें",
+  "app.cancel_keep": "नहीं, जारी रखें"
 }

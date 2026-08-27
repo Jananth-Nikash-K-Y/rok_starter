@@ -1,7 +1,7 @@
 .wall__list {
   display: flex;
   flex-direction: column;
-  gap: var(--rok-s3);
+  gap: var(--rok-s4);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -281,3 +281,148 @@
 }
 
 .wall__demo { margin: 0; }
+
+/* ── Selection summary ─────────────────────────────────────
+   Everything ticked so far, and the way forward. On a phone this sits
+   fixed to the bottom of the screen — the thumb-reachable zone — so a
+   long list of messages never buries the one control that matters. */
+
+.wall__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s3);
+}
+
+.wall__summary--empty { padding-block: var(--rok-s2); }
+
+.wall__summary-hint {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-sm);
+}
+
+.wall__selected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wall__selected li {
+  align-items: center;
+  background: var(--rok-green-tint);
+  border: 1px solid var(--rok-green-line);
+  border-radius: var(--rok-radius);
+  color: var(--rok-green-deep);
+  display: flex;
+  gap: var(--rok-s3);
+  padding: var(--rok-s3) var(--rok-s3) var(--rok-s3) var(--rok-s4);
+}
+
+.wall__selected li > svg { flex: none; }
+
+.wall__selected-amount {
+  font-size: var(--rok-text-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.wall__selected-bank {
+  color: var(--rok-green);
+  flex: 1 1 auto;
+  font-size: var(--rok-text-sm);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wall__selected-remove {
+  align-items: center;
+  border-radius: var(--rok-radius-sm);
+  color: var(--rok-green-deep);
+  display: flex;
+  flex: none;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.wall__selected-remove:hover { background: rgba(0, 0, 0, 0.06); }
+
+.wall__summary-why {
+  align-items: flex-start;
+  color: var(--rok-ink-soft);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  gap: var(--rok-s2);
+}
+
+.wall__summary-why svg { color: var(--rok-indigo); flex: none; margin-top: 2px; }
+
+@media (max-width: 720px) {
+  .wall__summary {
+    background: var(--rok-surface);
+    border-top: 1px solid var(--rok-line);
+    bottom: 0;
+    box-shadow: 0 -4px 16px rgba(22, 24, 29, 0.08);
+    left: 0;
+    margin-inline: calc(var(--rok-s4) * -1);
+    padding: var(--rok-s4);
+    position: sticky;
+    right: 0;
+    z-index: 5;
+  }
+
+  .wall__summary--empty {
+    background: none;
+    border-top: none;
+    box-shadow: none;
+    position: static;
+  }
+}
+
+/* ── Review phase ──────────────────────────────────────────
+   The Receipt component from the single-pick flow, now stacked once per
+   selected payment. Wrapped in its own bordered card so several in a row
+   read as separate items rather than one long form. */
+
+.wall__review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s4);
+}
+
+.receipt--card {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  padding: var(--rok-s5);
+}
+
+.receipt__remove {
+  align-items: center;
+  color: var(--rok-ink-mute);
+  display: flex;
+  flex: none;
+  height: 36px;
+  justify-content: center;
+  margin-left: auto;
+  width: 36px;
+}
+
+.receipt__remove:hover { color: var(--rok-red); }
+
+.wall__review-total {
+  align-items: center;
+  background: var(--rok-surface-quiet);
+  border-radius: var(--rok-radius);
+  display: flex;
+  font-size: var(--rok-text-md);
+  gap: var(--rok-s2);
+  padding: var(--rok-s3) var(--rok-s4);
+}
+
+.wall__review-total svg { color: var(--rok-indigo); flex: none; }
+.wall__review-total strong { font-variant-numeric: tabular-nums; margin-left: auto; }

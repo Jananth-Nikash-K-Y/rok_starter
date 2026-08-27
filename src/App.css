@@ -101,6 +101,48 @@
 
 .rok-lang-hint button:hover { background: var(--rok-indigo-deep); }
 
+/* ── Back / Cancel row ─────────────────────────────────────
+   One consistent place on every question screen to revert the last
+   choice, or to abandon the report entirely. Back carries more visual
+   weight (it is the everyday control); Cancel is quieter on purpose — it
+   is rare and consequential, and sits behind a confirmation dialog, but
+   it must never be hidden in a menu. */
+
+.rok-navrow {
+  align-items: center;
+  border-bottom: 1px solid var(--rok-line);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--rok-s3);
+  padding: var(--rok-s2) var(--rok-s4);
+}
+
+.rok-navrow__back {
+  align-items: center;
+  color: var(--rok-ink);
+  display: flex;
+  font-size: var(--rok-text-sm);
+  font-weight: 650;
+  gap: var(--rok-s1);
+  min-height: 40px;
+  padding-inline: var(--rok-s1);
+}
+
+.rok-navrow__back:hover { color: var(--rok-indigo); }
+.rok-navrow__back svg { flex: none; }
+
+.rok-navrow__cancel {
+  color: var(--rok-ink-mute);
+  font-size: var(--rok-text-xs);
+  min-height: 40px;
+  padding-inline: var(--rok-s2);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.rok-navrow__cancel:hover { color: var(--rok-red); }
+
 /* Last-resort screen when a render fails. Still shows the one action that
    matters when the interface has not. */
 .crash {

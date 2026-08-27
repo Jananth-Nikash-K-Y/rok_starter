@@ -64,10 +64,7 @@
   "messageWall.correct_note": "We only send what you confirm. A wrong number could freeze the wrong account.",
   "messageWall.choose_different": "Pick another",
   "messageWall.confirm_this": "Yes, this one",
-  "scope.question": "Only this one?",
   "scope.why": "Each payment may need its own hold.",
-  "scope.only_this_one": "Only this one",
-  "scope.there_were_more": "There were more",
   "scope.total_label": "Total",
   "reachedVia.question": "How did they reach you?",
   "reachedVia.why": "This files your case under the right heading. You never pick a category.",
@@ -242,5 +239,15 @@
   "gate.badge": "For people reviewing this project",
   "gate.footer_link": "Reviewing this project? Sign in",
   "palm.resume": "Continue my report",
-  "palm.resume_note": "Case {reference}, saved on this phone"
+  "palm.resume_note": "Case {reference}, saved on this phone",
+  "messageWall.continue": "Continue",
+  "messageWall.select_hint": "Tap every payment that's wrong. You can choose more than one.",
+  "messageWall.remove_message": "Remove {bank} {amount} from your list",
+  "messageWall.review_confirm": "Yes, these are right",
+  "app.back": "Back",
+  "app.cancel": "Cancel this report",
+  "app.cancel_title": "Cancel this report?",
+  "app.cancel_body": "Everything you've entered so far will be deleted from this device. This cannot be undone.",
+  "app.cancel_confirm": "Yes, cancel it",
+  "app.cancel_keep": "No, keep going"
 }

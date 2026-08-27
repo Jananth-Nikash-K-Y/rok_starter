@@ -3,7 +3,6 @@ import { useT } from "./i18n/useT.js";
 import {
   caseReferenceFrom,
   createInitialMachineState,
-  isCaseComplete,
   rokReducer,
   ROK_STATES,
 } from "./state/machine.js";
@@ -11,6 +10,7 @@ import { announce, setSpeechEnabled } from "./engines/a11yBus.js";
 import { detectLocale, rememberLocale } from "./i18n/detect.js";
 import { localeMeta } from "./i18n/locales.js";
 import AccessibilityMenu from "./components/AccessibilityMenu.jsx";
+import ConfirmDialog from "./components/ConfirmDialog.jsx";
 import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import GoldenHourClock from "./components/GoldenHourClock.jsx";
 import Icon from "./components/Icon.jsx";
@@ -28,7 +28,6 @@ import RaceView from "./screens/RaceView.jsx";
 import ReachedVia from "./screens/ReachedVia.jsx";
 import ReadBack from "./screens/ReadBack.jsx";
 import SafetyTriage from "./screens/SafetyTriage.jsx";
-import Scope from "./screens/Scope.jsx";
 import "./components/ui.css";
 import "./App.css";
 
@@ -37,16 +36,30 @@ const SNAPSHOT_KEY = "rok:active-case";
    visitor always sees the contrast the gate is there to make. */
 const UNLOCK_KEY = "rok:evaluator";
 
-/** Which of the four freeze-relevant questions the user is on. */
+/** Which of the four freeze-relevant questions the user is on.
+    The Message Wall's old loop-back "were there more?" question is gone —
+    selecting several payments now happens in one pass on the wall itself —
+    so every remaining screen gets its own number instead of two screens
+    sharing one, which is a small clarity gain on top of the simplification. */
 const STEP_FOR_STATE = {
   [ROK_STATES.MESSAGE_WALL]: 0,
-  [ROK_STATES.SCOPE]: 1,
-  [ROK_STATES.REACHED_VIA]: 2,
+  [ROK_STATES.REACHED_VIA]: 1,
   [ROK_STATES.JURISDICTION]: 2,
   [ROK_STATES.READ_BACK]: 3,
   [ROK_STATES.CASE_COMPLETE]: 4,
   [ROK_STATES.CALM_MODE]: 4,
 };
+
+/* Screens with their own dedicated way back (Calm Mode's "back to my
+   case", Guardian Handoff's "back to my case") do not also get the
+   generic Back control — one back affordance per screen, not two. */
+const OWN_BACK_STATES = new Set([ROK_STATES.CALM_MODE, ROK_STATES.GUARDIAN_HANDOFF]);
+
+/* Events that intentionally do not create a Back-able history entry:
+   opening a case is not a "choice" to revert, and restoring or resetting
+   are themselves full state replacements the history stack should not
+   try to layer on top of. */
+const NO_HISTORY_EVENTS = new Set(["OPEN_CASE", "RESTORE_CASE", "RESET_CASE"]);
 
 /**
  * The File object in `idAttachment` is deliberately dropped before writing:
@@ -102,6 +115,12 @@ export default function App() {
      development. */
   const debugMode = queryDebug || reviewer;
 
+  /* One entry per screen the user has moved forward through, so Back can
+     pop the most recent and land exactly where "revert the choice I made"
+     means: whatever field that choice set reverts with it, because the
+     popped snapshot is simply the state from before it was made. */
+  const [history, setHistory] = useState([]);
+
   const send = useCallback((event) => {
     if (event.type === "RESET_CASE") {
       try {
@@ -110,14 +129,48 @@ export default function App() {
         /* Nothing to clear, or storage is blocked. */
       }
     }
+    if (NO_HISTORY_EVENTS.has(event.type)) {
+      setHistory([]);
+    }
     setMachine((current) => {
       const next = rokReducer(current, event);
+
+      const screenChanged = next.value !== current.value;
+      const involvesGuardianHandoff =
+        current.value === ROK_STATES.GUARDIAN_HANDOFF || next.value === ROK_STATES.GUARDIAN_HANDOFF;
+
+      if (screenChanged && !involvesGuardianHandoff && !NO_HISTORY_EVENTS.has(event.type)) {
+        setHistory((stack) => [...stack, current]);
+      }
+
       if (debugMode) {
         console.info("[Rok machine]", { event: event.type, from: current.value, to: next.value });
       }
       return next;
     });
   }, [debugMode]);
+
+  const canGoBack = history.length > 0;
+
+  const goBack = () => {
+    setHistory((stack) => {
+      if (stack.length === 0) return stack;
+      setMachine(stack[stack.length - 1]);
+      return stack.slice(0, -1);
+    });
+  };
+
+  /* The one confirmation dialog in the app, shared by the generic Cancel
+     control on every screen and by "report another fraud" on the green
+     screen — same destructive action, same confirmation, one place to get
+     it right. `variant` only changes the copy. */
+  const [cancelDialog, setCancelDialog] = useState(null);
+  const requestCancel = (variant = "cancel") => setCancelDialog({ variant });
+  const dismissCancel = () => setCancelDialog(null);
+  const confirmCancel = () => {
+    send({ type: "RESET_CASE" });
+    setCancelDialog(null);
+  };
 
   /* Mechanic M1: a case, once open, survives anything the user does —
      including closing the tab.
@@ -192,6 +245,7 @@ export default function App() {
     send, t, locale, caseData: machine.case, speechOn, onEnableSpeech: enableSpeech,
     savedCase: savedSnapshot ? caseReferenceFrom(savedSnapshot.case.id) : null,
     onResume: resumeSavedCase,
+    onRequestNewCase: () => requestCancel("newCase"),
   };
 
   /* Shown only when someone opens it from the footer. */
@@ -296,6 +350,29 @@ export default function App() {
         />
       )}
 
+      {/* Back reverts the last choice made — the previous screen's own
+          field snapshot, not a fresh blank one. Cancel is the one
+          destructive control in the app: available from wherever a case
+          is open, always behind the shared confirmation dialog below. */}
+      {caseOpen && machine.value !== ROK_STATES.IDLE && (
+        <div className="rok-navrow">
+          {!OWN_BACK_STATES.has(machine.value) && canGoBack ? (
+            <button className="rok-navrow__back" type="button" onClick={goBack}>
+              <Icon name="arrowLeft" size={18} />
+              <span>{t("app.back")}</span>
+            </button>
+          ) : <span />}
+
+          <button
+            className="rok-navrow__cancel"
+            type="button"
+            onClick={() => requestCancel("cancel")}
+          >
+            {t("app.cancel")}
+          </button>
+        </div>
+      )}
+
       {languageHintOpen && (
         <p className="rok-lang-hint" role="status">
           <Icon name="globe" size={18} />
@@ -332,6 +409,16 @@ export default function App() {
         )}
         <p>{t("footer.not_official")}</p>
       </footer>
+
+      <ConfirmDialog
+        open={Boolean(cancelDialog)}
+        title={cancelDialog?.variant === "newCase" ? t("caseComplete.reset") : t("app.cancel_title")}
+        body={cancelDialog?.variant === "newCase" ? t("caseComplete.reset_confirm") : t("app.cancel_body")}
+        confirmLabel={cancelDialog?.variant === "newCase" ? t("caseComplete.reset_yes") : t("app.cancel_confirm")}
+        keepLabel={cancelDialog?.variant === "newCase" ? t("caseComplete.reset_cancel") : t("app.cancel_keep")}
+        onConfirm={confirmCancel}
+        onDismiss={dismissCancel}
+      />
     </div>
   );
 }
@@ -346,8 +433,6 @@ function Screen({ machine, screenProps, debugMode }) {
       return <SafetyTriage {...screenProps} isHangupScript />;
     case ROK_STATES.MESSAGE_WALL:
       return <MessageWall {...screenProps} />;
-    case ROK_STATES.SCOPE:
-      return <Scope {...screenProps} />;
     case ROK_STATES.REACHED_VIA:
       return <ReachedVia {...screenProps} debugMode={debugMode} />;
     case ROK_STATES.JURISDICTION:
@@ -368,4 +453,3 @@ function Screen({ machine, screenProps, debugMode }) {
   }
 }
 
-export { isCaseComplete };

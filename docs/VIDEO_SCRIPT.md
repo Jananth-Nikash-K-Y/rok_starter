@@ -1,6 +1,10 @@
 ROK — 2-MINUTE VIDEO SCRIPT
 (teleprompter copy — read exactly as written, natural pace, ~150 words/min)
 
+Updated 26 Aug 2026 to match the current build: the Message Wall is now
+tick-more-than-one instead of pick-one-then-loop, and every screen carries
+a Back and a Cancel control.
+
 
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 PART ONE — THE USER DEMO                              0:00–1:00
@@ -37,25 +41,28 @@ not her money.
 
 [0:29]
 Then the only real question:
-which one is wrong?
+which ones are wrong?
 
 [0:33]
 She recognizes her own money.
 
 She never typed a number.
 
-[0:40]
-A few taps confirm what happened.
+[0:38]
+(— tap the message; it moves into a small checked list —)
 
-No forms.
-No categories to understand.
+If there was more than one, she just taps those too.
 
-[0:48]
+[0:44]
+One tap for how they reached her.
+One tap for where she lives.
+
+[0:49]
 Rok writes the complaint for her.
 
-She just says yes.
+She just says yes. Three times.
 
-[0:53]
+[0:55]
 Done.
 
 Under a minute.
@@ -85,42 +92,36 @@ The core idea is recognition over recall.
 [1:17]
 A victim in shock can't remember a transaction ID.
 
-But she can recognize her own bank message.
+But she can recognize her own bank messages.
 
-[1:23]
-So Rok shows her the evidence —
+[1:25]
+So Rok shows her the evidence,
 and asks her to point.
 Not type.
 
-[1:30]
-It runs in four languages.
+[1:31]
+And nothing locks in by accident —
+she can go back at any screen,
+or cancel the whole report.
 
-It speaks every screen aloud.
+[1:38]
+It runs in four languages, and speaks every screen aloud.
 
-[1:35]
-It works for someone who can't read at all —
-
-because the fast path
-and the accessible path
+The fast path and the accessible path
 are the same path here.
 
-Not two separate builds.
-
-[1:44]
+[1:47]
 Filing still needs a human step today.
 
 So we give three equal ways to finish:
-
-call it in,
-send it in writing,
+call it in, send it in writing,
 or hand it to a helper —
 
 because a phone-only option
 would exclude anyone who's deaf.
 
-[1:55]
-There's no login for a citizen.
-No account.
+[1:57]
+No login. No account.
 Nothing to remember.
 
 [1:59]
@@ -140,6 +141,12 @@ NOTES FOR THE READ
 • Bracketed lines like (— tap the button —) are ACTIONS, not spoken words.
   Do the tap, let it land on screen for a beat, then continue.
 • [0:00] timestamps are targets, not hard cuts — stay close, don't rush.
+• At 0:38, only tick ONE message on screen for this take — Kamala's story
+  is a single ₹45,000 debit, so a second tick would contradict the story
+  you're telling. The line "if there was more than one, she just taps
+  those too" is spoken over the SAME screen, not demonstrated — it explains
+  what the tap you just made would also let her do, without slowing the
+  demo down to prove it live. Keep it moving.
 • The silences at 0:17 and the very last line matter. Let them sit.
 • Speak PART ONE like you're telling someone what just happened to a friend.
   Speak PART TWO like you're explaining a decision you're proud of.

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../components/Button.jsx";
 import ConfidenceBadge from "../components/ConfidenceBadge.jsx";
 import Icon from "../components/Icon.jsx";
@@ -13,6 +13,13 @@ import {
 } from "../i18n/format.js";
 import "./MessageWall.css";
 
+/** Two entries are the same payment if they share a reference number, or —
+ * for a reference-less message — the exact same raw text. */
+function sameTransaction(a, b) {
+  if (a.parsed.utr && b.parsed.utr) return a.parsed.utr === b.parsed.utr;
+  return a.raw === b.raw;
+}
+
 /**
  * Screen 3 — the Message Wall (mechanic M2).
  *
@@ -22,17 +29,37 @@ import "./MessageWall.css";
  * user needs to recognise a transaction is on the card — above all the
  * amount, in full. Masking those digits would remove the only cue they
  * have and break the mechanic this screen exists for.
+ *
+ * This used to be pick-one-then-loop: select a message, review it, then a
+ * separate screen asked "only this one, or were there more?", looping back
+ * here for each additional payment. A victim who recognises three wrong
+ * payments at a glance should not have to make that trip three times, so
+ * selection is multiple by default — tap every payment that is wrong, then
+ * continue once, however many there are.
+ *
+ * Two local phases, no state-machine involvement until the very end:
+ * 'select' (tick every wrong payment) and 'review' (check and correct each
+ * one before it becomes evidence). Only the final confirm in 'review'
+ * reaches the reducer, via CONFIRM_TRANSACTIONS.
  */
 export default function MessageWall({ send, t, locale, caseData }) {
   const [parsedInbox, setParsedInbox] = useState([]);
-  const [selected, setSelected] = useState(null);
   const [ocrState, setOcrState] = useState("idle");
-  const alreadyCaptured = useMemo(
-    () => new Set(caseData.transactions.map((transaction) => transaction.utr ?? transaction.raw)),
-    [caseData.transactions],
+  const fileInput = useRef(null);
+  const [phase, setPhase] = useState("select");
+
+  /* Seeded from the case, not from scratch: if the user is back here after
+     rejecting the read-back, or after using Back to revert a later choice,
+     whatever was already confirmed reappears ticked rather than forcing a
+     re-pick from zero. */
+  const [selected, setSelected] = useState(() =>
+    caseData.transactions.map((transaction, index) => ({
+      id: transaction.utr || `existing-${index}`,
+      raw: transaction.raw || "",
+      parsed: transaction,
+    })),
   );
   const [corrections, setCorrections] = useState({});
-  const fileInput = useRef(null);
 
   useEffect(() => {
     setParsedInbox(
@@ -44,13 +71,26 @@ export default function MessageWall({ send, t, locale, caseData }) {
         /* Money arriving is not a fraud to report, and offering it would
            only give a frightened user a wrong answer to tap. Credits are
            still parsed — they are simply never shown here. */
-        .filter((entry) => entry.parsed !== null && entry.parsed.direction !== "credit")
-        /* After "there were more", a payment already in the case must not
-           be offered again: adding it twice would double the reported
-           amount and repeat the reference number in the complaint. */
-        .filter((entry) => !alreadyCaptured.has(entry.parsed.utr ?? entry.raw)),
+        .filter((entry) => entry.parsed !== null && entry.parsed.direction !== "credit"),
     );
-  }, [alreadyCaptured]);
+  }, []);
+
+  const isSelected = (entry) => selected.some((row) => sameTransaction(row, entry));
+
+  const toggle = (entry) => {
+    setSelected((current) => (
+      current.some((row) => sameTransaction(row, entry))
+        ? current.filter((row) => !sameTransaction(row, entry))
+        : [...current, entry]
+    ));
+  };
+
+  const remove = (entry) => {
+    setSelected((current) => current.filter((row) => !sameTransaction(row, entry)));
+  };
+
+  const available = parsedInbox.filter((entry) => !isSelected(entry));
+  const total = selected.reduce((sum, entry) => sum + (entry.parsed.amount ?? 0), 0);
 
   const readAloud = (entry) => {
     const amount = formatIndianCurrency(entry.parsed.amount);
@@ -79,24 +119,62 @@ export default function MessageWall({ send, t, locale, caseData }) {
     }
 
     setOcrState("idle");
-    setSelected({ id: "ocr", raw: parsed.raw, parsed });
+    /* Straight into the selected set — a screenshot the user chose to
+       upload is, by definition, the one they mean to report. */
+    setSelected((current) => [...current, { id: `ocr-${Date.now()}`, raw: parsed.raw, parsed }]);
   };
 
-  const confirmSelection = () => {
-    send({ type: "SELECT_MESSAGE", message: { ...selected.parsed, ...corrections, raw: selected.raw } });
+  const confirmAll = () => {
+    const transactions = selected.map((entry) => ({
+      ...entry.parsed,
+      ...corrections[entry.id],
+      raw: entry.raw,
+    }));
+    send({ type: "CONFIRM_TRANSACTIONS", transactions });
   };
 
-  if (selected) {
+  if (phase === "review") {
     return (
-      <Receipt
-        entry={selected}
-        corrections={corrections}
-        onCorrect={(field, value) => setCorrections((current) => ({ ...current, [field]: value }))}
-        onConfirm={confirmSelection}
-        onBack={() => { setSelected(null); setCorrections({}); }}
+      <Screen
         t={t}
         locale={locale}
-      />
+        question={t("messageWall.receipt_title")}
+        spokenKey="messageWall.receipt_title"
+      >
+        <div className="wall__review">
+          {selected.map((entry) => (
+            <ReceiptCard
+              key={entry.id}
+              entry={entry}
+              correction={corrections[entry.id]}
+              onCorrect={(field, value) => setCorrections((current) => ({
+                ...current,
+                [entry.id]: { ...current[entry.id], [field]: value },
+              }))}
+              onRemove={() => remove(entry)}
+              t={t}
+              locale={locale}
+            />
+          ))}
+
+          {selected.length > 1 && (
+            <p className="wall__review-total">
+              <Icon name="rupee" size={18} />
+              <span>{t("scope.total_label")}</span>
+              <strong>{formatIndianCurrency(total)}</strong>
+            </p>
+          )}
+        </div>
+
+        <div className="receipt__actions">
+          <Button variant="quiet" icon="arrowLeft" onClick={() => setPhase("select")}>
+            {t("messageWall.choose_different")}
+          </Button>
+          <Button variant="danger" iconAfter="arrowRight" onClick={confirmAll}>
+            {t("messageWall.review_confirm")}
+          </Button>
+        </div>
+      </Screen>
     );
   }
 
@@ -113,13 +191,13 @@ export default function MessageWall({ send, t, locale, caseData }) {
       </p>
 
       <ul className="wall__list">
-        {parsedInbox.map((entry) => (
+        {available.map((entry) => (
           <li key={entry.id}>
             <div className="wall__card">
               <button
                 className="wall__select"
                 type="button"
-                onClick={() => setSelected(entry)}
+                onClick={() => toggle(entry)}
                 aria-label={t("messageWall.select_message", {
                   bank: entry.parsed.bank ?? t("messageWall.unknown_bank"),
                   amount: formatIndianCurrency(entry.parsed.amount) ?? "",
@@ -192,22 +270,65 @@ export default function MessageWall({ send, t, locale, caseData }) {
           </p>
         )}
       </div>
+
+      {/* Everything ticked so far, plus the way forward. Sticky on a phone
+          so it stays reachable without scrolling back up through a long
+          list — see MessageWall.css. */}
+      <div className={`wall__summary ${selected.length === 0 ? "wall__summary--empty" : ""}`}>
+        {selected.length === 0 ? (
+          <p className="wall__summary-hint" lang={locale}>{t("messageWall.select_hint")}</p>
+        ) : (
+          <>
+            <ul className="wall__selected">
+              {selected.map((entry) => (
+                <li key={entry.id}>
+                  <Icon name="check" size={16} />
+                  <span className="wall__selected-amount">
+                    {formatIndianCurrency(entry.parsed.amount) ?? t("messageWall.not_available")}
+                  </span>
+                  <span className="wall__selected-bank">
+                    {entry.parsed.bank ?? t("messageWall.unknown_bank")}
+                  </span>
+                  <button
+                    type="button"
+                    className="wall__selected-remove"
+                    onClick={() => remove(entry)}
+                    aria-label={t("messageWall.remove_message", {
+                      bank: entry.parsed.bank ?? t("messageWall.unknown_bank"),
+                      amount: formatIndianCurrency(entry.parsed.amount) ?? "",
+                    })}
+                  >
+                    <Icon name="cross" size={16} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {selected.length > 1 && (
+              <p className="wall__summary-why" lang={locale}>
+                <Icon name="shield" size={16} />
+                {t("scope.why")}
+              </p>
+            )}
+
+            <Button variant="danger" block iconAfter="arrowRight" onClick={() => setPhase("review")}>
+              {t("messageWall.continue")}
+            </Button>
+          </>
+        )}
+      </div>
     </Screen>
   );
 }
 
 /**
- * What we read out of the message, shown back before it becomes evidence.
- * Nothing is submitted without this step, and every field stays editable —
- * a wrong identifier here could freeze an innocent person's account.
+ * One selected payment, shown back before it becomes evidence. Nothing is
+ * submitted without this step, and every field stays editable — a wrong
+ * identifier here could freeze an innocent person's account.
  */
-function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }) {
-  const parsed = { ...entry.parsed, ...corrections };
-  const edited = Object.keys(corrections).length > 0;
-
-  useEffect(() => {
-    announce(t("messageWall.receipt_title"), { locale });
-  }, [t, locale]);
+function ReceiptCard({ entry, correction, onCorrect, onRemove, t, locale }) {
+  const parsed = { ...entry.parsed, ...correction };
+  const edited = Boolean(correction && Object.keys(correction).length > 0);
 
   const rows = [
     { key: "amount", label: t("messageWall.amount"), value: formatIndianCurrency(parsed.amount), editable: true, raw: parsed.amount },
@@ -219,17 +340,23 @@ function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }
   ];
 
   return (
-    <section className="rok-container screen receipt">
-      <p className="rok-eyebrow">
-        <Icon name="document" size={14} />
-        {t("messageWall.receipt_title")}
-      </p>
-
+    <article className="receipt receipt--card">
       <div className="receipt__headline">
         <span className="receipt__amount">
           {formatIndianCurrency(parsed.amount) ?? t("messageWall.not_available")}
         </span>
         <span className="receipt__bank">{parsed.bank ?? t("messageWall.unknown_bank")}</span>
+        <button
+          type="button"
+          className="receipt__remove"
+          onClick={onRemove}
+          aria-label={t("messageWall.remove_message", {
+            bank: parsed.bank ?? t("messageWall.unknown_bank"),
+            amount: formatIndianCurrency(parsed.amount) ?? "",
+          })}
+        >
+          <Icon name="cross" size={16} />
+        </button>
       </div>
 
       <ConfidenceBadge level={edited ? "corrected" : parsed.confidence} t={t} />
@@ -271,18 +398,6 @@ function Receipt({ entry, corrections, onCorrect, onConfirm, onBack, t, locale }
           <p className="receipt__correct-note" lang={locale}>{t("messageWall.correct_note")}</p>
         </div>
       </details>
-
-      <div className="receipt__actions">
-        {/* `quiet`, not `ghost`: beside a filled confirm button, a
-            borderless one reads as secondary text rather than a control,
-            and going back is a first-class choice here. */}
-        <Button variant="quiet" icon="arrowLeft" onClick={onBack}>
-          {t("messageWall.choose_different")}
-        </Button>
-        <Button variant="danger" iconAfter="arrowRight" onClick={onConfirm}>
-          {t("messageWall.confirm_this")}
-        </Button>
-      </div>
-    </section>
+    </article>
   );
 }

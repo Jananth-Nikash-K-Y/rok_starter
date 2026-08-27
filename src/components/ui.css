@@ -79,9 +79,12 @@
    decoration, and the label is always beside it — meaning never depends on
    interpreting a glyph. */
 
+/* A touch more breathing room than the default spacing step: these are
+   the primary decision points on the screen (yes/no, four channels), and
+   they were reading a little cramped shoulder-to-shoulder. */
 .rok-choice-grid {
   display: grid;
-  gap: var(--rok-s3);
+  gap: var(--rok-s4);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
 }
 
@@ -791,8 +794,76 @@
    control still lands centred rather than on its own baseline. */
 .rok-card__title > svg,
 .complete__route > svg,
-.scope__captured li > svg,
 .triage__script li > svg,
 .palm__promises li > svg {
   flex: none;
+}
+
+/* ── Confirm dialog ────────────────────────────────────────
+   The one confirmation modal in the app — see ConfirmDialog.jsx. Centred,
+   capped width, safe in both themes and in high contrast. */
+
+.confirm-dialog__overlay {
+  align-items: center;
+  background: rgba(10, 12, 18, 0.55);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: var(--rok-s4);
+  position: fixed;
+  z-index: 100;
+}
+
+.confirm-dialog {
+  background: var(--rok-surface);
+  border: 1px solid var(--rok-line);
+  border-radius: var(--rok-radius-lg);
+  box-shadow: var(--rok-shadow-lg);
+  max-width: 26rem;
+  padding: var(--rok-s6) var(--rok-s5) var(--rok-s5);
+  width: 100%;
+}
+
+.confirm-dialog:focus { outline: none; }
+
+.confirm-dialog__icon {
+  align-items: center;
+  background: var(--rok-red-tint);
+  border-radius: var(--rok-radius-pill);
+  color: var(--rok-red);
+  display: flex;
+  height: 52px;
+  justify-content: center;
+  margin-bottom: var(--rok-s4);
+  width: 52px;
+}
+
+.confirm-dialog__title {
+  font-size: var(--rok-text-xl);
+  margin-bottom: var(--rok-s2);
+}
+
+.confirm-dialog__body {
+  color: var(--rok-ink-soft);
+  font-size: var(--rok-text-sm);
+  line-height: 1.55;
+  margin-bottom: var(--rok-s5);
+}
+
+/* Unlike the receipt screen's reused red button (which just emphasises
+   the expected next step), the danger button in THIS dialog is a genuine
+   delete. It must never be the thing a rushed tap lands on first, so the
+   safe "keep going" option stays visually first — on top when stacked on
+   a phone, on the left once there is room for a row — at every width,
+   never reversed. */
+.confirm-dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s3);
+}
+
+@media (min-width: 480px) {
+  .confirm-dialog__actions {
+    flex-direction: row;
+  }
 }

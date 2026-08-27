@@ -11,7 +11,6 @@ export const ROK_STATES = Object.freeze({
   SAFETY_TRIAGE: "SAFETY_TRIAGE",
   SAFETY_HANGUP_SCRIPT: "SAFETY_HANGUP_SCRIPT",
   MESSAGE_WALL: "MESSAGE_WALL",
-  SCOPE: "SCOPE",
   REACHED_VIA: "REACHED_VIA",
   JURISDICTION: "JURISDICTION",
   READ_BACK: "READ_BACK",
@@ -19,16 +18,6 @@ export const ROK_STATES = Object.freeze({
   CALM_MODE: "CALM_MODE",
   GUARDIAN_HANDOFF: "GUARDIAN_HANDOFF",
 });
-
-/** States from which the case is considered filed and outputs are available. */
-const COMPLETE_STATES = new Set([
-  ROK_STATES.CASE_COMPLETE,
-  ROK_STATES.CALM_MODE,
-]);
-
-export function isCaseComplete(value) {
-  return COMPLETE_STATES.has(value);
-}
 
 function createCaseId() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -115,12 +104,13 @@ export function rokReducer(state, event) {
       };
     }
 
-    /* Discards the current case and returns to the Palm. Only reachable
-       from a completed case, and the interface asks twice before sending
-       it — the case exists nowhere else, so this is the one destructive
-       action in the app. */
+    /* Wipes the current case and returns to the Palm. Used both to abandon
+       a report mid-flow and, from the green screen, to start a fresh one.
+       Reachable from any state once a case exists — the interface always
+       confirms first, since the case exists nowhere else and this is the
+       one destructive action in the app. */
     case "RESET_CASE":
-      if (!isCaseComplete(state.value)) return state;
+      if (!state.case.openedAt) return state;
       return createInitialMachineState();
 
     case "OPEN_CASE":
@@ -144,39 +134,26 @@ export function rokReducer(state, event) {
       if (state.value !== ROK_STATES.SAFETY_HANGUP_SCRIPT) return state;
       return { ...state, value: ROK_STATES.MESSAGE_WALL };
 
-    case "SELECT_MESSAGE":
+    /* Replaces the old single-pick-then-loop flow: the Message Wall now
+       lets a victim tick every payment that is wrong in one pass — "were
+       there more?" is answered by how many are ticked, not by a separate
+       question. The whole set is confirmed together, so this replaces
+       whatever was previously recorded rather than appending to it; if the
+       user is back here after REJECT_READBACK or a Back navigation, the
+       screen re-seeds its own selection from these same transactions, so
+       nothing already reviewed is silently lost.
+       Corrections are applied by the screen before this is sent — there is
+       no separate CORRECT_FIELD step once a value is already part of the
+       confirmed set. */
+    case "CONFIRM_TRANSACTIONS": {
       if (state.value !== ROK_STATES.MESSAGE_WALL) return state;
+      if (!Array.isArray(event.transactions) || event.transactions.length === 0) return state;
       return updateCase(
         state,
-        { transactions: [...state.case.transactions, createTransaction(event.message)] },
-        ROK_STATES.SCOPE,
+        { transactions: event.transactions.map(createTransaction) },
+        ROK_STATES.REACHED_VIA,
       );
-
-    /* Manual correction of a parsed field. Required by the risk register:
-       a wrong identifier could freeze an innocent account, so every
-       extracted value has to remain editable by the user. */
-    case "CORRECT_FIELD": {
-      const { index, field, value } = event;
-      if (!Number.isInteger(index) || !state.case.transactions[index]) return state;
-      const editable = new Set(["amount", "utr", "accountTail", "beneficiaryVpa", "bank"]);
-      if (!editable.has(field)) return state;
-      const transactions = state.case.transactions.map((transaction, position) =>
-        position === index
-          ? { ...transaction, [field]: value, confidence: "corrected" }
-          : transaction,
-      );
-      return updateCase(state, { transactions });
     }
-
-    case "SCOPE_ONLY_THIS":
-      return state.value === ROK_STATES.SCOPE
-        ? { ...state, value: ROK_STATES.REACHED_VIA }
-        : state;
-
-    case "SCOPE_MORE":
-      return state.value === ROK_STATES.SCOPE
-        ? { ...state, value: ROK_STATES.MESSAGE_WALL }
-        : state;
 
     case "SELECT_CHANNEL":
       if (state.value !== ROK_STATES.REACHED_VIA) return state;
@@ -217,7 +194,9 @@ export function rokReducer(state, event) {
     }
 
     /* A rejected sentence sends the user back to the evidence rather than
-       letting a statement they disagree with reach the complaint. */
+       letting a statement they disagree with reach the complaint. The
+       transactions themselves are left untouched, so the Message Wall
+       reopens with everything already ticked. */
     case "REJECT_READBACK":
       if (state.value !== ROK_STATES.READ_BACK) return state;
       return updateCase(

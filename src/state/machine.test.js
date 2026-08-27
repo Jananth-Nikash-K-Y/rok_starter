@@ -10,8 +10,10 @@ describe("rokReducer", () => {
     let state = createInitialMachineState();
     state = send(state, { type: "OPEN_CASE", openedAt: "2026-08-24T00:00:00.000Z" });
     state = send(state, { type: "STILL_ON_CALL_NO" });
-    state = send(state, { type: "SELECT_MESSAGE", message: { raw: "masked demo message", bank: "Demo Bank" } });
-    state = send(state, { type: "SCOPE_ONLY_THIS" });
+    state = send(state, {
+      type: "CONFIRM_TRANSACTIONS",
+      transactions: [{ raw: "masked demo message", bank: "Demo Bank" }],
+    });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
     state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Tamil Nadu" });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 0, confirmed: true });
@@ -25,15 +27,33 @@ describe("rokReducer", () => {
     expect(state.case.channel).toBe("call");
   });
 
-  it("returns to the message wall to collect another transaction", () => {
+  /* The Message Wall now collects every wrong payment in one pass instead
+     of looping through a separate "were there more?" screen. */
+  it("accepts several transactions confirmed together", () => {
     let state = createInitialMachineState();
     state = send(state, { type: "OPEN_CASE" });
     state = send(state, { type: "STILL_ON_CALL_NO" });
-    state = send(state, { type: "SELECT_MESSAGE", message: { raw: "masked demo message" } });
-    state = send(state, { type: "SCOPE_MORE" });
+    state = send(state, {
+      type: "CONFIRM_TRANSACTIONS",
+      transactions: [
+        { raw: "first", bank: "SBI", amount: 45000 },
+        { raw: "second", bank: "HDFC Bank", amount: 12500 },
+      ],
+    });
 
-    expect(state.value).toBe(ROK_STATES.MESSAGE_WALL);
-    expect(state.case.transactions).toHaveLength(1);
+    expect(state.value).toBe(ROK_STATES.REACHED_VIA);
+    expect(state.case.transactions).toHaveLength(2);
+    expect(state.case.transactions[1].bank).toBe("HDFC Bank");
+  });
+
+  it("refuses to confirm an empty set", () => {
+    let state = createInitialMachineState();
+    state = send(state, { type: "OPEN_CASE" });
+    state = send(state, { type: "STILL_ON_CALL_NO" });
+    const result = send(state, { type: "CONFIRM_TRANSACTIONS", transactions: [] });
+
+    expect(result.value).toBe(ROK_STATES.MESSAGE_WALL);
+    expect(result.case.transactions).toHaveLength(0);
   });
 });
 
@@ -53,7 +73,7 @@ describe("case survival", () => {
 
   it("ignores a snapshot for a case that was never opened", () => {
     const state = createInitialMachineState();
-    const result = send(state, { type: "RESTORE_CASE", snapshot: { value: "SCOPE", case: {} } });
+    const result = send(state, { type: "RESTORE_CASE", snapshot: { value: "MESSAGE_WALL", case: {} } });
     expect(result.value).toBe(ROK_STATES.IDLE);
   });
 });
@@ -63,8 +83,7 @@ describe("calm mode", () => {
     let state = createInitialMachineState();
     state = send(state, { type: "OPEN_CASE" });
     state = send(state, { type: "STILL_ON_CALL_NO" });
-    state = send(state, { type: "SELECT_MESSAGE", message: { amount: 45000 } });
-    state = send(state, { type: "SCOPE_ONLY_THIS" });
+    state = send(state, { type: "CONFIRM_TRANSACTIONS", transactions: [{ amount: 45000 }] });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
     state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Delhi" });
     [0, 1, 2].forEach((index) => {
@@ -115,47 +134,47 @@ describe("guardian handoff", () => {
 });
 
 describe("evidence integrity", () => {
-  function atScope() {
+  /* Risk register: a wrong identifier could freeze an innocent account, so
+     the interface must let the user correct what the parser read. That
+     correction now happens in the screen's own state before the set is
+     confirmed — CONFIRM_TRANSACTIONS receives the corrected values
+     directly, so what lands in the case is already right. */
+  it("accepts a corrected value as part of the confirmed set", () => {
     let state = createInitialMachineState();
     state = send(state, { type: "OPEN_CASE" });
     state = send(state, { type: "STILL_ON_CALL_NO" });
-    return send(state, { type: "SELECT_MESSAGE", message: { amount: 45000, utr: "412583947261" } });
-  }
-
-  /* Risk register: a wrong identifier could freeze an innocent account, so
-     the user must always be able to correct what the parser read. */
-  it("lets the user correct a parsed field and marks it as corrected", () => {
-    const state = send(atScope(), { type: "CORRECT_FIELD", index: 0, field: "utr", value: "999888777666" });
+    state = send(state, {
+      type: "CONFIRM_TRANSACTIONS",
+      transactions: [{ amount: 45000, utr: "999888777666", confidence: "corrected" }],
+    });
     expect(state.case.transactions[0].utr).toBe("999888777666");
     expect(state.case.transactions[0].confidence).toBe("corrected");
   });
 
-  it("refuses to write a field that is not meant to be editable", () => {
-    const state = send(atScope(), { type: "CORRECT_FIELD", index: 0, field: "raw", value: "tampered" });
-    expect(state.case.transactions[0].raw).not.toBe("tampered");
-  });
-
-  it("ignores an out-of-range correction", () => {
-    const before = atScope();
-    expect(send(before, { type: "CORRECT_FIELD", index: 9, field: "utr", value: "x" })).toEqual(before);
-  });
-
   it("ignores events that do not belong to the current state", () => {
     const state = createInitialMachineState();
-    expect(send(state, { type: "SCOPE_ONLY_THIS" }).value).toBe(ROK_STATES.IDLE);
+    expect(send(state, { type: "SELECT_CHANNEL", channel: "call" }).value).toBe(ROK_STATES.IDLE);
     expect(send(state, { type: "CONFIRM_SENTENCE", index: 0, confirmed: true }).value).toBe(ROK_STATES.IDLE);
     expect(send(state, { type: "NOT_A_REAL_EVENT" })).toEqual(state);
   });
 
-  it("sends a rejected read-back back to the evidence", () => {
-    let state = atScope();
-    state = send(state, { type: "SCOPE_ONLY_THIS" });
+  it("sends a rejected read-back back to the evidence, leaving it intact", () => {
+    let state = createInitialMachineState();
+    state = send(state, { type: "OPEN_CASE" });
+    state = send(state, { type: "STILL_ON_CALL_NO" });
+    state = send(state, {
+      type: "CONFIRM_TRANSACTIONS",
+      transactions: [{ amount: 45000, utr: "412583947261" }],
+    });
     state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
     state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Kerala" });
     state = send(state, { type: "CONFIRM_SENTENCE", index: 0, confirmed: true });
     state = send(state, { type: "REJECT_READBACK" });
+
     expect(state.value).toBe(ROK_STATES.MESSAGE_WALL);
     expect(state.case.sentenceConfirmations).toEqual([false, false, false]);
+    expect(state.case.transactions).toHaveLength(1);
+    expect(state.case.transactions[0].utr).toBe("412583947261");
   });
 });
 
@@ -164,8 +183,7 @@ describe("jurisdiction", () => {
     let state = createInitialMachineState();
     state = send(state, { type: "OPEN_CASE" });
     state = send(state, { type: "STILL_ON_CALL_NO" });
-    state = send(state, { type: "SELECT_MESSAGE", message: { amount: 45000 } });
-    state = send(state, { type: "SCOPE_ONLY_THIS" });
+    state = send(state, { type: "CONFIRM_TRANSACTIONS", transactions: [{ amount: 45000 }] });
     return send(state, { type: "SELECT_CHANNEL", channel: "call" });
   }
 
@@ -183,5 +201,39 @@ describe("jurisdiction", () => {
     expect(send(state, { type: "CONFIRM_JURISDICTION" }).value).toBe(ROK_STATES.JURISDICTION);
     expect(send(state, { type: "CONFIRM_JURISDICTION", stateUt: "" }).value)
       .toBe(ROK_STATES.JURISDICTION);
+  });
+});
+
+describe("cancelling a report", () => {
+  /* Requested explicitly, with a confirmation step owned by the interface:
+     a citizen may want to abandon a report mid-flow, not only start a new
+     one after finishing. RESET_CASE now covers both, guarded only by a
+     case actually being open. */
+  it("wipes an in-progress case from any state once one is open", () => {
+    let state = createInitialMachineState();
+    state = send(state, { type: "OPEN_CASE" });
+    state = send(state, { type: "STILL_ON_CALL_NO" });
+    state = send(state, { type: "RESET_CASE" });
+    expect(state.value).toBe(ROK_STATES.IDLE);
+    expect(state.case.openedAt).toBeNull();
+  });
+
+  it("does nothing before a case exists", () => {
+    const state = createInitialMachineState();
+    expect(send(state, { type: "RESET_CASE" })).toEqual(state);
+  });
+
+  it("still works from the completed case, to start a new report", () => {
+    let state = createInitialMachineState();
+    state = send(state, { type: "OPEN_CASE" });
+    state = send(state, { type: "STILL_ON_CALL_NO" });
+    state = send(state, { type: "CONFIRM_TRANSACTIONS", transactions: [{ amount: 1000 }] });
+    state = send(state, { type: "SELECT_CHANNEL", channel: "call" });
+    state = send(state, { type: "CONFIRM_JURISDICTION", stateUt: "Goa" });
+    [0, 1, 2].forEach((index) => {
+      state = send(state, { type: "CONFIRM_SENTENCE", index, confirmed: true });
+    });
+    state = send(state, { type: "RESET_CASE" });
+    expect(state.value).toBe(ROK_STATES.IDLE);
   });
 });

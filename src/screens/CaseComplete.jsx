@@ -16,7 +16,7 @@ import "./CaseComplete.css";
  * below it is ordered by what happens when: the money, then their next
  * action, then tomorrow.
  */
-export default function CaseComplete({ send, t, locale, caseData }) {
+export default function CaseComplete({ send, t, locale, caseData, onRequestNewCase }) {
   const reference = caseReferenceFrom(caseData.id);
   const helplineLines = buildHelplineCard(caseData);
   const transaction = caseData.transactions[0] ?? {};
@@ -26,7 +26,6 @@ export default function CaseComplete({ send, t, locale, caseData }) {
   /* Which case has already been auto-saved, so a re-mount cannot produce a
      second file in the user's downloads folder. */
   const autoSavedCaseId = useRef(null);
-  const [confirmingReset, setConfirmingReset] = useState(false);
 
   useEffect(() => {
     announce(t("caseComplete.spoken", { reference }), { locale, key: "caseComplete.spoken" });
@@ -224,25 +223,12 @@ export default function CaseComplete({ send, t, locale, caseData }) {
       </Button>
 
       {/* Discarding a case is the only destructive action in the app, and
-          the case exists nowhere but this browser — so it asks twice. */}
+          the case exists nowhere but this browser — so it goes through the
+          same shared confirmation dialog as the generic Cancel control. */}
       <div className="complete__reset">
-        {confirmingReset ? (
-          <>
-            <p lang={locale}>{t("caseComplete.reset_confirm")}</p>
-            <div className="complete__reset-actions">
-              <Button variant="ghost" onClick={() => setConfirmingReset(false)}>
-                {t("caseComplete.reset_cancel")}
-              </Button>
-              <Button variant="danger" onClick={() => send({ type: "RESET_CASE" })}>
-                {t("caseComplete.reset_yes")}
-              </Button>
-            </div>
-          </>
-        ) : (
-          <Button variant="ghost" onClick={() => setConfirmingReset(true)}>
-            {t("caseComplete.reset")}
-          </Button>
-        )}
+        <Button variant="ghost" onClick={onRequestNewCase}>
+          {t("caseComplete.reset")}
+        </Button>
       </div>
     </section>
   );

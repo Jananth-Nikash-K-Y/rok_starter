@@ -3,7 +3,7 @@
 Everything known to be outstanding, with the reason it matters. Ordered by
 what blocks what, not by size.
 
-Last audited: 25 August 2026.
+Last audited: 26 August 2026.
 
 ---
 
@@ -15,7 +15,7 @@ Nothing else counts until these are done.
 | --- | --- | --- | --- |
 | 1.1 | **Deploy and paste the live URL** into `SUBMISSION.md` | The submission requires a live public link. The build is ready and `vercel.json` is in place; the deploy itself needs a Vercel or GitHub login. | You — needs your auth |
 | 1.2 | **Record the 2-minute video** | Mandatory deliverable. Timed script and shot list are in `SUBMISSION.md` §3. | You |
-| 1.3 | **Commit the working tree** | ~10 files uncommitted, including the evaluator gate and voice tooling. | Either |
+| 1.3 | **Commit the working tree** | Uncommitted since the evaluator gate work; grown further with today's navigation and Message Wall changes. | Either |
 
 **Do 1.1 first.** Verify by opening the URL on a phone, signing in with
 `evaluator` / `rok-2026`, and completing one full case end to end.
@@ -68,6 +68,21 @@ demo.
 ---
 
 ## 5. Accepted limitations — do not "fix" these
+
+- **Back reverts fully, not one field at a time.** Pressing Back restores
+  the exact snapshot from just before the last screen transition — so on
+  the Message Wall, Back does not un-tick one payment, it clears the whole
+  selection back to empty. That is "revert the choice I made" applied
+  literally to the screen you are leaving, not a per-click undo stack.
+  Building the latter would need its own history inside the Message Wall;
+  not worth it for a control used to correct a wrong turn, not to
+  fine-tune a selection already in progress.
+- **Confirming transactions replaces the set, it never appends.**
+  `CONFIRM_TRANSACTIONS` hands the reducer the complete list the Message
+  Wall built locally and that becomes `case.transactions` outright. This
+  is what makes Back-then-forward and reject-then-reopen behave
+  predictably: the case always holds exactly what the wall last confirmed,
+  never a merge of two different visits.
 
 Listed so nobody spends a night solving something that is deliberate. Each
 is stated on screen or in the docs.
