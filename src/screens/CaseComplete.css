@@ -172,7 +172,7 @@
 
 .complete__routes {
   display: grid;
-  gap: var(--rok-s3);
+  gap: var(--rok-s4);
 }
 
 .complete__route {

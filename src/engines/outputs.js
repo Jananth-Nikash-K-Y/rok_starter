@@ -19,10 +19,16 @@ import { formatIndianDateTime } from "../i18n/format.js";
  * @returns {object}
  */
 export function buildNcrpPacket(caseObj) {
-  const tx = caseObj.transactions[0] ?? {};
+  const transactions = caseObj.transactions ?? [];
+  const tx = transactions[0] ?? {};
   const taxonomy = caseObj.channel
     ? inferTaxonomy(caseObj.channel, tx)
     : { category: "Financial Fraud", subCategory: "UPI Related Frauds" };
+  /* NCRP's own form has one amount field per complaint, so the top-level
+     scalars below stay the first confirmed transaction for compatibility —
+     but a case built from several payments must not lose the rest, so the
+     full set and its total are carried alongside them. */
+  const totalAmount = transactions.reduce((sum, t) => sum + (t.amount ?? 0), 0);
 
   return {
     complaintCategory: taxonomy.category,
@@ -33,11 +39,16 @@ export function buildNcrpPacket(caseObj) {
        reader never mistakes a defaulted midnight for a recorded time. */
     incidentTimeRecorded: tx.timeKnown ?? false,
     fraudAmount: tx.amount ?? null,
+    totalFraudAmount: totalAmount,
     currency: "INR",
     bankOrWallet: tx.bank ?? "Unknown",
     transactionReference: tx.utr ?? null,
     beneficiaryVpa: tx.beneficiaryVpa ?? null,
     accountTail: tx.accountTail ?? null,
+    transactions: transactions.map((t) => ({
+      amount: t.amount ?? null, bank: t.bank ?? null, utr: t.utr ?? null,
+      timestamp: t.timestamp ?? null, beneficiaryVpa: t.beneficiaryVpa ?? null,
+    })),
     incidentDescription: composeNarrative(caseObj),
     caseReferenceId: caseObj.id,
     spokenCaseReference: caseReferenceFrom(caseObj.id),
@@ -53,24 +64,29 @@ export function buildNcrpPacket(caseObj) {
  * @returns {string[]}
  */
 export function buildHelplineCard(caseObj) {
-  const tx = caseObj.transactions[0] ?? {};
-  const amount = tx.amount === null || tx.amount === undefined
-    ? "Amount not confirmed"
-    : `Rs.${Number(tx.amount).toLocaleString("en-IN")}`;
-  const bank = tx.bank ?? "bank not identified";
-  const utr = tx.utr ?? "no reference number found";
-  const when = tx.timestamp
-    ? formatIndianDateTime(tx.timestamp, tx.timeKnown ?? false)
-    : "time not recorded";
+  const transactions = caseObj.transactions ?? [];
+  const lines = [`My case reference is ${caseReferenceFrom(caseObj.id)}.`];
 
-  return [
-    `My case reference is ${caseReferenceFrom(caseObj.id)}.`,
-    `${amount} left my ${bank} account on ${when}.`,
-    `The transaction reference is ${utr}.`,
-    tx.beneficiaryVpa
-      ? `The money went to ${tx.beneficiaryVpa}.`
-      : "I do not have the beneficiary details.",
-  ];
+  /* One line per confirmed payment — an operator needs every reference
+     number, not just the first one the victim ticked. */
+  transactions.forEach((tx) => {
+    const amount = tx.amount === null || tx.amount === undefined
+      ? "an amount not confirmed"
+      : `Rs.${Number(tx.amount).toLocaleString("en-IN")}`;
+    const bank = tx.bank ?? "a bank not identified";
+    const when = tx.timestamp
+      ? formatIndianDateTime(tx.timestamp, tx.timeKnown ?? false)
+      : "a time not recorded";
+    const reference = tx.utr ?? "no reference number found";
+    lines.push(`${amount} left my ${bank} account on ${when}. Reference ${reference}.`);
+  });
+
+  if (transactions.length > 1) {
+    const total = transactions.reduce((sum, tx) => sum + (tx.amount ?? 0), 0);
+    lines.push(`Total across ${transactions.length} transactions: Rs.${total.toLocaleString("en-IN")}.`);
+  }
+
+  return lines;
 }
 
 /**

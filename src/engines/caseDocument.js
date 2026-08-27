@@ -37,21 +37,42 @@ function escapeHtml(value) {
   }[character]));
 }
 
-/** Rows for the disputed-transaction table, skipping anything unknown. */
-function transactionRows(caseObj, t) {
-  const tx = caseObj.transactions[0] ?? {};
+/** One row set per confirmed transaction, plus the case-level fields once
+    at the end. A case built from several payments must show every one of
+    them, not just the first the victim ticked. */
+function transactionBlocks(caseObj, t) {
   const unknown = t("doc.unconfirmed");
-  return [
-    [t("doc.f_amount"), formatIndianCurrency(tx.amount) ?? unknown],
-    [t("doc.f_bank"), tx.bank ?? unknown],
-    [t("doc.f_when"), formatIndianDateTime(tx.timestamp, tx.timeKnown) ?? unknown],
-    [t("doc.f_account"), formatMaskedAccount(tx.accountTail) ?? unknown],
-    [t("doc.f_reference"), tx.utr ?? unknown],
-    [t("doc.f_beneficiary"), tx.beneficiaryVpa ?? unknown],
+  const transactions = caseObj.transactions?.length ? caseObj.transactions : [{}];
+
+  const perTransaction = transactions.map((tx, index) => ({
+    label: transactions.length > 1
+      ? `${t("doc.s_transaction")} ${index + 1}`
+      : t("doc.s_transaction"),
+    rows: [
+      [t("doc.f_amount"), formatIndianCurrency(tx.amount) ?? unknown],
+      [t("doc.f_bank"), tx.bank ?? unknown],
+      [t("doc.f_when"), formatIndianDateTime(tx.timestamp, tx.timeKnown) ?? unknown],
+      [t("doc.f_account"), formatMaskedAccount(tx.accountTail) ?? unknown],
+      [t("doc.f_reference"), tx.utr ?? unknown],
+      [t("doc.f_beneficiary"), tx.beneficiaryVpa ?? unknown],
+    ],
+  }));
+
+  const caseRows = [
     [t("doc.f_category"), caseObj.ncrpCategory ?? unknown],
     [t("doc.f_subcategory"), caseObj.ncrpSubCategory ?? unknown],
     [t("doc.f_state"), caseObj.stateUt ?? unknown],
   ];
+
+  return { perTransaction, caseRows };
+}
+
+function tableHtml(rows) {
+  return rows.map(([label, value]) => `
+      <tr>
+        <td style="padding:7px 0;border-bottom:1px solid #e7e7e3;color:#4a4f59;width:44%;vertical-align:top">${escapeHtml(label)}</td>
+        <td style="padding:7px 0;border-bottom:1px solid #e7e7e3;font-weight:600;text-align:right">${escapeHtml(value)}</td>
+      </tr>`).join("");
 }
 
 /**
@@ -85,12 +106,7 @@ function buildPageNode(caseObj, t, locale) {
     boxSizing: "border-box",
   });
 
-  const rows = transactionRows(caseObj, t)
-    .map(([label, value]) => `
-      <tr>
-        <td style="padding:7px 0;border-bottom:1px solid #e7e7e3;color:#4a4f59;width:44%;vertical-align:top">${escapeHtml(label)}</td>
-        <td style="padding:7px 0;border-bottom:1px solid #e7e7e3;font-weight:600;text-align:right">${escapeHtml(value)}</td>
-      </tr>`).join("");
+  const { perTransaction, caseRows } = transactionBlocks(caseObj, t);
 
   const heading = (text) => `
     <h2 style="font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#6b7079;
@@ -120,8 +136,11 @@ function buildPageNode(caseObj, t, locale) {
       &nbsp;·&nbsp; ${escapeHtml(meta.english)}
     </div>
 
-    ${heading(t("doc.s_transaction"))}
-    <table style="width:100%;border-collapse:collapse;font-size:13px">${rows}</table>
+    ${perTransaction.map((block) => `
+      ${heading(block.label)}
+      <table style="width:100%;border-collapse:collapse;font-size:13px">${tableHtml(block.rows)}</table>
+    `).join("")}
+    <table style="width:100%;border-collapse:collapse;font-size:13px">${tableHtml(caseRows)}</table>
 
     ${heading(t("doc.s_statement"))}
     <ul style="margin:0 0 14px;padding-left:18px;font-size:13px;line-height:1.7">

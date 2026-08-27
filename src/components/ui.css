@@ -867,3 +867,15 @@
     flex-direction: row;
   }
 }
+
+/* Screens that render their own top-level section (CaseComplete, CalmMode,
+   GuardianHandoff, the hang-up script) instead of the shared <Screen>
+   component still need the same rhythm between their blocks. Without this,
+   nothing set a gap between them at all — hero, cards and buttons sat
+   flush against each other with zero space. */
+.rok-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rok-s5);
+  padding-block: var(--rok-s5) var(--rok-s7);
+}

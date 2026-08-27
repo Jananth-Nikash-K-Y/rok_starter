@@ -92,7 +92,7 @@ describe("narrative honesty", () => {
   });
 
   it("states the time when the evidence does carry one", () => {
-    expect(composeNarrative(baseCase)).toContain("On 24-08-2026 at approximately 23.47 hours IST");
+    expect(composeNarrative(baseCase)).toContain("on 24-08-2026 at approximately 23.47 hours IST");
   });
 
   it("says an amount is unconfirmed rather than reporting zero", () => {

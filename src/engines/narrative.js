@@ -48,9 +48,9 @@ const CHANNEL_TEXT = {
  * @returns {string} >=200 characters, plain ASCII only
  */
 export function composeNarrative(caseObj) {
-  const transaction = caseObj.transactions?.[0];
+  const transactions = caseObj.transactions ?? [];
 
-  if (!transaction) {
+  if (transactions.length === 0) {
     return sanitize(
       "The complainant has opened a financial fraud report using the Rok intake system. " +
       "No transaction evidence has been attached to this case yet. The complainant intends " +
@@ -58,44 +58,53 @@ export function composeNarrative(caseObj) {
     );
   }
 
+  const primary = transactions[0];
   const { category, subCategory } = caseObj.channel
-    ? inferTaxonomy(caseObj.channel, transaction)
+    ? inferTaxonomy(caseObj.channel, primary)
     : { category: "Financial Fraud", subCategory: "UPI Related Frauds" };
-
-  /* NCRP accepts only [A-Za-z0-9 ,.-], so a slashed date and a colonned
-     time would be sanitised into an unreadable digit run ("24082026 at
-     2347"). Hyphens and periods survive, and read correctly in a
-     complaint. */
-  const date = transaction.timestamp
-    ? formatIndianDate(transaction.timestamp).replace(/\//g, "-")
-    : null;
-  const time = transaction.timestamp && transaction.timeKnown
-    ? formatIndianTime(transaction.timestamp).replace(":", ".")
-    : null;
-
-  let when = "on a date the complainant is unable to confirm";
-  if (date && time) when = `on ${date} at approximately ${time} hours IST`;
-  else if (date) when = `on ${date}, at a time not recorded in the bank alert`;
-
   const channelText = CHANNEL_TEXT[caseObj.channel] ?? "method the complainant could not identify";
-  const amountText = transaction.amount === null
-    ? "an amount the complainant is unable to confirm"
-    : `Rs.${Number(transaction.amount).toLocaleString("en-IN")}`;
-  const accountText = transaction.accountTail
-    ? `their account ending ${transaction.accountTail}`
-    : "their account";
-  const bankText = transaction.bank ? ` held with ${transaction.bank}` : "";
-  const referenceText = transaction.utr
-    ? `The transaction reference number is ${transaction.utr}.`
-    : "The complainant was unable to locate a transaction reference number.";
-  const beneficiaryText = transaction.beneficiaryVpa
-    ? ` The funds were credited to the payment address ${spellVpa(transaction.beneficiaryVpa)}.`
+
+  /* One clause per confirmed transaction — a case is not always a single
+     debit, and a complaint that only describes the first one silently
+     drops every other payment the victim confirmed. */
+  const describeTransaction = (transaction) => {
+    const date = transaction.timestamp
+      ? formatIndianDate(transaction.timestamp).replace(/\//g, "-")
+      : null;
+    const time = transaction.timestamp && transaction.timeKnown
+      ? formatIndianTime(transaction.timestamp).replace(":", ".")
+      : null;
+
+    let when = "on a date the complainant is unable to confirm";
+    if (date && time) when = `on ${date} at approximately ${time} hours IST`;
+    else if (date) when = `on ${date}, at a time not recorded in the bank alert`;
+
+    const amountText = transaction.amount === null
+      ? "an amount the complainant is unable to confirm"
+      : `Rs.${Number(transaction.amount).toLocaleString("en-IN")}`;
+    const accountText = transaction.accountTail
+      ? `their account ending ${transaction.accountTail}`
+      : "their account";
+    const bankText = transaction.bank ? ` held with ${transaction.bank}` : "";
+    const referenceText = transaction.utr
+      ? `The transaction reference number is ${transaction.utr}.`
+      : "The complainant was unable to locate a transaction reference number.";
+    const beneficiaryText = transaction.beneficiaryVpa
+      ? ` The funds were credited to the payment address ${spellVpa(transaction.beneficiaryVpa)}.`
+      : "";
+
+    return `${when}, an unauthorised debit of ${amountText} was observed from ${accountText}${bankText}. ${referenceText}${beneficiaryText}`;
+  };
+
+  const total = transactions.reduce((sum, tx) => sum + (tx.amount ?? 0), 0);
+  const totalLine = transactions.length > 1
+    ? `In total, ${transactions.length} unauthorised transactions amounting to Rs.${total.toLocaleString("en-IN")} were observed. `
     : "";
 
   const sentences = [
-    `${when}, the complainant was contacted by an unknown person through a ${channelText} and subsequently observed an unauthorised debit of ${amountText} from ${accountText}${bankText}.`,
-    referenceText + beneficiaryText,
-    `The complainant states that they did not authorise this transaction and did not knowingly share any credentials.`,
+    `The complainant was contacted by an unknown person through a ${channelText}.`,
+    totalLine + transactions.map(describeTransaction).join(" "),
+    "The complainant states that they did not authorise this transaction and did not knowingly share any credentials.",
     `This complaint is being reported under the category ${category}, sub category ${subCategory}.`,
   ];
 
@@ -109,7 +118,7 @@ export function composeNarrative(caseObj) {
     );
   }
 
-  if (transaction.confidence === "low" || transaction.confidence === "medium") {
+  if (transactions.some((tx) => tx.confidence === "low" || tx.confidence === "medium")) {
     sentences.push(
       "Some details above were read automatically from the bank alert and have been confirmed by the complainant.",
     );
@@ -128,18 +137,11 @@ export function composeNarrative(caseObj) {
   return narrative;
 }
 
-/**
- * Three short plain-language sentences for the Read-Back screen. These are
- * deliberately not the narrative: the narrative is written for the
- * investigator, these are written to be understood by ear.
- *
- * @returns {[string, string, string]}
- */
 export function composeReadBackSentences(caseObj, t) {
   const translate = typeof t === "function" ? t : (key, vars = {}) => fallback(key, vars);
-  const transaction = caseObj.transactions?.[0];
+  const transactions = caseObj.transactions ?? [];
 
-  if (!transaction) {
+  if (transactions.length === 0) {
     return [
       translate("readBack.fallback_one"),
       translate("readBack.fallback_two"),
@@ -147,15 +149,21 @@ export function composeReadBackSentences(caseObj, t) {
     ];
   }
 
-  const amount = transaction.amount === null
+  /* Every confirmed payment, summed and named — not just the first one
+     the victim ticked. */
+  const total = transactions.reduce((sum, tx) => sum + (tx.amount ?? 0), 0);
+  const amount = transactions.every((tx) => tx.amount === null)
     ? translate("readBack.some_money")
-    : `₹${Number(transaction.amount).toLocaleString("en-IN")}`;
+    : `₹${total.toLocaleString("en-IN")}`;
+  const banks = [...new Set(transactions.map((tx) => tx.bank).filter(Boolean))];
+  const bankText = banks.length ? banks.join(", ") : translate("readBack.your_bank");
+  const primary = transactions[0];
 
   return [
     translate("readBack.sentence_money", {
       amount,
-      bank: transaction.bank ?? translate("readBack.your_bank"),
-      date: formatIndianDate(transaction.timestamp) ?? translate("readBack.recently"),
+      bank: bankText,
+      date: formatIndianDate(primary.timestamp) ?? translate("readBack.recently"),
     }),
     translate("readBack.sentence_contact", {
       channel: translate(`readBack.channel_${caseObj.channel ?? "unknown"}`),

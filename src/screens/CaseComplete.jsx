@@ -19,7 +19,11 @@ import "./CaseComplete.css";
 export default function CaseComplete({ send, t, locale, caseData, onRequestNewCase }) {
   const reference = caseReferenceFrom(caseData.id);
   const helplineLines = buildHelplineCard(caseData);
-  const transaction = caseData.transactions[0] ?? {};
+  /* The headline amount is the total across every confirmed payment, not
+     just the first one — a case built from several ticked messages must
+     not silently report only one of them. */
+  const totalAmount = caseData.transactions.reduce((sum, tx) => sum + (tx.amount ?? 0), 0);
+  const hasAmount = caseData.transactions.some((tx) => tx.amount !== null && tx.amount !== undefined);
   const [shared, setShared] = useState(false);
   const [buildingPdf, setBuildingPdf] = useState(false);
   const [autoSave, setAutoSave] = useState("pending");
@@ -108,9 +112,9 @@ export default function CaseComplete({ send, t, locale, caseData, onRequestNewCa
         <h1 className="complete__heading" lang={locale}>{t("caseComplete.heading")}</h1>
         <p className="complete__reference-label" lang={locale}>{t("caseComplete.reference_label")}</p>
         <p className="complete__reference">{reference}</p>
-        {transaction.amount !== undefined && transaction.amount !== null && (
+        {hasAmount && (
           <p className="complete__amount" lang={locale}>
-            {t("caseComplete.amount_line", { amount: formatIndianCurrency(transaction.amount) })}
+            {t("caseComplete.amount_line", { amount: formatIndianCurrency(totalAmount) })}
           </p>
         )}
       </div>
